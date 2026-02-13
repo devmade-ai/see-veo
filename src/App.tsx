@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { cvData } from './data/cv-data'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -6,8 +7,24 @@ import Education from './components/Education'
 import Skills from './components/Skills'
 import Projects from './components/Projects'
 import Contact from './components/Contact'
+import UpdatePrompt from './components/UpdatePrompt'
+import InstallInstructionsModal from './components/InstallInstructionsModal'
+import { usePWAUpdate } from './hooks/usePWAUpdate'
+import { usePWAInstall } from './hooks/usePWAInstall'
 
 function App() {
+  const { hasUpdate, update } = usePWAUpdate()
+  const {
+    canInstall,
+    install,
+    isInstalled,
+    showManualInstructions,
+    getInstallInstructions,
+  } = usePWAInstall()
+  const [showModal, setShowModal] = useState(false)
+
+  const instructions = getInstallInstructions()
+
   return (
     <div className="min-h-screen bg-background text-text">
       <Hero personal={cvData.personal} />
@@ -24,7 +41,36 @@ function App() {
           &copy; {new Date().getFullYear()} {cvData.personal.name}. All rights
           reserved.
         </p>
+        <div className="mt-3 flex justify-center gap-3">
+          {canInstall && (
+            <button
+              onClick={() => void install()}
+              className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-primary-light"
+            >
+              Install App
+            </button>
+          )}
+          {!canInstall && showManualInstructions && !isInstalled && (
+            <button
+              onClick={() => setShowModal(true)}
+              className="rounded-md bg-surface-light px-3 py-1.5 text-sm font-medium text-text transition-colors hover:bg-border"
+            >
+              How to Install
+            </button>
+          )}
+        </div>
       </footer>
+
+      {hasUpdate && <UpdatePrompt onUpdate={() => void update()} />}
+
+      {showModal && (
+        <InstallInstructionsModal
+          browser={instructions.browser}
+          steps={instructions.steps}
+          note={instructions.note}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </div>
   )
 }
