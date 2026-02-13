@@ -30,3 +30,117 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - Single-page app with no client-side routing.
 - PWA `base`, `scope`, and `start_url` all use `/see-veo/` for GitHub Pages compatibility.
 - Print styles in `src/index.css` override to white background. Elements with class `no-print` are hidden when printing.
+- Static read-only display — no forms, user inputs, or destructive actions.
+
+---
+
+## Hard Rules
+
+These rules are non-negotiable. Stop and ask before proceeding if any rule would be violated.
+
+### Before Making Changes
+
+- Read relevant existing code and documentation first
+- Ask clarifying questions if scope, approach, or intent is unclear
+- Confirm understanding before implementing non-trivial changes
+- Never assume — when in doubt, ask
+
+### Best Practices
+
+- Follow established patterns and conventions already in the codebase
+- Use industry-standard solutions over custom implementations when available
+- Apply SOLID principles, DRY, and separation of concerns
+- Follow security best practices (input validation, sanitization, principle of least privilege)
+- Handle errors gracefully with meaningful messages
+- Write self-documenting code with clear naming
+
+### Code Organization
+
+- Prefer smaller, focused files and functions
+- Pause and consider extraction at: 500 lines (file), 100 lines (function)
+- Strongly consider refactoring at: 800+ lines (file), 150+ lines (function)
+- Extract reusable logic into separate modules/files immediately
+- Group related functionality into logical directories
+
+### Styling
+
+- Use Tailwind CSS utility classes in JSX — this is the project's standard approach
+- Custom theme tokens, base styles, and print overrides go in `src/index.css` via `@theme`
+- Do not create separate component stylesheet files
+- Do not write inline `style={}` attributes; use Tailwind classes instead
+
+### Decision Documentation
+
+Non-trivial code changes should include comments explaining:
+- **What** the requirement or instruction was
+- **Why** this approach was chosen
+- **What alternatives** were considered and why they were rejected
+
+Trivial changes (content updates in `cv-data.ts`, minor styling tweaks) do not need this.
+
+### Cleanup
+
+- Remove all temporary files after implementation is complete
+- Delete unused imports, variables, and dead code immediately
+- Remove commented-out code unless explicitly marked for preservation
+- Clean up `console.log` statements before marking work complete
+
+### Quality Checks
+
+During every change, actively scan for:
+- Error handling gaps
+- Edge cases not covered
+- Inconsistent naming
+- Code duplication that should be extracted
+- Missing validation
+- Security concerns
+- Performance issues
+
+Report findings even if not directly related to current task.
+
+---
+
+## Communication Style
+
+- Direct, concise responses
+- No filler phrases or conversational padding
+- State facts and actions, not opinions
+- Ask specific questions with concrete options when clarification needed
+- Never proceed with assumptions on ambiguous requests
+
+---
+
+## Project-Specific Configuration
+
+```
+LANGUAGE=TypeScript
+FRAMEWORK=React 19
+PACKAGE_MANAGER=npm
+NAMING_CONVENTION=camelCase
+FILE_NAMING=PascalCase (components), kebab-case (config)
+COMPONENT_STRUCTURE=flat (src/components/)
+```
+
+---
+
+## Workflow
+
+1. **Receive task** — Ask clarifying questions if needed
+2. **Plan** — For non-trivial tasks, outline approach before implementing
+3. **Implement** — Follow all hard rules above
+4. **Verify** — Run `npm run build` to confirm TypeScript and build pass
+5. **Document** — Update this file if project structure or decisions change
+6. **Report** — Summarize changes and any issues found
+
+---
+
+## Prohibitions
+
+Never:
+- Start implementation without understanding full scope
+- Create files outside established project structure
+- Leave TODO comments without tracking them
+- Ignore errors or warnings in output
+- Make "while I'm here" changes without asking
+- Use placeholder data that looks like real data
+- Skip error handling "for now"
