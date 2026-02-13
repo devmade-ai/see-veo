@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# TypeScript cache
+*.tsbuildinfo
+
+# PWA dev artifacts
+dev-dist/
+
+# Environment variables
+.env
