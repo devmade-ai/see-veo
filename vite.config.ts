@@ -12,9 +12,9 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'John Doe - Software Engineer',
-        short_name: 'JD Resume',
-        description: 'Personal CV and resume of John Doe, Software Engineer',
+        name: 'Jaco Theron - Solutions Engineer',
+        short_name: 'JT Resume',
+        description: 'Personal CV and resume of Jaco Theron, Solutions / Software / Sales Engineer & Analyst',
         theme_color: '#0f172a',
         background_color: '#0f172a',
         display: 'standalone',
