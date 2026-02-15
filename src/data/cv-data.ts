@@ -53,127 +53,177 @@ export interface ContactInfo {
 
 export const cvData: CVData = {
   personal: {
-    name: 'John Doe',
-    title: 'Senior Software Engineer',
-    tagline: 'Building scalable web applications with modern technologies',
-    location: 'San Francisco, CA',
-    avatarInitials: 'JD',
+    name: 'Jaco Theron',
+    title: 'Solutions / Software / Sales Engineer & Analyst',
+    tagline:
+      'Bridging business needs and technical solutions across pre-sales, consulting, and development',
+    location: 'City of Cape Town, Western Cape, South Africa',
+    avatarInitials: 'JT',
   },
-  about:
-    'Passionate software engineer with 8+ years of experience designing and building high-performance web applications. Skilled in full-stack development with a focus on React, TypeScript, and cloud-native architectures. Committed to writing clean, maintainable code and mentoring junior developers.',
+  about: `public class About {
+    public static ResponseEntity<String> mysteryCheck(Person who) {
+        if (!who.getComprehend()) {
+            return ResponseEntity.status(HttpStatus.LOCKED).body("Thanks");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body("Noted");
+        }
+    }
+}`,
   experience: [
     {
-      company: 'TechCorp Inc.',
-      role: 'Senior Software Engineer',
-      period: 'Jan 2022 - Present',
-      location: 'San Francisco, CA',
+      company: 'I Am App (Pty) Ltd',
+      role: 'Pre-Sales Software Engineer',
+      period: 'Aug 2022 - Dec 2023',
+      location: 'Cape Town, Western Cape, South Africa',
       description:
-        'Lead frontend architect for the company\'s flagship SaaS platform.',
+        'Provided technical expertise and support to sales teams during the pre-sales phase, translating business challenges into platform solutions for C-level executives.',
       highlights: [
-        'Architected a micro-frontend system serving 2M+ monthly active users',
-        'Reduced bundle size by 40% through code splitting and lazy loading',
-        'Mentored a team of 5 junior engineers, establishing code review practices',
-        'Implemented CI/CD pipelines that reduced deployment time from 45min to 8min',
+        'Conducted live product demonstrations showcasing features, functionality, and value proposition to potential customers',
+        'Designed customized software solutions by analysing customer requirements and recommending appropriate product configurations',
+        'Developed and delivered proof of concept projects to demonstrate feasibility and value in customer environments',
+        'Delivered technical presentations to both technical and non-technical audiences',
       ],
     },
     {
-      company: 'WebSolutions Ltd.',
-      role: 'Software Engineer',
-      period: 'Mar 2019 - Dec 2021',
-      location: 'Austin, TX',
-      description: 'Full-stack developer on an e-commerce platform.',
+      company: 'I Am App (Pty) Ltd',
+      role: 'Technical Consultant',
+      period: 'Jun 2020 - Jul 2022',
+      location: 'Cape Town, Western Cape, South Africa',
+      description:
+        'Part of a global team at Deutsche Bank developing a large-scale smart contract and deal capturing system handling complex deals across countries and legal frameworks.',
       highlights: [
-        'Built a real-time inventory management system using WebSockets',
-        'Designed RESTful APIs serving 10K+ requests per minute',
-        'Migrated legacy jQuery codebase to React, improving performance by 60%',
+        'Devised a solution to manage an increasingly complex set of rules for user access and editing permissions',
+        'Resolved pre-existing issues, streamlined code into reusable components, and carried out refactoring',
+        'Designed application structure, user interfaces, and workflows using BPMN process modelling',
+        'Built integrations with external systems and databases for seamless data exchange',
+        'Implemented business rules and expressions to control and automate decision-making processes',
       ],
     },
     {
-      company: 'StartupXYZ',
-      role: 'Junior Developer',
-      period: 'Jun 2017 - Feb 2019',
-      location: 'Remote',
-      description: 'Early engineering hire at a seed-stage startup.',
+      company: 'Santam Insurance',
+      role: 'Analyst Developer',
+      period: 'Oct 2016 - Apr 2019',
+      location: 'Cape Town, Western Cape, South Africa',
+      description:
+        'Progressed from reporting and requirements gathering to full-stack development, eventually becoming lead developer on a standalone Spring Boot REST API for the financial system.',
       highlights: [
-        'Developed the initial MVP that secured $2M in Series A funding',
-        'Implemented responsive designs achieving 98+ Lighthouse accessibility scores',
+        'Designed data transfer objects, underlying databases and tables, and debugged existing code',
+        'Conducted extensive integration testing using SoapUI',
+        'Led development of a standalone Spring Boot REST API for the financial system — a first-of-its-kind project for the organisation',
+        'Became the primary knowledge holder in the team, supporting senior developers across the codebase',
+      ],
+    },
+    {
+      company: 'PBT Group',
+      role: 'Master Data Management Consultant',
+      period: 'Jan 2014 - Oct 2016',
+      location: '',
+      description:
+        'Focused on data collection, analysis, quality assurance, and business intelligence across multiple client engagements.',
+      highlights: [
+        'Gathered and acquired data from various internal and external sources to support analysis and decision-making',
+        'Applied statistical methods and data visualisation techniques to explore and interpret data patterns and trends',
+        'Established and monitored key performance indicators (KPIs) to assess business performance',
+        'Implemented data quality assurance measures and conducted data audits',
+        'Identified opportunities to automate data-related processes and optimise workflows',
       ],
     },
   ],
   education: [
     {
-      institution: 'University of California, Berkeley',
-      degree: 'B.S. Computer Science',
-      period: '2013 - 2017',
-      description:
-        'Graduated with honors. Focus on distributed systems and HCI.',
+      institution: 'Stellenbosch University',
+      degree: 'Bachelor of Commerce (B.Comm), Management Sciences and Quantitative Methods',
+      period: '2011 - 2013',
+      description: '',
+    },
+    {
+      institution: 'Faculty Training Institute (FTI)',
+      degree: 'Diploma in Business Analysis for IT',
+      period: '2015',
+      description: '',
+    },
+    {
+      institution: 'Bytes People Solutions',
+      degree: 'Certificate, Advanced Java',
+      period: '2017',
+      description: '',
+    },
+    {
+      institution: 'TorqueIT',
+      degree: 'Java Certificate, Java Development Fundamentals',
+      period: '2014',
+      description: '',
+    },
+    {
+      institution: 'IBM',
+      degree: 'IBM Infosphere Certificate, Master Data Management',
+      period: '2014',
+      description: '',
     },
   ],
   skills: [
     {
-      category: 'Frontend',
+      category: 'Core',
       skills: [
-        'React',
-        'TypeScript',
-        'Next.js',
-        'Tailwind CSS',
-        'HTML/CSS',
-        'Redux',
+        'Business Analysis',
+        'Pre-Sales Consulting',
+        'Systems Analysis',
+        'Solution Design',
       ],
     },
     {
-      category: 'Backend',
+      category: 'Development',
       skills: [
-        'Node.js',
-        'Python',
-        'PostgreSQL',
-        'Redis',
-        'GraphQL',
+        'Java',
+        'Spring Boot',
         'REST APIs',
+        'JavaScript',
+        'TypeScript',
+        'React',
       ],
     },
     {
-      category: 'DevOps & Tools',
-      skills: ['Docker', 'AWS', 'CI/CD', 'Git', 'Terraform', 'Kubernetes'],
-    },
-    {
-      category: 'Practices',
+      category: 'Data & Integration',
       skills: [
-        'Agile/Scrum',
-        'TDD',
-        'Code Review',
-        'System Design',
-        'Mentoring',
+        'SQL',
+        'Data Modelling',
+        'QlikView',
+        'BPMN',
+        'SoapUI',
+        'Master Data Management',
       ],
+    },
+    {
+      category: 'Languages',
+      skills: ['English (Native)', 'Dutch (Native)'],
     },
   ],
   projects: [
     {
-      name: 'OpenDash',
+      name: 'CanvaGrid',
       description:
-        'An open-source analytics dashboard framework built with React and D3.js. Supports custom widgets, real-time data streams, and exportable reports.',
-      tech: ['React', 'D3.js', 'TypeScript', 'WebSockets'],
-      link: 'https://github.com/johndoe/opendash',
+        'Create visual designs — social posts, ads, presentations, and stories. Build grid-based layouts with images, text, and presets, then style and download.',
+      tech: [],
+      link: 'https://devmade-ai.github.io/canva-grid/',
     },
     {
-      name: 'DevBlog Engine',
+      name: 'SyncTone',
       description:
-        'A markdown-powered static blog generator with built-in SEO optimization, syntax highlighting, and RSS feed generation.',
-      tech: ['Next.js', 'MDX', 'Tailwind CSS'],
-      link: 'https://github.com/johndoe/devblog',
+        'Anonymous messaging where you tag the tone of your messages. No accounts, no phone numbers — just conversations.',
+      tech: [],
+      link: 'https://synctone.vercel.app',
     },
     {
-      name: 'TaskFlow CLI',
+      name: 'Repo-Tor',
       description:
-        'A command-line task management tool with Git-like syntax for developers who prefer terminal workflows.',
-      tech: ['Rust', 'SQLite', 'TOML'],
-      link: 'https://github.com/johndoe/taskflow',
+        'Git analytics reporting system. Extract and visualise commit history from any repository with interactive dashboards for progress, contributors, and code quality.',
+      tech: [],
+      link: 'https://devmade-ai.github.io/repo-tor/',
     },
   ],
   contact: {
-    email: 'john.doe@example.com',
-    linkedin: 'https://linkedin.com/in/johndoe',
-    github: 'https://github.com/johndoe',
-    website: 'https://johndoe.dev',
+    email: 'jacotheron87@gmail.com',
+    linkedin: 'https://www.linkedin.com/in/jacotheron87',
+    github: 'https://github.com/devmade-ai',
   },
 }
