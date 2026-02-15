@@ -200,6 +200,13 @@ export const cvData: CVData = {
   ],
   projects: [
     {
+      name: 'see-veo',
+      description:
+        'This site. A hand-coded CV and portfolio built from scratch — proof that the skills listed here are the real deal.',
+      tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'PWA'],
+      link: 'https://github.com/devmade-ai/see-veo',
+    },
+    {
       name: 'CanvaGrid',
       description:
         'Create visual designs — social posts, ads, presentations, and stories. Build grid-based layouts with images, text, and presets, then style and download.',

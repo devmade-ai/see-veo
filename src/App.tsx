@@ -7,6 +7,7 @@ import Education from './components/Education'
 import Skills from './components/Skills'
 import Projects from './components/Projects'
 import Contact from './components/Contact'
+import PortfolioCallout from './components/PortfolioCallout'
 import UpdatePrompt from './components/UpdatePrompt'
 import InstallInstructionsModal from './components/InstallInstructionsModal'
 import { usePWAUpdate } from './hooks/usePWAUpdate'
@@ -36,6 +37,9 @@ function App() {
             Alpha
           </span>
         </div>
+        <p className="mt-2 text-sm text-text-muted">
+          a hand-coded portfolio &mdash; built from scratch, not from a template
+        </p>
 
         <div className="mt-3 flex justify-center gap-3">
           {canInstall && (
@@ -64,6 +68,7 @@ function App() {
       </header>
 
       <Hero personal={cvData.personal} />
+      <PortfolioCallout />
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <About text={cvData.about} />
         <Experience items={cvData.experience} />
@@ -77,6 +82,17 @@ function App() {
         <p>
           &copy; {new Date().getFullYear()} {cvData.personal.name}. All rights
           reserved.
+        </p>
+        <p className="mt-2">
+          Designed &amp; built by {cvData.personal.name} &mdash;{' '}
+          <a
+            href="https://github.com/devmade-ai/see-veo"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:text-primary-light"
+          >
+            view source
+          </a>
         </p>
       </footer>
 
