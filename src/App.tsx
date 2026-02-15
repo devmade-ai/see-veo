@@ -28,10 +28,14 @@ function App() {
   return (
     <div className="min-h-screen bg-background text-text">
       <header className="bg-surface px-4 pt-10 pb-6 text-center no-print">
-        <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
-          see-veo{' '}
-          <span className="text-text-muted font-normal">(CV oh!)</span>
-        </h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+            this is a cv
+          </h1>
+          <span className="rounded-full bg-secondary/20 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-secondary">
+            Alpha
+          </span>
+        </div>
 
         <div className="mt-3 flex justify-center gap-3">
           {canInstall && (
@@ -50,6 +54,12 @@ function App() {
               How to Install
             </button>
           )}
+          <button
+            onClick={() => window.print()}
+            className="rounded-md bg-surface-light px-3 py-1.5 text-sm font-medium text-text transition-colors hover:bg-border"
+          >
+            Download as PDF
+          </button>
         </div>
       </header>
 
