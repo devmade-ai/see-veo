@@ -200,23 +200,23 @@ export const cvData: CVData = {
   ],
   projects: [
     {
-      name: 'Canva Grid',
+      name: 'CanvaGrid',
       description:
-        'A canvas-based grid layout tool for creating and arranging visual content.',
+        'Create visual designs — social posts, ads, presentations, and stories. Build grid-based layouts with images, text, and presets, then style and download.',
       tech: [],
       link: 'https://devmade-ai.github.io/canva-grid/',
     },
     {
       name: 'SyncTone',
       description:
-        'A web application for synchronising and managing audio content.',
+        'Anonymous messaging where you tag the tone of your messages. No accounts, no phone numbers — just conversations.',
       tech: [],
       link: 'https://synctone.vercel.app',
     },
     {
       name: 'Repo-Tor',
       description:
-        'A repository explorer for browsing and navigating code repositories.',
+        'Git analytics reporting system. Extract and visualise commit history from any repository with interactive dashboards for progress, contributors, and code quality.',
       tech: [],
       link: 'https://devmade-ai.github.io/repo-tor/',
     },
