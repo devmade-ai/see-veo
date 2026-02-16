@@ -1,4 +1,5 @@
 import Section from './Section'
+import InterestForm from './InterestForm'
 import type { ContactInfo } from '../data/cv-data'
 
 interface ContactProps {
@@ -42,6 +43,7 @@ export default function Contact({ info }: ContactProps) {
           </a>
         )}
       </div>
+      <InterestForm />
     </Section>
   )
 }

@@ -1,0 +1,19 @@
+{
+  "name": "see-veo-interest-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsc --watch & node --watch dist/server.js"
+  },
+  "dependencies": {
+    "nodemailer": "^7.0.3"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.17",
+    "@types/node": "^24.10.1",
+    "typescript": "~5.9.3"
+  }
+}
