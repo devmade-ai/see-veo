@@ -13,10 +13,11 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 ## Project Structure
 
 - `src/data/cv-data.ts` — All CV content and TypeScript interfaces. Edit this single file to update the resume.
-- `src/components/` — One component per CV section (Hero, About, Experience, Education, Skills, Projects, Contact) plus reusable helpers (Section, TimelineItem, SkillBadge).
+- `src/components/` — One component per CV section (Hero, About, Experience, Education, Skills, Projects, Contact) plus reusable helpers (Section, TimelineItem, SkillBadge) and `InterestForm` for the contact form.
 - `src/index.css` — Tailwind import, custom `@theme` color tokens (dark palette), and print styles.
 - `src/App.tsx` — Composes all sections into a single-page layout. No routing.
 - `vite.config.ts` — Vite config with `base: '/see-veo/'` for GitHub Pages, Tailwind plugin, and PWA plugin.
+- `api/` — Standalone Node.js API server for interest email notifications via SMTP. See `docs/interest-api-setup.md`.
 
 ## Commands
 
@@ -30,7 +31,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - Single-page app with no client-side routing.
 - PWA `base`, `scope`, and `start_url` all use `/see-veo/` for GitHub Pages compatibility.
 - Print styles in `src/index.css` override to white background. Elements with class `no-print` are hidden when printing.
-- Static read-only display — no forms, user inputs, or destructive actions.
+- Interest notification form in Contact section — POSTs to an external API endpoint configured via `VITE_INTEREST_API_URL` env variable. Hidden when printing. Degrades gracefully when API is not configured.
 
 ---
 
@@ -102,7 +103,7 @@ Assume all end users are non-technical. This is non-negotiable.
 - Provide feedback for all user actions (loading states, success confirmations, etc.)
 - Design for the least technical person who will use this
 
-> **Project note:** This is currently a static read-only display with no forms, user inputs, or destructive actions. These rules apply if interactive features are added in the future.
+> **Project note:** The site includes an interest/contact form in the Contact section. All UX rules above apply to this and any future interactive features.
 
 ### Cleanup
 
