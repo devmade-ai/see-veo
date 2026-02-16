@@ -35,6 +35,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_INTEREST_API_URL: https://tool-till-tees.vercel.app/api/send-interest
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
