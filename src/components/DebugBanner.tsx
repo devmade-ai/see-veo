@@ -381,7 +381,7 @@ export default function DebugBanner() {
       {/* Footer */}
       <div className="border-t border-border px-3 py-1.5 text-center">
         <p className="text-xs text-text-muted font-mono">
-          debug=true &middot; {entries.length} events
+          {entries.length} events
           {errorCount > 0 && <span className="text-red-400"> &middot; {errorCount} errors</span>}
         </p>
       </div>

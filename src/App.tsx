@@ -14,17 +14,7 @@ import DebugBanner from './components/DebugBanner'
 import { usePWAUpdate } from './hooks/usePWAUpdate'
 import { usePWAInstall } from './hooks/usePWAInstall'
 
-/** Check if debug mode is active via URL parameter */
-function isDebugMode(): boolean {
-  try {
-    return new URLSearchParams(window.location.search).get('debug') === 'true'
-  } catch {
-    return false
-  }
-}
-
 function App() {
-  const [debugEnabled] = useState(() => isDebugMode())
   const { hasUpdate, update } = usePWAUpdate()
   const {
     canInstall,
@@ -85,7 +75,7 @@ function App() {
         />
       )}
 
-      {debugEnabled && <DebugBanner />}
+      <DebugBanner />
     </div>
   )
 }
