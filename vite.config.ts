@@ -41,6 +41,14 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Requirement: Prevent service worker from intercepting cross-origin API requests
+        // Approach: navigateFallbackDenylist excludes API-domain URLs from SW handling
+        // Alternatives considered:
+        //   - No denylist (rely on default pass-through): Rejected — on some mobile
+        //     Chrome versions, Workbox's fetch handler can interfere with CORS preflight
+        //   - Custom SW with explicit passthrough: Rejected — adds complexity, generateSW
+        //     mode doesn't support custom fetch handlers
+        navigateFallbackDenylist: [/^https?:\/\/(?!devmade-ai\.github\.io)/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
