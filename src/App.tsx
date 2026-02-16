@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { cvData } from './data/cv-data'
 import Hero from './components/Hero'
-import About from './components/About'
 import Experience from './components/Experience'
 import Education from './components/Education'
 import Skills from './components/Skills'
@@ -44,7 +43,6 @@ function App() {
            - PortfolioCallout at top: Rejected — CTA lands better after visitor is invested */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <Projects items={cvData.projects} />
-        <About text={cvData.about} />
         <Skills categories={cvData.skills} />
         <Experience items={cvData.experience} />
         <Education items={cvData.education} />
