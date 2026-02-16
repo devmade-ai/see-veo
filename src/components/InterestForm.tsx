@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
+import { debugLog } from '../utils/debugLog'
 
 // Requirement: Allow visitors to express interest via a one-off email notification
 // Approach: Client-side form that POSTs to a serverless API endpoint which sends via SMTP
@@ -57,12 +58,17 @@ export default function InterestForm() {
 
     // Honeypot check: if filled, silently "succeed" to fool bots
     if (honeypot) {
+      debugLog('InterestForm', 'info', 'honeypot-triggered')
       setStatus('success')
       return
     }
 
     const apiUrl = import.meta.env.VITE_INTEREST_API_URL as string | undefined
+
     if (!apiUrl) {
+      debugLog('InterestForm', 'error', 'api-url-missing', {
+        envVar: 'VITE_INTEREST_API_URL',
+      })
       setStatus('error')
       setErrorMessage(
         'This feature is not available yet. Please reach out via email instead.'
@@ -73,34 +79,91 @@ export default function InterestForm() {
     setStatus('submitting')
     setErrorMessage('')
 
+    const requestBody = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      message: formData.message.trim(),
+    }
+
+    debugLog('InterestForm', 'info', 'submit', {
+      apiUrl,
+      timeoutMs: FETCH_TIMEOUT_MS,
+      fields: {
+        name: `${requestBody.name.length} chars`,
+        email: `${requestBody.email.length} chars`,
+        message: requestBody.message.length > 0 ? `${requestBody.message.length} chars` : 'empty',
+      },
+    })
+
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+    const startTime = performance.now()
 
     try {
+      debugLog('InterestForm', 'info', 'request', {
+        method: 'POST',
+        url: apiUrl,
+        headers: { 'Content-Type': 'application/json' },
+      })
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          message: formData.message.trim(),
-        }),
+        body: JSON.stringify(requestBody),
       })
 
+      const elapsed = Math.round(performance.now() - startTime)
+
+      // Read response body for debug logging
+      let responseBody: unknown = null
+      try {
+        responseBody = await response.clone().json()
+      } catch {
+        try {
+          responseBody = await response.clone().text()
+        } catch {
+          responseBody = '(could not read body)'
+        }
+      }
+
       if (!response.ok) {
+        debugLog('InterestForm', 'error', 'response-error', {
+          status: response.status,
+          statusText: response.statusText,
+          elapsedMs: elapsed,
+          body: responseBody,
+        })
         throw new Error('Request failed')
       }
+
+      debugLog('InterestForm', 'success', 'response-ok', {
+        status: response.status,
+        elapsedMs: elapsed,
+        body: responseBody,
+      })
 
       setStatus('success')
       setFormData({ name: '', email: '', message: '' })
     } catch (err) {
+      const elapsed = Math.round(performance.now() - startTime)
       setStatus('error')
+
       if (err instanceof Error && err.name === 'AbortError') {
+        debugLog('InterestForm', 'error', 'timeout', {
+          elapsedMs: elapsed,
+          timeoutMs: FETCH_TIMEOUT_MS,
+        })
         setErrorMessage(
           'The request took too long. Please check your connection and try again.'
         )
       } else {
+        debugLog('InterestForm', 'error', 'fetch-failed', {
+          elapsedMs: elapsed,
+          error: err instanceof Error
+            ? { name: err.name, message: err.message }
+            : { raw: String(err) },
+        })
         setErrorMessage(
           'Something went wrong while sending your message. Please try again, or reach out directly via email.'
         )

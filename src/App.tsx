@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { cvData } from './data/cv-data'
 import Hero from './components/Hero'
-import About from './components/About'
 import Experience from './components/Experience'
 import Education from './components/Education'
 import Skills from './components/Skills'
@@ -10,6 +9,7 @@ import Contact from './components/Contact'
 import PortfolioCallout from './components/PortfolioCallout'
 import UpdatePrompt from './components/UpdatePrompt'
 import InstallInstructionsModal from './components/InstallInstructionsModal'
+import DebugBanner from './components/DebugBanner'
 import { usePWAUpdate } from './hooks/usePWAUpdate'
 import { usePWAInstall } from './hooks/usePWAInstall'
 
@@ -28,56 +28,25 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background text-text">
-      <header className="bg-surface px-4 pt-10 pb-6 text-center no-print">
-        <div className="flex items-center justify-center gap-2">
-          <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
-            this is a cv
-          </h1>
-          <span className="rounded-full bg-secondary/20 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-secondary">
-            Alpha
-          </span>
-        </div>
-        <p className="mt-2 text-sm text-text-muted">
-          a hand-coded portfolio &mdash; built from scratch, not from a template
-        </p>
-
-        <div className="mt-3 flex justify-center gap-3">
-          {canInstall && (
-            <button
-              type="button"
-              onClick={() => void install()}
-              className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-primary-light"
-            >
-              Install as an App
-            </button>
-          )}
-          {!canInstall && showManualInstructions && !isInstalled && (
-            <button
-              type="button"
-              onClick={() => setShowModal(true)}
-              className="rounded-md bg-surface-light px-3 py-1.5 text-sm font-medium text-text transition-colors hover:bg-border"
-            >
-              How to Install
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="rounded-md bg-surface-light px-3 py-1.5 text-sm font-medium text-text transition-colors hover:bg-border"
-          >
-            Download as PDF
-          </button>
-        </div>
-      </header>
-
-      <Hero personal={cvData.personal} />
-      <PortfolioCallout />
+      <Hero
+        personal={cvData.personal}
+        canInstall={canInstall}
+        onInstall={() => void install()}
+        showManualInstructions={!canInstall && showManualInstructions && !isInstalled}
+        onShowInstructions={() => setShowModal(true)}
+      />
+      {/* Requirement: Section order optimized for general visitors
+         Approach: Lead with projects (show don't tell), then about/skills for context,
+         credentials later, CTA after engagement
+         Alternatives considered:
+           - About first: Rejected — projects are more immediately engaging
+           - PortfolioCallout at top: Rejected — CTA lands better after visitor is invested */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-        <About text={cvData.about} />
+        <Projects items={cvData.projects} />
+        <Skills categories={cvData.skills} />
         <Experience items={cvData.experience} />
         <Education items={cvData.education} />
-        <Skills categories={cvData.skills} />
-        <Projects items={cvData.projects} />
+        <PortfolioCallout />
         <Contact info={cvData.contact} />
       </main>
 
@@ -109,6 +78,8 @@ function App() {
           onClose={() => setShowModal(false)}
         />
       )}
+
+      <DebugBanner />
     </div>
   )
 }
