@@ -88,15 +88,6 @@ VITE_INTEREST_API_URL=https://tool-till-tees.vercel.app/api/send-interest
 
 Rebuild and deploy the frontend to GitHub Pages.
 
-### 6. Configure GitHub Actions
-
-The deploy workflow (`.github/workflows/deploy.yml`) injects `VITE_INTEREST_API_URL` at build time from a GitHub repository secret. Add the secret in your repo under **Settings > Secrets and variables > Actions**:
-
-- **Secret name:** `VITE_INTEREST_API_URL`
-- **Secret value:** `https://tool-till-tees.vercel.app/api/send-interest`
-
-Without this secret, the production build on GitHub Pages will not have the API URL, and the contact form will show a "feature unavailable" message.
-
 ## Security
 
 - **CORS**: Only origins listed in `ALLOWED_ORIGINS` can submit the form
