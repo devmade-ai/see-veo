@@ -167,12 +167,8 @@ export default function DebugBanner() {
     })
   }, [])
 
-  // Run diagnostics on first expand
-  useEffect(() => {
-    if (expanded && diagnostics.length === 0) {
-      void runDiagnostics()
-    }
-  }, [expanded, diagnostics.length, runDiagnostics])
+  // Trigger diagnostics on first expand via the click handler below
+  // (moved out of useEffect to avoid calling setState inside an effect)
 
   const handleCopy = async () => {
     const text = formatDebugReport()
@@ -201,7 +197,12 @@ export default function DebugBanner() {
     return (
       <button
         type="button"
-        onClick={() => setExpanded(true)}
+        onClick={() => {
+          setExpanded(true)
+          if (diagnostics.length === 0) {
+            void runDiagnostics()
+          }
+        }}
         className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-mono shadow-lg transition-colors hover:bg-surface-light no-print"
       >
         <span className="text-primary">DBG</span>
