@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback, type FormEvent } from 'react'
-import EmailDebugModal, { type DebugLogEntry } from './EmailDebugModal'
+import { useState, useEffect, useRef, type FormEvent } from 'react'
+import EmailDebugButton, { type EmailDebugReport } from './EmailDebugModal'
 
 // Requirement: Allow visitors to express interest via a one-off email notification
 // Approach: Client-side form that POSTs to a serverless API endpoint which sends via SMTP
@@ -48,23 +48,7 @@ export default function InterestForm() {
 
   // Debug state — only active when ?debug=true is in URL
   const [debugEnabled] = useState(() => isDebugMode())
-  const [debugLogs, setDebugLogs] = useState<DebugLogEntry[]>([])
-  const [showDebugModal, setShowDebugModal] = useState(false)
-
-  const addDebugLog = useCallback(
-    (phase: DebugLogEntry['phase'], message: string, data?: Record<string, unknown>) => {
-      if (!debugEnabled) return
-      setDebugLogs((prev) => [
-        ...prev,
-        { timestamp: new Date().toISOString(), phase, message, data },
-      ])
-    },
-    [debugEnabled]
-  )
-
-  const clearDebugLogs = useCallback(() => {
-    setDebugLogs([])
-  }, [])
+  const [debugReport, setDebugReport] = useState<EmailDebugReport | null>(null)
 
   // Auto-dismiss error messages after a delay
   useEffect(() => {
@@ -85,19 +69,36 @@ export default function InterestForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    // Start building the debug report (only stored if debug is enabled)
+    const report: EmailDebugReport = {
+      timestamp: new Date().toISOString(),
+      pageUrl: window.location.href,
+      userAgent: navigator.userAgent,
+      apiUrl: '',
+      request: null,
+      response: null,
+      error: null,
+      outcome: 'success',
+    }
+
     // Honeypot check: if filled, silently "succeed" to fool bots
     if (honeypot) {
-      addDebugLog('info', 'Honeypot field filled — silently succeeding (bot detected)')
+      report.outcome = 'bot-detected'
+      if (debugEnabled) setDebugReport(report)
       setStatus('success')
       return
     }
 
     const apiUrl = import.meta.env.VITE_INTEREST_API_URL as string | undefined
+    report.apiUrl = apiUrl ?? 'NOT CONFIGURED'
+
     if (!apiUrl) {
-      addDebugLog('error', 'API URL not configured', {
-        envVar: 'VITE_INTEREST_API_URL',
-        value: apiUrl ?? 'undefined',
-      })
+      report.outcome = 'no-api-url'
+      report.error = {
+        type: 'ConfigError',
+        message: 'VITE_INTEREST_API_URL environment variable is not set',
+      }
+      if (debugEnabled) setDebugReport(report)
       setStatus('error')
       setErrorMessage(
         'This feature is not available yet. Please reach out via email instead.'
@@ -105,36 +106,30 @@ export default function InterestForm() {
       return
     }
 
-    addDebugLog('info', 'Starting form submission', {
-      apiUrl,
-      timeoutMs: FETCH_TIMEOUT_MS,
-      fields: {
-        name: formData.name.trim().length > 0 ? `(${formData.name.trim().length} chars)` : '(empty)',
-        email: formData.email.trim().length > 0 ? `(${formData.email.trim().length} chars)` : '(empty)',
-        message: formData.message.trim().length > 0 ? `(${formData.message.trim().length} chars)` : '(empty)',
-      },
-    })
-
     setStatus('submitting')
     setErrorMessage('')
+
+    const requestBody = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      message: formData.message.trim(),
+    }
+
+    report.request = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      fieldSummary: {
+        name: requestBody.name.length > 0 ? `${requestBody.name.length} chars` : 'empty',
+        email: requestBody.email.length > 0 ? `${requestBody.email.length} chars` : 'empty',
+        message: requestBody.message.length > 0 ? `${requestBody.message.length} chars` : 'empty',
+      },
+    }
 
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
     const startTime = performance.now()
 
     try {
-      const requestBody = {
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        message: formData.message.trim(),
-      }
-
-      addDebugLog('request', `POST ${apiUrl}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        bodyKeys: Object.keys(requestBody),
-      })
-
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -144,7 +139,7 @@ export default function InterestForm() {
 
       const elapsed = Math.round(performance.now() - startTime)
 
-      // Attempt to read response body for debug logging
+      // Read response body for debug report
       let responseBody: unknown = null
       try {
         responseBody = await response.clone().json()
@@ -156,22 +151,24 @@ export default function InterestForm() {
         }
       }
 
+      report.response = {
+        status: response.status,
+        statusText: response.statusText,
+        elapsedMs: elapsed,
+        body: responseBody,
+      }
+
       if (!response.ok) {
-        addDebugLog('error', `HTTP ${response.status} ${response.statusText}`, {
-          status: response.status,
-          statusText: response.statusText,
+        report.outcome = 'error'
+        report.error = {
+          type: `HTTP ${response.status}`,
+          message: response.statusText,
           elapsedMs: elapsed,
-          responseBody,
-        })
+        }
         throw new Error('Request failed')
       }
 
-      addDebugLog('response', `HTTP ${response.status} OK`, {
-        status: response.status,
-        elapsedMs: elapsed,
-        responseBody,
-      })
-
+      report.outcome = 'success'
       setStatus('success')
       setFormData({ name: '', email: '', message: '' })
     } catch (err) {
@@ -179,27 +176,30 @@ export default function InterestForm() {
       setStatus('error')
 
       if (err instanceof Error && err.name === 'AbortError') {
-        addDebugLog('error', `Request timed out after ${FETCH_TIMEOUT_MS}ms`, {
+        report.outcome = 'error'
+        report.error = {
+          type: 'Timeout',
+          message: `Request aborted after ${FETCH_TIMEOUT_MS}ms`,
           elapsedMs: elapsed,
-          timeoutMs: FETCH_TIMEOUT_MS,
-        })
+        }
         setErrorMessage(
           'The request took too long. Please check your connection and try again.'
         )
-      } else {
-        const errorDetail = err instanceof Error
-          ? { name: err.name, message: err.message }
-          : { raw: String(err) }
-        addDebugLog('error', 'Fetch failed', {
+      } else if (!report.error) {
+        // Only set if not already set by the !response.ok branch
+        report.outcome = 'error'
+        report.error = {
+          type: err instanceof Error ? err.name : 'Unknown',
+          message: err instanceof Error ? err.message : String(err),
           elapsedMs: elapsed,
-          error: errorDetail,
-        })
+        }
         setErrorMessage(
           'Something went wrong while sending your message. Please try again, or reach out directly via email.'
         )
       }
     } finally {
       clearTimeout(timeoutId)
+      if (debugEnabled) setDebugReport(report)
     }
   }
 
@@ -220,23 +220,7 @@ export default function InterestForm() {
           </button>
         </div>
 
-        {debugEnabled && (
-          <button
-            type="button"
-            onClick={() => setShowDebugModal(true)}
-            className="mt-3 w-full rounded-md border border-border bg-surface-light px-3 py-1.5 text-xs font-mono text-text-muted transition-colors hover:bg-border"
-          >
-            Debug Log ({debugLogs.length})
-          </button>
-        )}
-
-        {showDebugModal && (
-          <EmailDebugModal
-            logs={debugLogs}
-            onClose={() => setShowDebugModal(false)}
-            onClear={clearDebugLogs}
-          />
-        )}
+        {debugEnabled && <EmailDebugButton report={debugReport} />}
       </div>
     )
   }
@@ -348,23 +332,7 @@ export default function InterestForm() {
         </button>
       </form>
 
-      {debugEnabled && (
-        <button
-          type="button"
-          onClick={() => setShowDebugModal(true)}
-          className="mt-3 w-full rounded-md border border-border bg-surface-light px-3 py-1.5 text-xs font-mono text-text-muted transition-colors hover:bg-border"
-        >
-          Debug Log ({debugLogs.length})
-        </button>
-      )}
-
-      {showDebugModal && (
-        <EmailDebugModal
-          logs={debugLogs}
-          onClose={() => setShowDebugModal(false)}
-          onClear={clearDebugLogs}
-        />
-      )}
+      {debugEnabled && <EmailDebugButton report={debugReport} />}
     </div>
   )
 }

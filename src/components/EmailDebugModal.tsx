@@ -1,162 +1,168 @@
-// Requirement: Debug modal for testing and logging email sending issues on mobile
-// Approach: URL-parameter-gated modal (?debug=true) that captures and displays fetch
-//   request/response details, timing, and errors in a scrollable log
+// Requirement: One-tap copy of email debug report for pasting into another session
+// Approach: Inline button that copies a pre-formatted plain-text diagnostic report
+//   to clipboard. No modal, no scrolling — just tap and paste.
 // Alternatives considered:
-//   - Keyboard shortcut (Ctrl+Shift+D): Rejected — not usable on mobile devices
-//   - Triple-click trigger: Rejected — unreliable on touch screens, accidental triggers
+//   - Scrollable modal with per-entry copy buttons: Rejected — too many steps on mobile,
+//     user just needs one copyable block to hand off to another session
 //   - Console-only logging: Rejected — not accessible on mobile without remote debugging
 
 import { useState } from 'react'
 
-/** A single log entry captured during an email send attempt */
-export interface DebugLogEntry {
-  /** ISO timestamp of the event */
+/** Complete diagnostic report for a single email send attempt */
+export interface EmailDebugReport {
+  /** When the submission started */
   timestamp: string
-  /** What phase of the request this entry represents */
-  phase: 'request' | 'response' | 'error' | 'info'
-  /** Human-readable summary of the event */
-  message: string
-  /** Optional structured data (request body, response headers, etc.) */
-  data?: Record<string, unknown>
+  /** The page URL (includes ?debug=true) */
+  pageUrl: string
+  /** Browser user-agent string */
+  userAgent: string
+  /** The API endpoint URL, or 'NOT CONFIGURED' */
+  apiUrl: string
+  /** Request details */
+  request: {
+    method: string
+    headers: Record<string, string>
+    /** Field names and character counts — never actual content */
+    fieldSummary: Record<string, string>
+  } | null
+  /** Response details (null if request never completed) */
+  response: {
+    status: number
+    statusText: string
+    elapsedMs: number
+    body: unknown
+  } | null
+  /** Error details (null if no error) */
+  error: {
+    type: string
+    message: string
+    elapsedMs?: number
+  } | null
+  /** Final form status */
+  outcome: 'success' | 'error' | 'bot-detected' | 'no-api-url'
 }
 
-interface EmailDebugModalProps {
-  logs: DebugLogEntry[]
-  onClose: () => void
-  onClear: () => void
-}
+/** Format a report as plain text that another session can read and act on */
+function formatReport(report: EmailDebugReport): string {
+  const lines: string[] = [
+    '## Email Send Debug Report',
+    '',
+    `Generated: ${report.timestamp}`,
+    `Outcome: ${report.outcome}`,
+    '',
+    '### Environment',
+    `- Page URL: ${report.pageUrl}`,
+    `- User Agent: ${report.userAgent}`,
+    `- API Endpoint: ${report.apiUrl}`,
+  ]
 
-export default function EmailDebugModal({
-  logs,
-  onClose,
-  onClear,
-}: EmailDebugModalProps) {
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
-
-  const copyEntry = async (entry: DebugLogEntry, index: number) => {
-    const text = JSON.stringify(entry, null, 2)
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopiedIndex(index)
-      setTimeout(() => setCopiedIndex(null), 1500)
-    } catch {
-      // Clipboard API may fail on some mobile browsers — fall back silently
+  if (report.request) {
+    lines.push(
+      '',
+      '### Request',
+      `- Method: ${report.request.method}`,
+      `- Headers: ${JSON.stringify(report.request.headers)}`,
+      '- Fields:',
+    )
+    for (const [key, val] of Object.entries(report.request.fieldSummary)) {
+      lines.push(`  - ${key}: ${val}`)
     }
   }
 
-  const copyAll = async () => {
-    const text = JSON.stringify(logs, null, 2)
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopiedIndex(-1)
-      setTimeout(() => setCopiedIndex(null), 1500)
-    } catch {
-      // Clipboard fallback: silent fail
+  if (report.response) {
+    lines.push(
+      '',
+      '### Response',
+      `- Status: ${report.response.status} ${report.response.statusText}`,
+      `- Elapsed: ${report.response.elapsedMs}ms`,
+      `- Body: ${typeof report.response.body === 'string' ? report.response.body : JSON.stringify(report.response.body, null, 2)}`,
+    )
+  }
+
+  if (report.error) {
+    lines.push(
+      '',
+      '### Error',
+      `- Type: ${report.error.type}`,
+      `- Message: ${report.error.message}`,
+    )
+    if (report.error.elapsedMs !== undefined) {
+      lines.push(`- Elapsed: ${report.error.elapsedMs}ms`)
     }
   }
 
-  const phaseStyles: Record<DebugLogEntry['phase'], string> = {
-    request: 'text-primary',
-    response: 'text-accent',
-    error: 'text-red-400',
-    info: 'text-text-muted',
+  return lines.join('\n')
+}
+
+interface EmailDebugButtonProps {
+  report: EmailDebugReport | null
+}
+
+export default function EmailDebugButton({ report }: EmailDebugButtonProps) {
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle')
+
+  if (!report) {
+    return (
+      <p className="mt-3 text-center text-xs text-text-muted font-mono">
+        Debug mode active — submit the form to capture a report
+      </p>
+    )
   }
+
+  const handleCopy = async () => {
+    const text = formatReport(report)
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopyState('copied')
+      setTimeout(() => setCopyState('idle'), 2000)
+    } catch {
+      // Clipboard API can fail on some mobile browsers — show the report
+      // in a textarea as fallback so user can manually select and copy
+      setCopyState('failed')
+    }
+  }
+
+  if (copyState === 'failed') {
+    return (
+      <div className="mt-3 space-y-2">
+        <p className="text-xs text-text-muted">
+          Could not copy automatically. Select all the text below and copy it manually.
+        </p>
+        <textarea
+          readOnly
+          rows={12}
+          value={formatReport(report)}
+          onFocus={(e) => e.target.select()}
+          className="w-full rounded-md border border-border bg-background p-2 text-xs font-mono text-text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        />
+        <button
+          type="button"
+          onClick={() => setCopyState('idle')}
+          className="text-xs text-primary hover:text-primary-light"
+        >
+          Hide
+        </button>
+      </div>
+    )
+  }
+
+  const isError = report.outcome === 'error' || report.outcome === 'no-api-url'
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 no-print"
-      onClick={onClose}
+    <button
+      type="button"
+      onClick={() => void handleCopy()}
+      className={`mt-3 w-full rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
+        copyState === 'copied'
+          ? 'border-accent/30 bg-accent/10 text-accent'
+          : isError
+            ? 'border-red-400/30 bg-red-400/10 text-red-400 hover:bg-red-400/20'
+            : 'border-border bg-surface-light text-text-muted hover:bg-border'
+      }`}
     >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="debug-modal-title"
-        className="mx-2 mb-2 sm:mb-0 w-full max-w-lg max-h-[80vh] flex flex-col rounded-xl bg-surface border border-border shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h2
-            id="debug-modal-title"
-            className="text-sm font-semibold text-text"
-          >
-            Email Debug Log
-          </h2>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => void copyAll()}
-              className="rounded px-2 py-1 text-xs text-text-muted hover:bg-surface-light transition-colors"
-            >
-              {copiedIndex === -1 ? 'Copied!' : 'Copy All'}
-            </button>
-            <button
-              type="button"
-              onClick={onClear}
-              className="rounded px-2 py-1 text-xs text-red-400 hover:bg-red-400/10 transition-colors"
-            >
-              Clear
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-text-muted hover:text-text transition-colors"
-              aria-label="Close debug modal"
-            >
-              &times;
-            </button>
-          </div>
-        </div>
-
-        {/* Log entries */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-          {logs.length === 0 && (
-            <p className="text-sm text-text-muted text-center py-8">
-              No log entries yet. Submit the form to see debug output here.
-            </p>
-          )}
-          {logs.map((entry, i) => (
-            <div
-              key={`${entry.timestamp}-${i}`}
-              className="rounded-md bg-background/50 border border-border/50 p-3"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`text-xs font-mono font-semibold uppercase ${phaseStyles[entry.phase]}`}
-                  >
-                    {entry.phase}
-                  </span>
-                  <span className="text-xs text-text-muted font-mono">
-                    {new Date(entry.timestamp).toLocaleTimeString()}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => void copyEntry(entry, i)}
-                  className="shrink-0 text-xs text-text-muted hover:text-text transition-colors"
-                  aria-label="Copy log entry"
-                >
-                  {copiedIndex === i ? 'Copied!' : 'Copy'}
-                </button>
-              </div>
-              <p className="mt-1 text-sm text-text">{entry.message}</p>
-              {entry.data && (
-                <pre className="mt-2 overflow-x-auto rounded bg-background p-2 text-xs text-text-muted font-mono">
-                  {JSON.stringify(entry.data, null, 2)}
-                </pre>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <div className="border-t border-border px-4 py-3">
-          <p className="text-xs text-text-muted text-center">
-            Debug mode active &mdash; add <code className="text-primary">?debug=true</code> to URL
-          </p>
-        </div>
-      </div>
-    </div>
+      {copyState === 'copied'
+        ? 'Copied! Paste into another session to diagnose.'
+        : 'Copy Debug Report'}
+    </button>
   )
 }
