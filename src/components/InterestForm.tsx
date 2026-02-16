@@ -9,12 +9,21 @@ import { debugLog } from '../utils/debugLog'
 //   - Direct SMTP from browser: Rejected — not possible, SMTP requires server-side
 
 // Requirement: Abort fetch after timeout so users aren't left waiting on dead networks
-// Approach: AbortController with 10s timeout
+// Approach: AbortController with 10s timeout per attempt
 // Alternatives considered:
 //   - No timeout: Rejected — users wait indefinitely on slow/dead networks
 //   - Shorter timeout (5s): Rejected — legitimate slow connections would fail unnecessarily
 
+// Requirement: Retry on mobile network failures (TypeError: Failed to fetch)
+// Approach: Single retry after 1.5s delay for network-level TypeErrors only
+// Alternatives considered:
+//   - No retry: Rejected — mobile networks are flaky, transient failures are common
+//   - Multiple retries (3+): Rejected — compounds wait time, persistent failures won't self-resolve
+//   - Immediate retry: Rejected — no back-off risks hitting same transient issue
+
 const FETCH_TIMEOUT_MS = 10_000
+const RETRY_DELAY_MS = 1_500
+const MAX_ATTEMPTS = 2
 const ERROR_AUTO_DISMISS_MS = 8_000
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
@@ -76,6 +85,18 @@ export default function InterestForm() {
       return
     }
 
+    // Pre-check: avoid doomed requests when the device is clearly offline
+    if (!navigator.onLine) {
+      debugLog('InterestForm', 'warn', 'offline', {
+        onLine: navigator.onLine,
+      })
+      setStatus('error')
+      setErrorMessage(
+        'You appear to be offline. Please check your connection and try again.'
+      )
+      return
+    }
+
     setStatus('submitting')
     setErrorMessage('')
 
@@ -88,6 +109,7 @@ export default function InterestForm() {
     debugLog('InterestForm', 'info', 'submit', {
       apiUrl,
       timeoutMs: FETCH_TIMEOUT_MS,
+      maxAttempts: MAX_ATTEMPTS,
       fields: {
         name: `${requestBody.name.length} chars`,
         email: `${requestBody.email.length} chars`,
@@ -95,81 +117,138 @@ export default function InterestForm() {
       },
     })
 
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
     const startTime = performance.now()
 
-    try {
-      debugLog('InterestForm', 'info', 'request', {
-        method: 'POST',
-        url: apiUrl,
-        headers: { 'Content-Type': 'application/json' },
-      })
+    // Attempt fetch with retry for transient mobile network failures.
+    // Only network-level TypeErrors are retried; HTTP errors and aborts are not.
+    let lastError: unknown = null
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: controller.signal,
-        body: JSON.stringify(requestBody),
-      })
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
 
-      const elapsed = Math.round(performance.now() - startTime)
-
-      // Read response body for debug logging
-      let responseBody: unknown = null
       try {
-        responseBody = await response.clone().json()
-      } catch {
-        try {
-          responseBody = await response.clone().text()
-        } catch {
-          responseBody = '(could not read body)'
-        }
-      }
+        debugLog('InterestForm', 'info', 'request', {
+          method: 'POST',
+          url: apiUrl,
+          headers: { 'Content-Type': 'application/json' },
+          attempt,
+          maxAttempts: MAX_ATTEMPTS,
+        })
 
-      if (!response.ok) {
-        debugLog('InterestForm', 'error', 'response-error', {
+        // Requirement: Explicit mode: 'cors' for mobile browser compatibility
+        // Approach: Set mode explicitly even though 'cors' is the default
+        // Alternatives considered:
+        //   - Rely on default: Rejected — some mobile browser versions handle
+        //     implicit vs explicit CORS mode differently
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify(requestBody),
+        })
+
+        clearTimeout(timeoutId)
+        const elapsed = Math.round(performance.now() - startTime)
+
+        // Read response body for debug logging
+        let responseBody: unknown = null
+        try {
+          responseBody = await response.clone().json()
+        } catch {
+          try {
+            responseBody = await response.clone().text()
+          } catch {
+            responseBody = '(could not read body)'
+          }
+        }
+
+        if (!response.ok) {
+          debugLog('InterestForm', 'error', 'response-error', {
+            status: response.status,
+            statusText: response.statusText,
+            elapsedMs: elapsed,
+            body: responseBody,
+            attempt,
+          })
+          // HTTP errors are not retryable — server received the request
+          setStatus('error')
+          setErrorMessage(
+            'Something went wrong while sending your message. Please try again, or reach out directly via email.'
+          )
+          return
+        }
+
+        debugLog('InterestForm', 'success', 'response-ok', {
           status: response.status,
-          statusText: response.statusText,
           elapsedMs: elapsed,
           body: responseBody,
+          attempt,
         })
-        throw new Error('Request failed')
-      }
 
-      debugLog('InterestForm', 'success', 'response-ok', {
-        status: response.status,
-        elapsedMs: elapsed,
-        body: responseBody,
-      })
+        setStatus('success')
+        setFormData({ name: '', email: '', message: '' })
+        return
+      } catch (err) {
+        clearTimeout(timeoutId)
+        lastError = err
 
-      setStatus('success')
-      setFormData({ name: '', email: '', message: '' })
-    } catch (err) {
-      const elapsed = Math.round(performance.now() - startTime)
-      setStatus('error')
+        // AbortError means timeout — don't retry, report immediately
+        if (err instanceof Error && err.name === 'AbortError') {
+          const elapsed = Math.round(performance.now() - startTime)
+          debugLog('InterestForm', 'error', 'timeout', {
+            elapsedMs: elapsed,
+            timeoutMs: FETCH_TIMEOUT_MS,
+            attempt,
+          })
+          setStatus('error')
+          setErrorMessage(
+            'The request took too long. Please check your connection and try again.'
+          )
+          return
+        }
 
-      if (err instanceof Error && err.name === 'AbortError') {
-        debugLog('InterestForm', 'error', 'timeout', {
+        // Network-level failure (TypeError: Failed to fetch) — may be transient on mobile
+        const elapsed = Math.round(performance.now() - startTime)
+        debugLog('InterestForm', 'warn', 'fetch-failed-attempt', {
           elapsedMs: elapsed,
-          timeoutMs: FETCH_TIMEOUT_MS,
-        })
-        setErrorMessage(
-          'The request took too long. Please check your connection and try again.'
-        )
-      } else {
-        debugLog('InterestForm', 'error', 'fetch-failed', {
-          elapsedMs: elapsed,
+          attempt,
+          maxAttempts: MAX_ATTEMPTS,
+          willRetry: attempt < MAX_ATTEMPTS,
           error: err instanceof Error
             ? { name: err.name, message: err.message }
             : { raw: String(err) },
         })
-        setErrorMessage(
-          'Something went wrong while sending your message. Please try again, or reach out directly via email.'
-        )
+
+        // Wait before retrying (only if there are attempts left)
+        if (attempt < MAX_ATTEMPTS) {
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS))
+        }
       }
-    } finally {
-      clearTimeout(timeoutId)
+    }
+
+    // All attempts exhausted — report the final error
+    const elapsed = Math.round(performance.now() - startTime)
+    debugLog('InterestForm', 'error', 'all-attempts-failed', {
+      elapsedMs: elapsed,
+      attempts: MAX_ATTEMPTS,
+      lastError: lastError instanceof Error
+        ? { name: lastError.name, message: lastError.message }
+        : { raw: String(lastError) },
+    })
+
+    setStatus('error')
+
+    // Provide a more specific message if the device went offline during attempts
+    if (!navigator.onLine) {
+      setErrorMessage(
+        'Your connection dropped while sending. Please check your network and try again.'
+      )
+    } else {
+      setErrorMessage(
+        'Could not reach the server. This may be a temporary network issue — please try again in a moment, or reach out directly via email.'
+      )
     }
   }
 
