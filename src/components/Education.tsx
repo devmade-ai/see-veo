@@ -9,9 +9,9 @@ interface EducationProps {
 export default function Education({ items }: EducationProps) {
   return (
     <Section title="Education">
-      {items.map((item, i) => (
+      {items.map((item) => (
         <TimelineItem
-          key={i}
+          key={item.id}
           title={item.degree}
           subtitle={item.institution}
           period={item.period}

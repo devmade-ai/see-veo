@@ -31,10 +31,15 @@ function isStandalone() {
 export function usePWAInstall() {
   const [canInstall, setCanInstall] = useState(false)
   const [isInstalled, setIsInstalled] = useState(isStandalone)
-  const [showManualInstructions, setShowManualInstructions] = useState(false)
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null)
   const browser = detectBrowser()
   const supportsAutoInstall = ['chrome', 'edge', 'brave'].includes(browser)
+
+  // Compute initial manual instructions state from browser detection rather than
+  // calling setState inside useEffect (which triggers cascading renders)
+  const [showManualInstructions, setShowManualInstructions] = useState(
+    () => !supportsAutoInstall && !isStandalone()
+  )
 
   useEffect(() => {
     const handlePrompt = (e: Event) => {
@@ -51,10 +56,6 @@ export function usePWAInstall() {
 
     window.addEventListener('beforeinstallprompt', handlePrompt)
     window.addEventListener('appinstalled', handleInstalled)
-
-    if (!supportsAutoInstall && !isStandalone()) {
-      setShowManualInstructions(true)
-    }
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handlePrompt)

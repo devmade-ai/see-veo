@@ -17,15 +17,17 @@ export interface PersonalInfo {
 }
 
 export interface ExperienceItem {
+  id: string
   company: string
   role: string
   period: string
-  location: string
+  location?: string
   description: string
   highlights: string[]
 }
 
 export interface EducationItem {
+  id: string
   institution: string
   degree: string
   period: string
@@ -33,11 +35,13 @@ export interface EducationItem {
 }
 
 export interface SkillCategory {
+  id: string
   category: string
   skills: string[]
 }
 
 export interface ProjectItem {
+  id: string
   name: string
   description: string
   tech: string[]
@@ -71,6 +75,7 @@ export const cvData: CVData = {
 }`,
   experience: [
     {
+      id: 'exp-iamapp-presales',
       company: 'I Am App (Pty) Ltd',
       role: 'Pre-Sales Software Engineer',
       period: 'Aug 2022 - Dec 2023',
@@ -85,6 +90,7 @@ export const cvData: CVData = {
       ],
     },
     {
+      id: 'exp-iamapp-consultant',
       company: 'I Am App (Pty) Ltd',
       role: 'Technical Consultant',
       period: 'Jun 2020 - Jul 2022',
@@ -100,6 +106,7 @@ export const cvData: CVData = {
       ],
     },
     {
+      id: 'exp-santam',
       company: 'Santam Insurance',
       role: 'Analyst Developer',
       period: 'Oct 2016 - Apr 2019',
@@ -114,10 +121,10 @@ export const cvData: CVData = {
       ],
     },
     {
+      id: 'exp-pbt',
       company: 'PBT Group',
       role: 'Master Data Management Consultant',
       period: 'Jan 2014 - Oct 2016',
-      location: '',
       description:
         'Focused on data collection, analysis, quality assurance, and business intelligence across multiple client engagements.',
       highlights: [
@@ -131,30 +138,35 @@ export const cvData: CVData = {
   ],
   education: [
     {
+      id: 'edu-stellenbosch',
       institution: 'Stellenbosch University',
       degree: 'Bachelor of Commerce (B.Comm), Management Sciences and Quantitative Methods',
       period: '2011 - 2013',
       description: '',
     },
     {
+      id: 'edu-fti',
       institution: 'Faculty Training Institute (FTI)',
       degree: 'Diploma in Business Analysis for IT',
       period: '2015',
       description: '',
     },
     {
+      id: 'edu-bytes',
       institution: 'Bytes People Solutions',
       degree: 'Certificate, Advanced Java',
       period: '2017',
       description: '',
     },
     {
+      id: 'edu-torqueit',
       institution: 'TorqueIT',
       degree: 'Java Certificate, Java Development Fundamentals',
       period: '2014',
       description: '',
     },
     {
+      id: 'edu-ibm',
       institution: 'IBM',
       degree: 'IBM Infosphere Certificate, Master Data Management',
       period: '2014',
@@ -163,6 +175,7 @@ export const cvData: CVData = {
   ],
   skills: [
     {
+      id: 'skill-core',
       category: 'Core',
       skills: [
         'Business Analysis',
@@ -172,6 +185,7 @@ export const cvData: CVData = {
       ],
     },
     {
+      id: 'skill-dev',
       category: 'Development',
       skills: [
         'Java',
@@ -183,6 +197,7 @@ export const cvData: CVData = {
       ],
     },
     {
+      id: 'skill-data',
       category: 'Data & Integration',
       skills: [
         'SQL',
@@ -194,12 +209,14 @@ export const cvData: CVData = {
       ],
     },
     {
+      id: 'skill-lang',
       category: 'Languages',
       skills: ['English (Native)', 'Dutch (Native)'],
     },
   ],
   projects: [
     {
+      id: 'proj-see-veo',
       name: 'see-veo',
       description:
         'This site. A hand-coded CV and portfolio built from scratch — proof that the skills listed here are the real deal.',
@@ -207,6 +224,7 @@ export const cvData: CVData = {
       link: 'https://github.com/devmade-ai/see-veo',
     },
     {
+      id: 'proj-canvagrid',
       name: 'CanvaGrid',
       description:
         'Create visual designs — social posts, ads, presentations, and stories. Build grid-based layouts with images, text, and presets, then style and download.',
@@ -214,6 +232,7 @@ export const cvData: CVData = {
       link: 'https://devmade-ai.github.io/canva-grid/',
     },
     {
+      id: 'proj-synctone',
       name: 'SyncTone',
       description:
         'Anonymous messaging where you tag the tone of your messages. No accounts, no phone numbers — just conversations.',
@@ -221,6 +240,7 @@ export const cvData: CVData = {
       link: 'https://synctone.vercel.app',
     },
     {
+      id: 'proj-repo-tor',
       name: 'Repo-Tor',
       description:
         'Git analytics reporting system. Extract and visualise commit history from any repository with interactive dashboards for progress, contributors, and code quality.',

@@ -44,6 +44,7 @@ function App() {
         <div className="mt-3 flex justify-center gap-3">
           {canInstall && (
             <button
+              type="button"
               onClick={() => void install()}
               className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-primary-light"
             >
@@ -52,6 +53,7 @@ function App() {
           )}
           {!canInstall && showManualInstructions && !isInstalled && (
             <button
+              type="button"
               onClick={() => setShowModal(true)}
               className="rounded-md bg-surface-light px-3 py-1.5 text-sm font-medium text-text transition-colors hover:bg-border"
             >
@@ -59,6 +61,7 @@ function App() {
             </button>
           )}
           <button
+            type="button"
             onClick={() => window.print()}
             className="rounded-md bg-surface-light px-3 py-1.5 text-sm font-medium text-text transition-colors hover:bg-border"
           >
