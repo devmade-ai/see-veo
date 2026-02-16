@@ -36,13 +36,19 @@ function App() {
         showManualInstructions={!canInstall && showManualInstructions && !isInstalled}
         onShowInstructions={() => setShowModal(true)}
       />
-      <PortfolioCallout />
+      {/* Requirement: Section order optimized for general visitors
+         Approach: Lead with projects (show don't tell), then about/skills for context,
+         credentials later, CTA after engagement
+         Alternatives considered:
+           - About first: Rejected — projects are more immediately engaging
+           - PortfolioCallout at top: Rejected — CTA lands better after visitor is invested */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        <Projects items={cvData.projects} />
         <About text={cvData.about} />
+        <Skills categories={cvData.skills} />
         <Experience items={cvData.experience} />
         <Education items={cvData.education} />
-        <Skills categories={cvData.skills} />
-        <Projects items={cvData.projects} />
+        <PortfolioCallout />
         <Contact info={cvData.contact} />
       </main>
 
