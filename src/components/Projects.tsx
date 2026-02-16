@@ -9,9 +9,9 @@ export default function Projects({ items }: ProjectsProps) {
   return (
     <Section title="Projects">
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((project, i) => (
+        {items.map((project) => (
           <div
-            key={i}
+            key={project.id}
             className="rounded-lg border border-border bg-surface p-6 transition-colors hover:border-primary"
           >
             <h3 className="mb-2 text-lg font-semibold text-text">
@@ -21,9 +21,9 @@ export default function Projects({ items }: ProjectsProps) {
               {project.description}
             </p>
             <div className="flex flex-wrap gap-1">
-              {project.tech.map((t, j) => (
+              {project.tech.map((t) => (
                 <span
-                  key={j}
+                  key={t}
                   className="rounded bg-background px-2 py-0.5 text-xs text-primary"
                 >
                   {t}

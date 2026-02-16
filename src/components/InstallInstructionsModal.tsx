@@ -1,3 +1,8 @@
+// Requirement: Accessible modal for PWA install instructions on unsupported browsers
+// Approach: Added role="dialog", aria-modal, aria-labelledby for screen reader support
+// Alternatives considered:
+//   - Headless UI dialog: Rejected — adds a dependency for a single modal
+
 interface InstallInstructionsModalProps {
   browser: string
   steps: string[]
@@ -17,17 +22,20 @@ export default function InstallInstructionsModal({
       onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="install-modal-title"
         className="mx-4 w-full max-w-md rounded-xl bg-surface border border-border p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-lg font-semibold text-text">
+        <h2 id="install-modal-title" className="text-lg font-semibold text-text">
           Install on {browser}
         </h2>
 
         {steps.length > 0 && (
           <ol className="mt-4 space-y-2">
             {steps.map((step, i) => (
-              <li key={i} className="flex gap-2 text-sm text-text-muted">
+              <li key={step} className="flex gap-2 text-sm text-text-muted">
                 <span className="font-medium text-primary">{i + 1}.</span>
                 {step}
               </li>
@@ -51,6 +59,7 @@ export default function InstallInstructionsModal({
         </div>
 
         <button
+          type="button"
           onClick={onClose}
           className="mt-6 w-full rounded-md bg-surface-light px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-border"
         >

@@ -17,6 +17,8 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - `src/index.css` — Tailwind import, custom `@theme` color tokens (dark palette), and print styles.
 - `src/App.tsx` — Composes all sections into a single-page layout. No routing.
 - `vite.config.ts` — Vite config with `base: '/see-veo/'` for GitHub Pages, Tailwind plugin, and PWA plugin.
+- `vitest.config.ts` — Vitest config with jsdom environment and React plugin.
+- `src/test/` — Test files (Vitest + Testing Library).
 - `api/` — Standalone Node.js API server for interest email notifications via SMTP. See `docs/interest-api-setup.md`.
 
 ## Commands
@@ -24,6 +26,8 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - `npm run dev` — Start dev server
 - `npm run build` — TypeScript check + production build (`tsc -b && vite build`)
 - `npm run preview` — Preview production build locally
+- `npm run test` — Run Vitest test suite
+- `npm run test:watch` — Run Vitest in watch mode
 
 ## Key Decisions
 
@@ -140,7 +144,7 @@ Report findings even if not directly related to current task.
 - Tests are not required for trivial getters/setters or UI-only code
 - Run existing tests before and after changes
 
-> **Project note:** No test runner is configured yet. When one is added, update the `TEST_RUNNER` config below and add a test command to the Commands section.
+> **Project note:** Vitest is configured with jsdom environment. Tests live in `src/test/`. Run with `npm run test`.
 
 ### Commit Message Format
 
@@ -192,14 +196,14 @@ DOCS_PATH=/docs
 WORKING_DOCS_PATH=/docs/working
 COMPONENTS_PATH=src/components/
 STYLES_PATH=src/index.css
-TESTS_PATH=
+TESTS_PATH=src/test/
 ```
 
 ### Stack
 ```
 LANGUAGE=TypeScript
 FRAMEWORK=React 19
-TEST_RUNNER=
+TEST_RUNNER=vitest
 PACKAGE_MANAGER=npm
 ```
 

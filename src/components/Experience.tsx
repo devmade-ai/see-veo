@@ -9,9 +9,9 @@ interface ExperienceProps {
 export default function Experience({ items }: ExperienceProps) {
   return (
     <Section title="Experience">
-      {items.map((item, i) => (
+      {items.map((item) => (
         <TimelineItem
-          key={i}
+          key={item.id}
           title={item.role}
           subtitle={item.company}
           period={item.period}

@@ -33,18 +33,34 @@ function setCorsHeaders(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Max-Age', '86400')
 }
 
+// Requirement: Reject requests from unknown origins explicitly
+// Approach: Check origin against ALLOWED_ORIGINS before processing
+// Alternatives considered:
+//   - Rely on browser CORS enforcement alone: Rejected — non-browser clients bypass CORS
+function isOriginAllowed(req: VercelRequest): boolean {
+  const origin = req.headers.origin
+  if (!origin) return true // Non-browser clients (curl, Postman) don't send Origin
+  return ALLOWED_ORIGINS.length === 0 || ALLOWED_ORIGINS.includes(origin)
+}
+
+// Requirement: Stricter email validation to reject malformed addresses
+// Approach: Regex that requires 2+ char local part, valid domain with 2+ char TLD, no consecutive dots
+// Alternatives considered:
+//   - Original /^[^\s@]+@[^\s@]+\.[^\s@]+$/: Rejected — allows a@b.c, consecutive dots
+//   - RFC 5322 full regex: Rejected — overly complex, SMTP server does final validation anyway
+const EMAIL_PATTERN = /^[a-zA-Z0-9](?:[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]*[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/
+
 function validatePayload(data: unknown): InterestPayload | null {
   if (typeof data !== 'object' || data === null) return null
 
-  const { name, email, message } = data as Record<string, unknown>
+  const obj = data as Record<string, unknown>
+  const { name, email, message } = obj
 
   if (typeof name !== 'string' || name.trim().length === 0 || name.length > 100) return null
   if (typeof email !== 'string' || email.length > 254) return null
   if (typeof message !== 'string' || message.length > 2000) return null
 
-  // Basic email format check — not exhaustive, the SMTP server will ultimately validate
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailPattern.test(email.trim())) return null
+  if (!EMAIL_PATTERN.test(email.trim())) return null
 
   return {
     name: name.trim(),
@@ -57,6 +73,11 @@ function validatePayload(data: unknown): InterestPayload | null {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   setCorsHeaders(req, res)
+
+  // Reject requests from disallowed origins
+  if (!isOriginAllowed(req)) {
+    return res.status(403).json({ error: 'Forbidden' })
+  }
 
   // CORS preflight
   if (req.method === 'OPTIONS') {

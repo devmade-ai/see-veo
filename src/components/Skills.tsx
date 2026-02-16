@@ -10,14 +10,14 @@ export default function Skills({ categories }: SkillsProps) {
   return (
     <Section title="Skills">
       <div className="space-y-6">
-        {categories.map((cat, i) => (
-          <div key={i}>
+        {categories.map((cat) => (
+          <div key={cat.id}>
             <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-text-muted">
               {cat.category}
             </h3>
             <div className="flex flex-wrap gap-2">
-              {cat.skills.map((skill, j) => (
-                <SkillBadge key={j} name={skill} />
+              {cat.skills.map((skill) => (
+                <SkillBadge key={skill} name={skill} />
               ))}
             </div>
           </div>

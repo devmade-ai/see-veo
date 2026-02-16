@@ -29,8 +29,8 @@ export default function TimelineItem({
       {description && <p className="mb-3 text-text-muted">{description}</p>}
       {highlights && highlights.length > 0 && (
         <ul className="list-disc space-y-1 pl-5 text-text-muted">
-          {highlights.map((item, i) => (
-            <li key={i}>{item}</li>
+          {highlights.map((item) => (
+            <li key={item}>{item}</li>
           ))}
         </ul>
       )}
