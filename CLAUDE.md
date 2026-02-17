@@ -19,7 +19,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - `vite.config.ts` — Vite config with `base: '/see-veo/'` for GitHub Pages, Tailwind plugin, and PWA plugin.
 - `vitest.config.ts` — Vitest config with jsdom environment and React plugin.
 - `src/test/` — Test files (Vitest + Testing Library).
-- `api/` — Standalone Node.js API server for interest email notifications via SMTP. See `docs/interest-api-setup.md`.
+- Interest notification API is a separate project deployed independently to Vercel. Frontend POSTs to it via `VITE_INTEREST_API_URL`.
 
 ## Commands
 
