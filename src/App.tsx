@@ -79,7 +79,7 @@ function App() {
         />
       )}
 
-      <DebugBanner />
+      <DebugBanner hasUpdate={hasUpdate} />
     </div>
   )
 }
