@@ -175,6 +175,10 @@ export const cvData: CVData = {
         'Pre-Sales Consulting',
         'Systems Analysis',
         'Solution Design',
+        'Requirements Engineering',
+        'Technical Documentation',
+        'Product Demonstrations',
+        'Process Optimisation',
       ],
     },
     {
@@ -187,6 +191,10 @@ export const cvData: CVData = {
         'JavaScript',
         'TypeScript',
         'React',
+        'Node.js',
+        'Next.js',
+        'Tailwind CSS',
+        'Git / CI/CD',
       ],
     },
     {
