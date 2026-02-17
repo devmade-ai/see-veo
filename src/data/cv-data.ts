@@ -194,9 +194,12 @@ export const cvData: CVData = {
       category: 'Data & Integration',
       skills: [
         'SQL',
+        'PL/SQL',
         'Data Modelling',
         'Neo4j',
         'Graph Databases',
+        'Supabase',
+        'Firebase',
         'Postman',
         'Vercel / Serverless',
         'Master Data Management',
