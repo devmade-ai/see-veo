@@ -23,7 +23,7 @@ function validatePayload(data: unknown): InterestPayload | null {
 
   if (typeof name !== 'string' || name.trim().length === 0 || name.length > 100) return null
   if (typeof email !== 'string' || email.length > 254) return null
-  if (typeof message !== 'string' || message.length > 2000) return null
+  if (typeof message !== 'string' || message.trim().length === 0 || message.length > 2000) return null
 
   if (!EMAIL_PATTERN.test(email.trim())) return null
 
@@ -61,14 +61,12 @@ describe('validatePayload', () => {
     })
   })
 
-  it('accepts empty message', () => {
-    const result = validatePayload({
+  it('rejects empty message', () => {
+    expect(validatePayload({
       name: 'Jane',
       email: 'jane@example.com',
       message: '',
-    })
-    expect(result).not.toBeNull()
-    expect(result!.message).toBe('')
+    })).toBeNull()
   })
 
   it('rejects null input', () => {

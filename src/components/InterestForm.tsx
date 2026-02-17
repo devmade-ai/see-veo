@@ -161,10 +161,17 @@ export default function InterestForm() {
     setStatus('submitting')
     setErrorMessage('')
 
+    // Requirement: Send _honeypot field to the API for server-side spam rejection
+    // Approach: Always include _honeypot in the request body (empty string for real users).
+    //   Client-side check above short-circuits bots that fill it, but sending the field
+    //   means bots bypassing frontend JS still get caught by the server (400 response).
+    // Alternatives considered:
+    //   - Client-side check only: Rejected — bots can bypass JS, server needs the field
     const requestBody = {
       name: formData.name.trim(),
       email: formData.email.trim(),
       message: formData.message.trim(),
+      _honeypot: '',
     }
 
     debugLog('InterestForm', 'info', 'submit', {
@@ -422,11 +429,11 @@ export default function InterestForm() {
           htmlFor="interest-message"
           className="mb-1 block text-sm font-medium text-text-muted"
         >
-          Message{' '}
-          <span className="text-text-muted/50">(optional)</span>
+          Message
         </label>
         <textarea
           id="interest-message"
+          required
           rows={3}
           maxLength={2000}
           value={formData.message}
