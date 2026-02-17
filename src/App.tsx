@@ -36,17 +36,19 @@ function App() {
         onShowInstructions={() => setShowModal(true)}
       />
       {/* Requirement: Section order optimized for general visitors
-         Approach: Lead with projects (show don't tell), then about/skills for context,
+         Approach: Lead with projects (show don't tell), portfolio callout right after
+         to frame the site itself as proof of work, then skills/experience for context,
          credentials later, CTA after engagement
          Alternatives considered:
            - About first: Rejected — projects are more immediately engaging
-           - PortfolioCallout at top: Rejected — CTA lands better after visitor is invested */}
+           - PortfolioCallout at top: Rejected — needs context from seeing projects first
+           - PortfolioCallout before Contact: Rejected — felt like an afterthought */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <Projects items={cvData.projects} />
+        <PortfolioCallout />
         <Skills categories={cvData.skills} />
         <Experience items={cvData.experience} />
         <Education items={cvData.education} />
-        <PortfolioCallout />
         <Contact info={cvData.contact} />
       </main>
 

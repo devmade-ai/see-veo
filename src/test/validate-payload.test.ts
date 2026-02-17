@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest'
 
-// Requirement: Test the API's validatePayload and email regex logic
-// Approach: Replicate the validation logic from api/api/send-interest.ts for unit testing
+// Requirement: Test the validatePayload and email regex logic used by the external API
+// Approach: Replicate the validation logic locally for unit testing, ensuring this
+//   frontend stays in sync with the API's contract
 // Alternatives considered:
-//   - Import directly from api/: Rejected — different tsconfig, Vercel types not in src scope
-//   - Integration tests: Added separately, but unit tests catch edge cases faster
+//   - Integration tests only: Rejected — unit tests catch edge cases faster
+//   - Shared package: Rejected — adds coupling between two independently deployed projects
 
 const EMAIL_PATTERN = /^[a-zA-Z0-9](?:[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]*[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/
 
