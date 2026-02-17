@@ -25,6 +25,36 @@ const FETCH_TIMEOUT_MS = 10_000
 const RETRY_DELAY_MS = 1_500
 const MAX_ATTEMPTS = 2
 const ERROR_AUTO_DISMISS_MS = 8_000
+const CORS_PROBE_TIMEOUT_MS = 3_000
+
+// Requirement: Distinguish CORS failures from genuine network failures on mobile Chrome
+// Approach: After all fetch attempts fail with TypeError, probe the API with mode: 'no-cors'.
+//   An opaque response (type 'opaque') proves the server is reachable but CORS is blocking;
+//   a network error means the server is genuinely unreachable.
+// Alternatives considered:
+//   - HEAD request to different endpoint: Rejected — may not exist, adds surface area
+//   - Assume always CORS: Rejected — misleading when the server is actually down
+//   - Ignore distinction: Rejected — user sees "could not reach server" when the real
+//     problem is a CORS misconfiguration, making debugging much harder
+async function isCorsBlockingNotNetwork(url: string): Promise<boolean> {
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), CORS_PROBE_TIMEOUT_MS)
+    const res = await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      signal: controller.signal,
+      // Minimal body — server may reject but we only care about reachability
+      body: '{}',
+    })
+    clearTimeout(timeoutId)
+    // An opaque response means the server responded but CORS blocked the real request
+    return res.type === 'opaque'
+  } catch {
+    // Network error — server is genuinely unreachable
+    return false
+  }
+}
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -240,15 +270,33 @@ export default function InterestForm() {
 
     setStatus('error')
 
-    // Provide a more specific message if the device went offline during attempts
+    // Provide a more specific message depending on failure cause
     if (!navigator.onLine) {
+      // Device went offline during attempts
       setErrorMessage(
         'Your connection dropped while sending. Please check your network and try again.'
       )
     } else {
-      setErrorMessage(
-        'Could not reach the server. This may be a temporary network issue — please try again in a moment, or reach out directly via email.'
-      )
+      // Probe to distinguish CORS misconfiguration from genuine network failure.
+      // On mobile Chrome, CORS preflight failures and network errors both throw
+      // the same "TypeError: Failed to fetch", so we use a no-cors probe to tell
+      // them apart and give the user a more actionable error message.
+      const corsBlocking = await isCorsBlockingNotNetwork(apiUrl)
+
+      debugLog('InterestForm', 'info', 'cors-probe', {
+        corsBlocking,
+      })
+
+      if (corsBlocking) {
+        setErrorMessage(
+          'The server received your request but a security setting is blocking the response. '
+          + 'This is a configuration issue — please try again later or reach out directly via email.'
+        )
+      } else {
+        setErrorMessage(
+          'Could not reach the server. This may be a temporary network issue — please try again in a moment, or reach out directly via email.'
+        )
+      }
     }
   }
 

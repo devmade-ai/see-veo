@@ -42,14 +42,28 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         // Requirement: Prevent service worker from intercepting cross-origin API requests
-        // Approach: navigateFallbackDenylist excludes API-domain URLs from SW handling
+        // Approach: navigateFallbackDenylist excludes API-domain URLs from navigation
+        //   fallback; runtimeCaching NetworkOnly ensures API fetches bypass SW entirely
         // Alternatives considered:
-        //   - No denylist (rely on default pass-through): Rejected — on some mobile
-        //     Chrome versions, Workbox's fetch handler can interfere with CORS preflight
+        //   - navigateFallbackDenylist alone: Rejected — only controls navigation fallback,
+        //     not fetch interception. On some mobile Chrome versions the SW fetch handler
+        //     still intercepts cross-origin requests and can break CORS preflight
         //   - Custom SW with explicit passthrough: Rejected — adds complexity, generateSW
         //     mode doesn't support custom fetch handlers
         navigateFallbackDenylist: [/^https?:\/\/(?!devmade-ai\.github\.io)/],
         runtimeCaching: [
+          {
+            // Requirement: API requests must never be handled by the service worker
+            // Approach: NetworkOnly ensures Workbox immediately delegates to the network,
+            //   preventing interference with CORS preflight on mobile Chrome
+            // Alternatives considered:
+            //   - NetworkFirst: Rejected — API requests should never be cached or served stale
+            //   - Omitting (let requests fall through): Rejected — on mobile Chrome the SW
+            //     fetch event listener can still interfere with CORS preflight even when no
+            //     route matches, causing "Failed to fetch" TypeErrors
+            urlPattern: /^https:\/\/.*\.vercel\.app\/api\/.*/i,
+            handler: 'NetworkOnly',
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',

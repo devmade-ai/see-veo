@@ -79,10 +79,53 @@ export default function DebugBanner() {
       detail: apiUrl ?? 'VITE_INTEREST_API_URL not set',
     })
 
-    // 4. API reachability (only if URL is configured)
+    // 4. API reachability and CORS (only if URL is configured)
+    // Requirement: Separate "is the server reachable" from "are CORS headers correct"
+    // Approach: Two-phase probe — first a mode:'no-cors' request (proves network path),
+    //   then a mode:'cors' OPTIONS request (proves CORS configuration)
+    // Alternatives considered:
+    //   - Single OPTIONS request: Rejected — cannot distinguish network failure from CORS
+    //     rejection, both throw identical TypeError on mobile Chrome
+    //   - Single no-cors request: Rejected — proves reachability but not CORS, which is
+    //     the most common misconfiguration causing form submission failures
     if (apiUrl) {
+      // 4a. Network reachability via no-cors probe
       checks.push({
         label: 'API Reachable',
+        status: 'running',
+        detail: 'Checking...',
+      })
+      setDiagnostics([...checks])
+
+      let serverReachable = false
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 5000)
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          signal: controller.signal,
+          body: '{}',
+        })
+        clearTimeout(timeoutId)
+        // An opaque response means the server responded (reachable)
+        serverReachable = res.type === 'opaque'
+        checks[checks.length - 1] = {
+          label: 'API Reachable',
+          status: serverReachable ? 'pass' : 'warn',
+          detail: serverReachable ? 'Server responded' : `Unexpected response type: ${res.type}`,
+        }
+      } catch (err) {
+        checks[checks.length - 1] = {
+          label: 'API Reachable',
+          status: 'fail',
+          detail: err instanceof Error ? err.message : 'Connection failed',
+        }
+      }
+
+      // 4b. CORS headers check via explicit cors OPTIONS request
+      checks.push({
+        label: 'CORS Headers',
         status: 'running',
         detail: 'Checking...',
       })
@@ -93,19 +136,22 @@ export default function DebugBanner() {
         const timeoutId = setTimeout(() => controller.abort(), 5000)
         const res = await fetch(apiUrl, {
           method: 'OPTIONS',
+          mode: 'cors',
           signal: controller.signal,
         })
         clearTimeout(timeoutId)
         checks[checks.length - 1] = {
-          label: 'API Reachable',
+          label: 'CORS Headers',
           status: res.ok || res.status === 204 || res.status === 405 ? 'pass' : 'warn',
           detail: `HTTP ${res.status} ${res.statusText}`,
         }
       } catch (err) {
         checks[checks.length - 1] = {
-          label: 'API Reachable',
+          label: 'CORS Headers',
           status: 'fail',
-          detail: err instanceof Error ? err.message : 'Connection failed',
+          detail: serverReachable
+            ? 'Server is reachable but CORS is blocking — check ALLOWED_ORIGINS on the API'
+            : err instanceof Error ? err.message : 'Connection failed',
         }
       }
     }
