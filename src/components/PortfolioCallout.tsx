@@ -1,11 +1,11 @@
 /**
  * Requirement: Make it clear that this app itself is proof of the author's skills.
- * Approach: A small, visually distinct callout between Hero and About that explicitly
- * frames the site as a portfolio piece. Uses a left-border accent style to stand out
- * without being intrusive.
+ * Approach: A small, visually distinct callout placed right after the Projects section
+ * to frame the site as a portfolio piece. Uses a left-border accent style to stand out
+ * without being intrusive. Positioned after Projects so visitors see it in context of
+ * "here's my work — and this site is one too."
  * Alternatives considered:
- *   - Inline text in the About section: Rejected — About already has a code snippet
- *     and mixing prose with it would feel disjointed.
+ *   - Before Contact section: Rejected — felt like an afterthought at the bottom
  *   - Modal/popup on first visit: Rejected — intrusive and annoying for recruiters
  *     who just want to scan the CV quickly.
  */

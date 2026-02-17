@@ -125,7 +125,7 @@ export default function DebugBanner() {
         checks[checks.length - 1] = {
           label: 'API Deployed',
           status: 'fail',
-          detail: 'API not deployed — redeploy with: cd api && npx vercel --prod',
+          detail: 'API not deployed — the messaging service is offline',
         }
         // Log the actual error for debugging
         debugLog('App', 'warn', 'health-check-failed', {
