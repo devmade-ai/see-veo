@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { cvData } from './data/cv-data'
 import Hero from './components/Hero'
+import About from './components/About'
 import Experience from './components/Experience'
 import Education from './components/Education'
 import Skills from './components/Skills'
 import Projects from './components/Projects'
 import Contact from './components/Contact'
-import PortfolioCallout from './components/PortfolioCallout'
 import UpdatePrompt from './components/UpdatePrompt'
 import InstallInstructionsModal from './components/InstallInstructionsModal'
 import DebugBanner from './components/DebugBanner'
@@ -35,17 +35,15 @@ function App() {
         showManualInstructions={!canInstall && showManualInstructions && !isInstalled}
         onShowInstructions={() => setShowModal(true)}
       />
-      {/* Requirement: Section order optimized for general visitors
-         Approach: Lead with projects (show don't tell), portfolio callout right after
-         to frame the site itself as proof of work, then skills/experience for context,
-         credentials later, CTA after engagement
+      {/* Requirement: Section order — About first to tell the story, then projects as proof
+         Approach: Lead with About (why I built this) so visitors understand the context,
+         then projects (show don't tell), then skills/experience for detail, CTA last
          Alternatives considered:
-           - About first: Rejected — projects are more immediately engaging
-           - PortfolioCallout at top: Rejected — needs context from seeing projects first
-           - PortfolioCallout before Contact: Rejected — felt like an afterthought */}
+           - About after Projects: Rejected — visitors should know the story before seeing work
+           - PortfolioCallout kept alongside About: Rejected — redundant, About covers it */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        <About text={cvData.about} />
         <Projects items={cvData.projects} />
-        <PortfolioCallout />
         <Skills categories={cvData.skills} />
         <Experience items={cvData.experience} />
         <Education items={cvData.education} />
