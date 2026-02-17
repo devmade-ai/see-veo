@@ -35,19 +35,19 @@ function App() {
         showManualInstructions={!canInstall && showManualInstructions && !isInstalled}
         onShowInstructions={() => setShowModal(true)}
       />
-      {/* Requirement: Section order — About first to tell the story, then projects as proof
-         Approach: Lead with About (why I built this) so visitors understand the context,
-         then projects (show don't tell), then skills/experience for detail, CTA last
+      {/* Requirement: Section order — story first, then proof, then CTA, then credentials
+         Approach: About (why I built this) → Projects (show don't tell) → Contact (CTA at
+         peak engagement, right after the visitor has seen proof of work) → credentials detail
          Alternatives considered:
-           - About after Projects: Rejected — visitors should know the story before seeing work
-           - PortfolioCallout kept alongside About: Rejected — redundant, About covers it */}
+           - Contact at very end: Rejected — too many visitors drop off before reaching it
+           - Contact right after About: Rejected — interrupts the story-then-proof flow */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <About text={cvData.about} />
         <Projects items={cvData.projects} />
+        <Contact info={cvData.contact} />
         <Skills categories={cvData.skills} />
         <Experience items={cvData.experience} />
         <Education items={cvData.education} />
-        <Contact info={cvData.contact} />
       </main>
 
       <footer className="py-8 text-center text-sm text-text-muted no-print">
@@ -79,7 +79,7 @@ function App() {
         />
       )}
 
-      <DebugBanner />
+      <DebugBanner hasUpdate={hasUpdate} />
     </div>
   )
 }
