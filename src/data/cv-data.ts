@@ -195,9 +195,10 @@ export const cvData: CVData = {
       skills: [
         'SQL',
         'Data Modelling',
-        'QlikView',
-        'BPMN',
-        'SoapUI',
+        'Neo4j',
+        'Graph Databases',
+        'Postman',
+        'Vercel / Serverless',
         'Master Data Management',
       ],
     },
