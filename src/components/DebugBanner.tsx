@@ -79,17 +79,62 @@ export default function DebugBanner() {
       detail: apiUrl ?? 'VITE_INTEREST_API_URL not set',
     })
 
-    // 4. API reachability and CORS (only if URL is configured)
-    // Requirement: Separate "is the server reachable" from "are CORS headers correct"
-    // Approach: Two-phase probe — first a mode:'no-cors' request (proves network path),
-    //   then a mode:'cors' OPTIONS request (proves CORS configuration)
+    // 4. API deployment, reachability, and CORS (only if URL is configured)
+    // Requirement: Diagnose the three layers that can cause "Failed to fetch":
+    //   (a) API not deployed — function returns 404, no CORS headers
+    //   (b) API deployed but CORS misconfigured — function runs but browser blocks
+    //   (c) Network failure — server genuinely unreachable
+    // Approach: Three-phase probe:
+    //   1. Health endpoint (no-cors) — detects deployment status without CORS
+    //   2. Send-interest endpoint (no-cors) — confirms network path to actual endpoint
+    //   3. OPTIONS with cors — verifies CORS headers are set correctly
     // Alternatives considered:
-    //   - Single OPTIONS request: Rejected — cannot distinguish network failure from CORS
-    //     rejection, both throw identical TypeError on mobile Chrome
-    //   - Single no-cors request: Rejected — proves reachability but not CORS, which is
-    //     the most common misconfiguration causing form submission failures
+    //   - Single OPTIONS request: Rejected — 404-without-CORS and CORS-misconfigured
+    //     both throw identical TypeError on mobile Chrome, impossible to distinguish
+    //   - Skip health check: Rejected — cannot tell "not deployed" from "CORS blocking"
     if (apiUrl) {
-      // 4a. Network reachability via no-cors probe
+      // 4a. Health endpoint — verifies the API is actually deployed on Vercel.
+      // Uses the /api/health endpoint which returns {"status":"ok"} with no CORS
+      // restrictions. A no-cors opaque response means the function exists and runs.
+      // A network error (even with the server reachable) means 404 / not deployed.
+      const healthUrl = apiUrl.replace(/\/[^/]+$/, '/health')
+      checks.push({
+        label: 'API Deployed',
+        status: 'running',
+        detail: 'Checking health endpoint...',
+      })
+      setDiagnostics([...checks])
+
+      let apiDeployed = false
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 5000)
+        const res = await fetch(healthUrl, {
+          method: 'GET',
+          mode: 'cors',
+          signal: controller.signal,
+        })
+        clearTimeout(timeoutId)
+        apiDeployed = res.ok
+        checks[checks.length - 1] = {
+          label: 'API Deployed',
+          status: apiDeployed ? 'pass' : 'warn',
+          detail: apiDeployed ? 'Health endpoint OK' : `HTTP ${res.status} ${res.statusText}`,
+        }
+      } catch (err) {
+        checks[checks.length - 1] = {
+          label: 'API Deployed',
+          status: 'fail',
+          detail: 'API not deployed — redeploy with: cd api && npx vercel --prod',
+        }
+        // Log the actual error for debugging
+        debugLog('App', 'warn', 'health-check-failed', {
+          url: healthUrl,
+          error: err instanceof Error ? err.message : String(err),
+        })
+      }
+
+      // 4b. Network reachability via no-cors probe to the actual endpoint
       checks.push({
         label: 'API Reachable',
         status: 'running',
@@ -123,35 +168,39 @@ export default function DebugBanner() {
         }
       }
 
-      // 4b. CORS headers check via explicit cors OPTIONS request
-      checks.push({
-        label: 'CORS Headers',
-        status: 'running',
-        detail: 'Checking...',
-      })
-      setDiagnostics([...checks])
-
-      try {
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 5000)
-        const res = await fetch(apiUrl, {
-          method: 'OPTIONS',
-          mode: 'cors',
-          signal: controller.signal,
+      // 4c. CORS headers check via explicit cors OPTIONS request.
+      // Only meaningful if the API is deployed — skip if health check failed to
+      // avoid a confusing "CORS fail" when the real issue is "not deployed".
+      if (apiDeployed) {
+        checks.push({
+          label: 'CORS Headers',
+          status: 'running',
+          detail: 'Checking...',
         })
-        clearTimeout(timeoutId)
-        checks[checks.length - 1] = {
-          label: 'CORS Headers',
-          status: res.ok || res.status === 204 || res.status === 405 ? 'pass' : 'warn',
-          detail: `HTTP ${res.status} ${res.statusText}`,
-        }
-      } catch (err) {
-        checks[checks.length - 1] = {
-          label: 'CORS Headers',
-          status: 'fail',
-          detail: serverReachable
-            ? 'Server is reachable but CORS is blocking — check ALLOWED_ORIGINS on the API'
-            : err instanceof Error ? err.message : 'Connection failed',
+        setDiagnostics([...checks])
+
+        try {
+          const controller = new AbortController()
+          const timeoutId = setTimeout(() => controller.abort(), 5000)
+          const res = await fetch(apiUrl, {
+            method: 'OPTIONS',
+            mode: 'cors',
+            signal: controller.signal,
+          })
+          clearTimeout(timeoutId)
+          checks[checks.length - 1] = {
+            label: 'CORS Headers',
+            status: res.ok || res.status === 204 || res.status === 405 ? 'pass' : 'warn',
+            detail: `HTTP ${res.status} ${res.statusText}`,
+          }
+        } catch (err) {
+          checks[checks.length - 1] = {
+            label: 'CORS Headers',
+            status: 'fail',
+            detail: serverReachable
+              ? 'Server is reachable but CORS is blocking — check ALLOWED_ORIGINS on the API'
+              : err instanceof Error ? err.message : 'Connection failed',
+          }
         }
       }
     }
