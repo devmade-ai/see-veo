@@ -25,6 +25,67 @@ const FETCH_TIMEOUT_MS = 10_000
 const RETRY_DELAY_MS = 1_500
 const MAX_ATTEMPTS = 2
 const ERROR_AUTO_DISMISS_MS = 8_000
+const CORS_PROBE_TIMEOUT_MS = 3_000
+
+// Requirement: Distinguish three failure modes when fetch throws TypeError on mobile Chrome:
+//   (a) API not deployed — Vercel returns 404 without CORS headers → looks like network error
+//   (b) API deployed but CORS misconfigured — function runs but browser blocks response
+//   (c) Server genuinely unreachable — network/DNS failure
+// Approach: Check health endpoint (GET /api/health with cors) to detect deployment status,
+//   then no-cors probe to detect CORS vs network. Health endpoint has no CORS restrictions
+//   on Vercel's default 200 response, so it cleanly separates "deployed" from "not deployed".
+// Alternatives considered:
+//   - no-cors probe only: Rejected — cannot tell "404 without CORS" from "200 with CORS
+//     blocking", both return opaque response. Vercel serves 404 for missing functions and
+//     the server IS reachable, so opaque succeeds in both cases
+//   - Assume always network: Rejected — gives "could not reach server" when the API
+//     is just not deployed, which is confusing and not actionable
+type FailureCause = 'not-deployed' | 'cors' | 'network'
+
+async function diagnoseFailure(apiUrl: string): Promise<FailureCause> {
+  // Step 1: Check health endpoint to verify the API is deployed.
+  // The /api/health endpoint returns {"status":"ok"} and since Vercel serverless
+  // functions set their own headers, a working health endpoint proves deployment.
+  const healthUrl = apiUrl.replace(/\/[^/]+$/, '/health')
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), CORS_PROBE_TIMEOUT_MS)
+    const res = await fetch(healthUrl, {
+      method: 'GET',
+      mode: 'cors',
+      signal: controller.signal,
+    })
+    clearTimeout(timeoutId)
+    if (!res.ok) {
+      // Health endpoint returned an error — likely not deployed (404 from Vercel)
+      return 'not-deployed'
+    }
+  } catch {
+    // Health endpoint fetch failed — could be CORS blocking or not deployed.
+    // Try a no-cors probe to see if the server is reachable at all.
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), CORS_PROBE_TIMEOUT_MS)
+      const res = await fetch(healthUrl, {
+        method: 'GET',
+        mode: 'no-cors',
+        signal: controller.signal,
+      })
+      clearTimeout(timeoutId)
+      if (res.type === 'opaque') {
+        // Server responded but health endpoint doesn't exist — not deployed
+        return 'not-deployed'
+      }
+    } catch {
+      // Server completely unreachable
+      return 'network'
+    }
+    return 'not-deployed'
+  }
+
+  // Step 2: Health endpoint works, so API is deployed. The form fetch failed due to CORS.
+  return 'cors'
+}
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -240,15 +301,39 @@ export default function InterestForm() {
 
     setStatus('error')
 
-    // Provide a more specific message if the device went offline during attempts
+    // Provide a specific message depending on failure cause.
+    // On mobile Chrome, CORS preflight failures, 404s without CORS headers, and genuine
+    // network errors all throw the same "TypeError: Failed to fetch", so we probe the
+    // health endpoint to diagnose the actual cause.
     if (!navigator.onLine) {
+      // Device went offline during attempts
       setErrorMessage(
         'Your connection dropped while sending. Please check your network and try again.'
       )
     } else {
-      setErrorMessage(
-        'Could not reach the server. This may be a temporary network issue — please try again in a moment, or reach out directly via email.'
-      )
+      const cause = await diagnoseFailure(apiUrl)
+
+      debugLog('InterestForm', 'info', 'failure-diagnosis', { cause })
+
+      switch (cause) {
+        case 'not-deployed':
+          setErrorMessage(
+            'This feature is temporarily unavailable — the messaging service is offline. '
+            + 'Please reach out directly via email instead.'
+          )
+          break
+        case 'cors':
+          setErrorMessage(
+            'The server received your request but a security setting is blocking the response. '
+            + 'This is a configuration issue — please try again later or reach out directly via email.'
+          )
+          break
+        case 'network':
+          setErrorMessage(
+            'Could not reach the server. This may be a temporary network issue — please try again in a moment, or reach out directly via email.'
+          )
+          break
+      }
     }
   }
 
