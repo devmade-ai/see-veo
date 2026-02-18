@@ -1,66 +1,57 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Background -->
   <rect width="512" height="512" rx="64" fill="#0f172a"/>
 
-  <!--
-    Requirement: Icon based on stencil/silhouette beard-man references
-    Approach: Single-color silhouette — face is negative space (dark background),
-      hair/beard/features are solid #38bdf8 shapes. Square glasses overlay.
-    Alternatives considered:
-      - Multi-color filled cartoon: Rejected — completely wrong style
-      - Dark silhouette on light: Rejected — project uses dark theme
-  -->
+  <!-- Ears -->
+  <path d="M125 230 Q115 210 120 190 Q128 175 138 190 Q145 210 142 238 Q138 255 130 255Z" fill="#38bdf8"/>
+  <path d="M387 230 Q397 210 392 190 Q384 175 374 190 Q367 210 370 238 Q374 255 382 255Z" fill="#38bdf8"/>
 
-  <!-- Ears — simple curves peeking from behind head -->
-  <path d="M130 240 Q120 220 125 200 Q130 185 138 198 Q144 215 142 240 Q140 255 132 258Z" fill="#38bdf8"/>
-  <path d="M382 240 Q392 220 387 200 Q382 185 374 198 Q368 215 370 240 Q372 255 380 258Z" fill="#38bdf8"/>
+  <!-- Hair — solid filled shape, swept pompadour -->
+  <path d="M138 210 Q140 140 175 105 Q210 70 256 62 Q305 66 345 95 Q382 125 384 200 L384 210 L375 210 Q372 155 345 125 Q315 95 256 88 Q200 95 172 128 Q150 158 145 210Z" fill="#38bdf8"/>
+  <!-- Hair texture — negative space cuts carved into hair -->
+  <path d="M190 96 Q230 76 278 74 Q232 80 195 102Z" fill="#0f172a"/>
+  <path d="M178 112 Q218 88 285 82 Q222 92 183 118Z" fill="#0f172a"/>
+  <path d="M168 130 Q212 100 295 92 Q218 108 174 138Z" fill="#0f172a"/>
+  <path d="M160 150 Q208 118 305 105 Q215 125 166 160Z" fill="#0f172a"/>
+  <path d="M154 172 Q205 135 312 118 Q212 145 160 182Z" fill="#0f172a"/>
 
-  <!-- Hair — solid mass on top, swept to the right -->
-  <path d="M132 215 Q135 145 170 110 Q205 75 256 65 Q310 70 348 95 Q385 125 385 195 L385 215 Q382 175 360 145 Q330 110 256 95 Q190 100 165 135 Q145 165 140 215Z" fill="#38bdf8"/>
+  <!-- Sideburns — solid shapes connecting hair to beard -->
+  <path d="M138 210 L145 210 Q148 235 150 260 L140 270 Q138 245 138 210Z" fill="#38bdf8"/>
+  <path d="M374 210 L367 210 Q364 235 362 260 L372 270 Q374 245 374 210Z" fill="#38bdf8"/>
 
-  <!-- Hair texture streaks (dark lines carved into hair) -->
-  <path d="M195 95 Q230 78 275 76" fill="none" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M182 108 Q222 86 280 82" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
-  <path d="M172 122 Q215 96 288 90" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
-  <path d="M164 138 Q210 110 295 100" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M158 155 Q205 125 300 112" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Eyebrows — thick solid shapes -->
+  <path d="M178 232 Q198 212 235 218 Q240 222 234 226 Q205 220 190 234 Q184 238 178 232Z" fill="#38bdf8"/>
+  <path d="M334 232 Q314 212 277 218 Q272 222 278 226 Q307 220 322 234 Q328 238 334 232Z" fill="#38bdf8"/>
 
-  <!-- Sideburns — connecting hair to beard along the face sides -->
-  <path d="M140 215 L140 275 Q142 260 146 240 Q150 225 152 215Z" fill="#38bdf8"/>
-  <path d="M372 215 L372 275 Q370 260 366 240 Q362 225 360 215Z" fill="#38bdf8"/>
+  <!-- Eyes — small solid shapes -->
+  <ellipse cx="210" cy="252" rx="8" ry="6" fill="#38bdf8"/>
+  <ellipse cx="302" cy="252" rx="8" ry="6" fill="#38bdf8"/>
 
-  <!-- Eyebrows — thick solid arched shapes -->
-  <path d="M180 228 Q200 210 232 215 L228 224 Q204 218 192 230Z" fill="#38bdf8"/>
-  <path d="M332 228 Q312 210 280 215 L284 224 Q308 218 320 230Z" fill="#38bdf8"/>
+  <!-- Glasses — solid filled square frames with negative space lens holes -->
+  <!-- Left lens: outer shape -->
+  <path d="M170 228 L250 228 L250 280 L170 280 Z" fill="#38bdf8"/>
+  <!-- Left lens: inner cutout (negative space) -->
+  <path d="M178 236 L242 236 L242 272 L178 272 Z" fill="#0f172a"/>
+  <!-- Right lens: outer shape -->
+  <path d="M262 228 L342 228 L342 280 L262 280 Z" fill="#38bdf8"/>
+  <!-- Right lens: inner cutout (negative space) -->
+  <path d="M270 236 L334 236 L334 272 L270 272 Z" fill="#0f172a"/>
+  <!-- Bridge — solid bar -->
+  <rect x="250" y="246" width="12" height="8" fill="#38bdf8"/>
+  <!-- Temple arms — solid shapes to ears -->
+  <path d="M170 242 L142 236 L142 244 L170 250Z" fill="#38bdf8"/>
+  <path d="M342 242 L370 236 L370 244 L342 250Z" fill="#38bdf8"/>
 
-  <!-- Glasses — square frames -->
-  <rect x="174" y="232" width="72" height="44" rx="4" fill="none" stroke="#38bdf8" stroke-width="4.5"/>
-  <rect x="266" y="232" width="72" height="44" rx="4" fill="none" stroke="#38bdf8" stroke-width="4.5"/>
-  <!-- Bridge -->
-  <line x1="246" y1="253" x2="266" y2="253" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
-  <!-- Temple arms -->
-  <line x1="174" y1="248" x2="145" y2="240" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-  <line x1="338" y1="248" x2="367" y2="240" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- Mustache — solid filled handlebar shape -->
+  <path d="M205 310 Q230 295 256 298 Q282 295 307 310 Q298 322 278 318 Q262 312 256 314 Q250 312 234 318 Q214 322 205 310Z" fill="#38bdf8"/>
+  <!-- Handlebar curl ends -->
+  <path d="M205 310 Q196 318 194 308 Q195 304 200 306Z" fill="#38bdf8"/>
+  <path d="M307 310 Q316 318 318 308 Q317 304 312 306Z" fill="#38bdf8"/>
 
-  <!-- Eyes — small solid dots centered in each lens -->
-  <circle cx="210" cy="254" r="6" fill="#38bdf8"/>
-  <circle cx="302" cy="254" r="6" fill="#38bdf8"/>
-
-  <!-- Nose — small downward line -->
-  <path d="M256 278 L256 294 Q256 300 250 302" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-
-  <!-- Mustache — thick, handlebar style -->
-  <path d="M214 316 Q234 302 256 306 Q278 302 298 316 Q282 326 268 322 Q258 318 256 320 Q254 318 244 322 Q230 326 214 316Z" fill="#38bdf8"/>
-  <!-- Handlebar curls -->
-  <path d="M214 316 Q206 322 204 316" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-  <path d="M298 316 Q306 322 308 316" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-
-  <!-- Beard — solid shape wrapping the lower face and jaw -->
-  <path d="M138 275 Q140 290 148 310 L148 290 Q155 268 185 278 Q220 290 256 294 Q292 290 327 278 Q357 268 364 290 L364 310 Q372 290 374 275 L376 320 Q374 372 348 400 Q320 430 256 448 Q192 430 164 400 Q138 372 136 320Z" fill="#38bdf8"/>
-
-  <!-- Beard texture lines (dark carved lines) -->
-  <path d="M172 335 Q215 318 256 315 Q297 318 340 335" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
-  <path d="M178 360 Q218 378 256 380 Q294 378 334 360" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M192 385 Q225 402 256 404 Q287 402 320 385" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
-  <path d="M212 408 Q236 420 256 422 Q276 420 300 408" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+  <!-- Beard — solid shape wrapping jaw -->
+  <path d="M140 270 Q142 280 150 295 Q155 270 185 280 Q220 292 256 296 Q292 292 327 280 Q357 270 362 295 Q370 280 372 270 L376 310 Q375 370 350 398 Q322 428 256 446 Q190 428 162 398 Q137 370 136 310Z" fill="#38bdf8"/>
+  <!-- Beard detail — negative space curves -->
+  <path d="M175 332 Q215 315 256 312 Q297 315 337 332 Q297 322 256 320 Q215 322 175 332Z" fill="#0f172a"/>
+  <path d="M180 358 Q218 375 256 378 Q294 375 332 358 Q294 368 256 370 Q218 368 180 358Z" fill="#0f172a"/>
+  <path d="M195 382 Q225 398 256 400 Q287 398 317 382 Q287 392 256 394 Q225 392 195 382Z" fill="#0f172a"/>
+  <path d="M215 405 Q236 416 256 418 Q276 416 297 405 Q276 412 256 414 Q236 412 215 405Z" fill="#0f172a"/>
 </svg>
