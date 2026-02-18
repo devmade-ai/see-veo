@@ -1,4 +1,48 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="64" fill="#0f172a"/>
-  <text x="256" y="300" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="220" fill="#38bdf8">JT</text>
+
+  <!-- Ears (behind head) -->
+  <ellipse cx="152" cy="240" rx="16" ry="22" fill="#38bdf8"/>
+  <ellipse cx="360" cy="240" rx="16" ry="22" fill="#38bdf8"/>
+
+  <!-- Head / face -->
+  <ellipse cx="256" cy="235" rx="110" ry="120" fill="#38bdf8"/>
+
+  <!-- Hair -->
+  <path d="M146 230 Q146 130 256 115 Q366 130 366 230 Q360 170 310 155 Q256 142 202 155 Q152 170 146 230Z" fill="#0c4a6e"/>
+
+  <!-- Glasses frame - left lens -->
+  <rect x="182" y="210" width="62" height="46" rx="10" fill="none" stroke="#0f172a" stroke-width="8"/>
+  <!-- Glasses frame - right lens -->
+  <rect x="268" y="210" width="62" height="46" rx="10" fill="none" stroke="#0f172a" stroke-width="8"/>
+  <!-- Glasses bridge -->
+  <path d="M244 232 Q256 226 268 232" fill="none" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+  <!-- Glasses left arm -->
+  <line x1="182" y1="228" x2="160" y2="222" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+  <!-- Glasses right arm -->
+  <line x1="330" y1="228" x2="352" y2="222" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Eyes behind glasses -->
+  <circle cx="213" cy="234" r="9" fill="#0f172a"/>
+  <circle cx="299" cy="234" r="9" fill="#0f172a"/>
+  <!-- Eye highlights -->
+  <circle cx="216" cy="231" r="3" fill="#e0f2fe"/>
+  <circle cx="302" cy="231" r="3" fill="#e0f2fe"/>
+
+  <!-- Nose -->
+  <path d="M256 252 Q250 270 254 274 Q256 276 258 274 Q262 270 256 252" fill="#0ea5e9" stroke="none"/>
+
+  <!-- Beard -->
+  <path d="M186 285 Q186 268 210 275 Q234 282 256 284 Q278 282 302 275 Q326 268 326 285 Q326 345 256 368 Q186 345 186 285Z" fill="#0c4a6e"/>
+
+  <!-- Mustache -->
+  <path d="M220 282 Q238 276 256 280 Q274 276 292 282 Q274 290 256 288 Q238 290 220 282Z" fill="#083550"/>
+
+  <!-- Neck -->
+  <rect x="230" y="348" width="52" height="28" rx="6" fill="#38bdf8"/>
+
+  <!-- Shoulders / shirt -->
+  <path d="M160 430 Q160 385 220 375 L292 375 Q352 385 352 430 L352 450 L160 450Z" fill="#0e7490"/>
+  <!-- Collar -->
+  <path d="M230 375 L256 400 L282 375" fill="none" stroke="#0c4a6e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
