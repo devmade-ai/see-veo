@@ -1,4 +1,68 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="64" fill="#0f172a"/>
-  <text x="256" y="300" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="220" fill="#38bdf8">JT</text>
+
+  <!-- Fade/undercut sides (very tight, barely there) -->
+  <rect x="140" y="175" width="18" height="90" rx="4" fill="#1a3d55" opacity="0.6"/>
+  <rect x="354" y="175" width="18" height="90" rx="4" fill="#1a3d55" opacity="0.6"/>
+
+  <!-- Ears (tucked closer to head) -->
+  <ellipse cx="152" cy="242" rx="10" ry="18" fill="#3a8ab5"/>
+  <ellipse cx="360" cy="242" rx="10" ry="18" fill="#3a8ab5"/>
+
+  <!-- Head / face -->
+  <ellipse cx="256" cy="245" rx="112" ry="116" fill="#4aade0"/>
+
+  <!-- Fade sides (thin, clipped tight against head) -->
+  <path d="M148 200 Q152 170 172 158 L158 270 Q148 260 148 240Z" fill="#1a3d55"/>
+  <path d="M364 200 Q360 170 340 158 L354 270 Q364 260 364 240Z" fill="#1a3d55"/>
+
+  <!-- Hair top - long, thick, combed from left to right with volume -->
+  <path d="M155 210 Q160 148 256 128 Q340 138 360 175 Q362 185 358 195 Q340 160 280 150 Q220 148 180 168 Q158 182 155 210Z" fill="#1e4a66"/>
+  <!-- Hair volume on top - swept right -->
+  <path d="M165 185 Q180 130 260 118 Q345 125 372 165 Q350 138 275 130 Q200 132 172 162Z" fill="#1e4a66"/>
+  <!-- Quiff/volume bump -->
+  <path d="M175 165 Q195 115 270 108 Q355 115 380 158 Q355 128 278 120 Q205 120 180 148Z" fill="#234f6e"/>
+
+  <!-- Side part (left) -->
+  <path d="M164 190 Q162 210 156 225" fill="none" stroke="#0f172a" stroke-width="2.5" opacity="0.5"/>
+
+  <!-- Eyebrows -->
+  <path d="M186 215 Q204 205 234 210" fill="none" stroke="#1e4a66" stroke-width="6" stroke-linecap="round"/>
+  <path d="M280 210 Q310 205 326 215" fill="none" stroke="#1e4a66" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Glasses - square frames -->
+  <rect x="179" y="226" width="68" height="48" rx="6" fill="none" stroke="#0f172a" stroke-width="7"/>
+  <rect x="265" y="226" width="68" height="48" rx="6" fill="none" stroke="#0f172a" stroke-width="7"/>
+  <!-- Glasses bridge -->
+  <path d="M247 248 Q256 240 265 248" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+  <!-- Glasses arms -->
+  <line x1="179" y1="244" x2="155" y2="238" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+  <line x1="333" y1="244" x2="357" y2="238" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Eyes -->
+  <circle cx="213" cy="250" r="9" fill="#0f172a"/>
+  <circle cx="299" cy="250" r="9" fill="#0f172a"/>
+  <!-- Eye highlights -->
+  <circle cx="216" cy="247" r="3.5" fill="#ffffff"/>
+  <circle cx="302" cy="247" r="3.5" fill="#ffffff"/>
+
+  <!-- Nose -->
+  <ellipse cx="256" cy="286" rx="6" ry="4" fill="#3a8ab5" opacity="0.5"/>
+
+  <!-- Triangular beard - wide at cheeks, tapers to a point -->
+  <path d="M158 298 Q158 284 200 292 Q230 298 256 300 Q282 298 312 292 Q354 284 354 298 Q350 340 330 370 Q305 400 256 420 Q207 400 182 370 Q162 340 158 298Z" fill="#1e4a66"/>
+
+  <!-- Beard texture lines following triangular shape -->
+  <path d="M182 325 Q220 338 256 340 Q292 338 330 325" fill="none" stroke="#152d40" stroke-width="2" opacity="0.3"/>
+  <path d="M192 350 Q224 366 256 368 Q288 366 320 350" fill="none" stroke="#152d40" stroke-width="2" opacity="0.25"/>
+  <path d="M206 375 Q232 390 256 392 Q280 390 306 375" fill="none" stroke="#152d40" stroke-width="2" opacity="0.2"/>
+  <path d="M225 395 Q242 408 256 410 Q270 408 287 395" fill="none" stroke="#152d40" stroke-width="1.5" opacity="0.15"/>
+
+  <!-- Mustache -->
+  <path d="M218 296 Q238 286 256 292 Q274 286 294 296 Q276 308 256 305 Q236 308 218 296Z" fill="#152d40"/>
+
+  <!-- Mouth gap — skin-colored strip separating mustache from beard -->
+  <path d="M210 308 Q232 318 256 320 Q280 318 302 308 L302 316 Q280 326 256 328 Q232 326 210 316Z" fill="#4aade0"/>
+  <!-- Lips / mouth line -->
+  <path d="M228 314 Q242 320 256 320 Q270 320 284 314" fill="none" stroke="#3a8ab5" stroke-width="2.5" stroke-linecap="round"/>
 </svg>

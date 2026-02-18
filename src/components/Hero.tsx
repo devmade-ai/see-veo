@@ -35,8 +35,7 @@ export default function Hero({
           {personal.name}
         </h1>
         <p className="mb-4 text-xl text-primary">{personal.title}</p>
-        <p className="mb-2 text-lg text-text-muted">{personal.tagline}</p>
-        <p className="text-sm text-text-muted">{personal.location}</p>
+        <p className="text-lg text-text-muted">{personal.tagline}</p>
 
         <div className="mt-6 flex justify-center gap-3 no-print">
           {canInstall && onInstall && (
