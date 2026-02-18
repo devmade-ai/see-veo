@@ -65,7 +65,7 @@ export const cvData: CVData = {
     avatarInitials: 'JT',
   },
   about:
-    'Instead of handing over a static PDF, I built this site from scratch as a living CV — one that I can update, extend, and deploy instantly. The frontend is React 19 with TypeScript, bundled by Vite, styled with Tailwind CSS v4, and shipped as a progressive web app you can install on any device. Behind the contact form sits a backend I wrote using Vercel serverless functions and a self-hosted SMTP server on my own domain. That backend is designed as a shared API platform, already architected to power services across multiple apps beyond just this one. The frontend deploys automatically to GitHub Pages through a GitHub Actions pipeline, and the backend auto-deploys to Vercel on every push or merge to main. The source code is open for anyone to read.',
+    'Instead of handing over a static PDF, I built this site from scratch as a living CV — one that I can update, extend, and deploy instantly. The frontend is React 19 with TypeScript, bundled by Vite, styled with Tailwind CSS v4, and shipped as a progressive web app you can install on any device. Behind the contact form sits a backend I wrote using Vercel serverless functions and a self-hosted SMTP server on my own domain. That backend is designed as a shared API platform, already architected to power services across multiple apps beyond just this one. The frontend deploys automatically to GitHub Pages through a GitHub Actions pipeline, and the backend auto-deploys to Vercel on every push or merge to main. Every project listed below is live and available to try.',
   experience: [
     {
       id: 'exp-iamapp-presales',
