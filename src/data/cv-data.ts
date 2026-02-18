@@ -245,12 +245,12 @@ export const cvData: CVData = {
       link: 'https://synctone.vercel.app',
     },
     {
-      id: 'proj-repo-tor',
-      name: 'Repo-Tor',
+      id: 'proj-model-pear',
+      name: 'model-pear',
       description:
-        'Git analytics reporting system. Extract and visualise commit history from any repository with interactive dashboards for progress, contributors, and code quality.',
-      tech: [],
-      link: 'https://devmade-ai.github.io/repo-tor/',
+        'Dual-mode pricing and deal structuring tool for South African B2B software companies. Find optimal pricing and compare six transaction models with 47 variants.',
+      tech: ['TypeScript', 'SvelteKit', 'Tailwind CSS', 'Vitest', 'Playwright'],
+      link: 'https://github.com/devmade-ai/model-pear',
     },
   ],
   contact: {
