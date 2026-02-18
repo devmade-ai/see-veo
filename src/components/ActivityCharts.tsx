@@ -18,7 +18,7 @@ interface ChartEmbedProps {
 function ChartEmbed({ embedId, title }: ChartEmbedProps) {
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-surface">
-      <h3 className="px-4 pb-0 pt-3 text-sm font-medium text-text-muted">{title}</h3>
+      <h3 className="mb-2 px-4 pt-3 text-sm font-medium text-text-muted">{title}</h3>
       <iframe
         src={`${EMBED_BASE}?embed=${embedId}&theme=dark`}
         title={title}
