@@ -1,20 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="64" fill="#0f172a"/>
 
-  <!-- Left lens — solid filled square with negative space cutout -->
-  <path d="M80 168 L232 168 L232 328 L80 328 Z" fill="#38bdf8"/>
-  <path d="M96 184 L216 184 L216 312 L96 312 Z" fill="#0f172a"/>
+  <!-- Left lens — outer frame with rounded corners -->
+  <rect x="72" y="188" width="160" height="136" rx="16" fill="#38bdf8"/>
+  <!-- Left lens — inner cutout -->
+  <rect x="88" y="204" width="128" height="104" rx="8" fill="#0f172a"/>
 
-  <!-- Right lens — solid filled square with negative space cutout -->
-  <path d="M280 168 L432 168 L432 328 L280 328 Z" fill="#38bdf8"/>
-  <path d="M296 184 L416 184 L416 312 L296 312 Z" fill="#0f172a"/>
+  <!-- Right lens — outer frame with rounded corners -->
+  <rect x="280" y="188" width="160" height="136" rx="16" fill="#38bdf8"/>
+  <!-- Right lens — inner cutout -->
+  <rect x="296" y="204" width="128" height="104" rx="8" fill="#0f172a"/>
 
-  <!-- Bridge — solid bar connecting lenses -->
-  <rect x="232" y="232" width="48" height="16" fill="#38bdf8"/>
+  <!-- Bridge — curved arc connecting lenses -->
+  <path d="M232 240 Q256 218 280 240 L280 254 Q256 234 232 254Z" fill="#38bdf8"/>
 
-  <!-- Left temple arm -->
-  <path d="M80 232 L32 220 L32 236 L80 248Z" fill="#38bdf8"/>
+  <!-- Left temple arm — angled with slight taper -->
+  <path d="M72 244 L28 228 Q24 226 24 232 L24 240 Q24 244 28 244 L72 258Z" fill="#38bdf8"/>
 
-  <!-- Right temple arm -->
-  <path d="M432 232 L480 220 L480 236 L432 248Z" fill="#38bdf8"/>
+  <!-- Right temple arm — angled with slight taper -->
+  <path d="M440 244 L484 228 Q488 226 488 232 L488 240 Q488 244 484 244 L440 258Z" fill="#38bdf8"/>
 </svg>
