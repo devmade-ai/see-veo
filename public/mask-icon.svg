@@ -30,14 +30,14 @@
   <path d="M186 215 Q204 205 234 210" fill="none" stroke="#1e4a66" stroke-width="6" stroke-linecap="round"/>
   <path d="M280 210 Q310 205 326 215" fill="none" stroke="#1e4a66" stroke-width="6" stroke-linecap="round"/>
 
-  <!-- Glasses - round frames -->
-  <circle cx="213" cy="248" r="34" fill="none" stroke="#0f172a" stroke-width="7"/>
-  <circle cx="299" cy="248" r="34" fill="none" stroke="#0f172a" stroke-width="7"/>
+  <!-- Glasses - square frames -->
+  <rect x="179" y="226" width="68" height="48" rx="6" fill="none" stroke="#0f172a" stroke-width="7"/>
+  <rect x="265" y="226" width="68" height="48" rx="6" fill="none" stroke="#0f172a" stroke-width="7"/>
   <!-- Glasses bridge -->
-  <path d="M247 244 Q256 236 265 244" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M247 248 Q256 240 265 248" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
   <!-- Glasses arms -->
-  <line x1="179" y1="242" x2="155" y2="236" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
-  <line x1="333" y1="242" x2="357" y2="236" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+  <line x1="179" y1="244" x2="155" y2="238" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+  <line x1="333" y1="244" x2="357" y2="238" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
 
   <!-- Eyes -->
   <circle cx="213" cy="250" r="9" fill="#0f172a"/>
