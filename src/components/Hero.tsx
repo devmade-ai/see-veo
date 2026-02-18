@@ -28,9 +28,11 @@ export default function Hero({
   return (
     <header className="bg-surface px-4 py-20 text-center">
       <div className="mx-auto max-w-4xl">
-        <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-primary text-3xl font-bold text-background">
-          {personal.avatarInitials}
-        </div>
+        <img
+          src={`${import.meta.env.BASE_URL}mask-icon.svg`}
+          alt={personal.name}
+          className="mx-auto mb-6 h-24 w-24 rounded-full bg-primary object-cover p-2"
+        />
         <h1 className="mb-2 text-4xl font-bold tracking-tight text-text sm:text-5xl">
           {personal.name}
         </h1>
