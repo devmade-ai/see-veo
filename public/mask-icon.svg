@@ -1,72 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="64" fill="#0f172a"/>
 
-  <!-- Hair - combed sides/back, swept over and down -->
-  <ellipse cx="256" cy="200" rx="120" ry="105" fill="#0c4a6e"/>
-  <!-- Hair side volume left -->
-  <ellipse cx="145" cy="235" rx="28" ry="55" fill="#0c4a6e"/>
-  <!-- Hair side volume right -->
-  <ellipse cx="367" cy="235" rx="28" ry="55" fill="#0c4a6e"/>
+  <!-- Hair back/sides - combed, swooped to the sides -->
+  <ellipse cx="256" cy="222" rx="130" ry="125" fill="#4a3728"/>
+  <!-- Side hair left - combed down -->
+  <ellipse cx="132" cy="250" rx="22" ry="60" fill="#4a3728"/>
+  <!-- Side hair right - combed down -->
+  <ellipse cx="380" cy="250" rx="22" ry="60" fill="#4a3728"/>
 
-  <!-- Ears (peeking out from hair) -->
-  <ellipse cx="148" cy="240" rx="12" ry="18" fill="#f0c060"/>
-  <ellipse cx="364" cy="240" rx="12" ry="18" fill="#f0c060"/>
+  <!-- Ears -->
+  <ellipse cx="140" cy="248" rx="14" ry="20" fill="#f0c060"/>
+  <ellipse cx="372" cy="248" rx="14" ry="20" fill="#f0c060"/>
 
-  <!-- Head / face - warm skin tone for emoji style -->
-  <ellipse cx="256" cy="240" rx="105" ry="112" fill="#f0c060"/>
+  <!-- Head / face -->
+  <ellipse cx="256" cy="250" rx="115" ry="118" fill="#f0c060"/>
 
-  <!-- Hair top - combed back with slight part -->
-  <path d="M151 225 Q151 128 256 112 Q361 128 361 225 Q355 175 315 158 Q270 144 210 158 Q157 175 151 225Z" fill="#0c4a6e"/>
-  <!-- Hair combed texture lines -->
-  <path d="M190 150 Q220 135 256 132 Q292 135 322 150" fill="none" stroke="#083550" stroke-width="3" opacity="0.5"/>
-  <path d="M175 165 Q215 145 256 142 Q297 145 337 165" fill="none" stroke="#083550" stroke-width="2" opacity="0.4"/>
+  <!-- Hair top - combed back, hipster swoop -->
+  <path d="M141 240 Q141 135 256 115 Q371 135 371 240 Q365 180 320 160 Q275 145 235 155 Q175 170 155 210 Q145 228 141 240Z" fill="#4a3728"/>
+  <!-- Hair swooped fringe/quiff -->
+  <path d="M180 170 Q210 130 270 125 Q330 130 345 155 Q310 138 260 138 Q210 142 180 170Z" fill="#5c4535"/>
+  <!-- Hair texture -->
+  <path d="M200 148 Q230 135 265 133 Q300 135 328 148" fill="none" stroke="#3a2a1c" stroke-width="2" opacity="0.3"/>
+  <path d="M185 162 Q220 145 260 142 Q300 145 330 162" fill="none" stroke="#3a2a1c" stroke-width="2" opacity="0.25"/>
 
-  <!-- Eyebrows -->
-  <path d="M185 208 Q200 198 230 203" fill="none" stroke="#0c4a6e" stroke-width="6" stroke-linecap="round"/>
-  <path d="M282 203 Q312 198 327 208" fill="none" stroke="#0c4a6e" stroke-width="6" stroke-linecap="round"/>
+  <!-- Eyebrows - thick, expressive -->
+  <path d="M182 218 Q200 206 235 212" fill="none" stroke="#4a3728" stroke-width="7" stroke-linecap="round"/>
+  <path d="M278 212 Q313 206 330 218" fill="none" stroke="#4a3728" stroke-width="7" stroke-linecap="round"/>
 
-  <!-- Glasses frame - left lens (round-ish for emoji feel) -->
-  <rect x="182" y="214" width="64" height="48" rx="14" fill="none" stroke="#0f172a" stroke-width="8"/>
-  <!-- Glasses frame - right lens -->
-  <rect x="266" y="214" width="64" height="48" rx="14" fill="none" stroke="#0f172a" stroke-width="8"/>
+  <!-- Glasses - round hipster frames -->
+  <circle cx="213" cy="248" r="36" fill="none" stroke="#1e293b" stroke-width="8"/>
+  <circle cx="299" cy="248" r="36" fill="none" stroke="#1e293b" stroke-width="8"/>
   <!-- Glasses bridge -->
-  <path d="M246 238 Q256 230 266 238" fill="none" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
-  <!-- Glasses left arm -->
-  <line x1="182" y1="232" x2="158" y2="226" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
-  <!-- Glasses right arm -->
-  <line x1="330" y1="232" x2="354" y2="226" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M249 244 Q256 236 263 244" fill="none" stroke="#1e293b" stroke-width="6" stroke-linecap="round"/>
+  <!-- Glasses arms -->
+  <line x1="177" y1="242" x2="152" y2="236" stroke="#1e293b" stroke-width="5" stroke-linecap="round"/>
+  <line x1="335" y1="242" x2="360" y2="236" stroke="#1e293b" stroke-width="5" stroke-linecap="round"/>
 
-  <!-- Eyes - big and emoji-like -->
-  <ellipse cx="214" cy="238" rx="10" ry="11" fill="#0f172a"/>
-  <ellipse cx="298" cy="238" rx="10" ry="11" fill="#0f172a"/>
-  <!-- Eye highlights (big for emoji sparkle) -->
-  <circle cx="218" cy="234" r="4" fill="#ffffff"/>
-  <circle cx="302" cy="234" r="4" fill="#ffffff"/>
-  <circle cx="210" cy="241" r="2" fill="#ffffff" opacity="0.6"/>
-  <circle cx="294" cy="241" r="2" fill="#ffffff" opacity="0.6"/>
+  <!-- Eyes - big emoji dots -->
+  <circle cx="213" cy="250" r="10" fill="#1e293b"/>
+  <circle cx="299" cy="250" r="10" fill="#1e293b"/>
+  <!-- Eye highlights -->
+  <circle cx="217" cy="246" r="4" fill="#ffffff"/>
+  <circle cx="303" cy="246" r="4" fill="#ffffff"/>
+  <circle cx="209" cy="253" r="2" fill="#ffffff" opacity="0.5"/>
+  <circle cx="295" cy="253" r="2" fill="#ffffff" opacity="0.5"/>
 
-  <!-- Nose - small and simple -->
-  <ellipse cx="256" cy="272" rx="8" ry="5" fill="#d4a44a" opacity="0.7"/>
+  <!-- Nose -->
+  <ellipse cx="256" cy="285" rx="7" ry="5" fill="#d4a44a" opacity="0.6"/>
 
-  <!-- Bushy beard - large, rounded, full coverage -->
-  <path d="M165 280 Q165 265 195 272 Q225 278 256 280 Q287 278 317 272 Q347 265 347 280 Q350 330 335 360 Q315 390 256 400 Q197 390 177 360 Q162 330 165 280Z" fill="#0c4a6e"/>
+  <!-- Bushy beard - big, rounded hipster beard -->
+  <path d="M155 300 Q155 282 190 290 Q225 296 256 298 Q287 296 322 290 Q357 282 357 300 Q360 355 345 385 Q325 418 256 432 Q187 418 167 385 Q152 355 155 300Z" fill="#4a3728"/>
 
-  <!-- Beard texture/volume lines -->
-  <path d="M190 310 Q220 320 256 322 Q292 320 322 310" fill="none" stroke="#083550" stroke-width="2" opacity="0.4"/>
-  <path d="M195 340 Q225 352 256 355 Q287 352 317 340" fill="none" stroke="#083550" stroke-width="2" opacity="0.4"/>
-  <path d="M205 368 Q230 380 256 382 Q282 380 307 368" fill="none" stroke="#083550" stroke-width="2" opacity="0.3"/>
+  <!-- Beard volume/texture lines -->
+  <path d="M180 325 Q218 338 256 340 Q294 338 332 325" fill="none" stroke="#3a2a1c" stroke-width="2.5" opacity="0.3"/>
+  <path d="M183 352 Q220 368 256 370 Q292 368 329 352" fill="none" stroke="#3a2a1c" stroke-width="2" opacity="0.25"/>
+  <path d="M192 378 Q224 394 256 396 Q288 394 320 378" fill="none" stroke="#3a2a1c" stroke-width="2" opacity="0.2"/>
+  <path d="M208 400 Q232 412 256 414 Q280 412 304 400" fill="none" stroke="#3a2a1c" stroke-width="2" opacity="0.15"/>
 
-  <!-- Mustache - thick and bushy -->
-  <path d="M215 278 Q235 270 256 275 Q277 270 297 278 Q280 292 256 290 Q232 292 215 278Z" fill="#083550"/>
-
-  <!-- Mouth hint (smile under mustache) -->
-  <path d="M238 288 Q256 296 274 288" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
-
-  <!-- Neck -->
-  <rect x="232" y="392" width="48" height="22" rx="6" fill="#f0c060"/>
-
-  <!-- Shoulders / shirt -->
-  <path d="M155 460 Q155 425 220 412 L292 412 Q357 425 357 460 L357 480 L155 480Z" fill="#0e7490"/>
-  <!-- Collar -->
-  <path d="M232 412 L256 434 L280 412" fill="none" stroke="#0c4a6e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Mustache - thick hipster handlebar -->
+  <path d="M218 294 Q237 284 256 290 Q275 284 294 294 Q278 308 256 305 Q234 308 218 294Z" fill="#3a2a1c"/>
+  <!-- Mustache curled ends -->
+  <path d="M218 294 Q210 298 206 294" fill="none" stroke="#3a2a1c" stroke-width="3" stroke-linecap="round"/>
+  <path d="M294 294 Q302 298 306 294" fill="none" stroke="#3a2a1c" stroke-width="3" stroke-linecap="round"/>
 </svg>
