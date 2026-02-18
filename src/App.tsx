@@ -5,6 +5,7 @@ import About from './components/About'
 import Experience from './components/Experience'
 import Education from './components/Education'
 import Skills from './components/Skills'
+import ActivityCharts from './components/ActivityCharts'
 import Projects from './components/Projects'
 import Contact from './components/Contact'
 import UpdatePrompt from './components/UpdatePrompt'
@@ -43,6 +44,7 @@ function App() {
            - Contact right after About: Rejected — interrupts the story-then-proof flow */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <About text={cvData.about} />
+        <ActivityCharts />
         <Projects items={cvData.projects} />
         <Contact info={cvData.contact} />
         <Skills categories={cvData.skills} />

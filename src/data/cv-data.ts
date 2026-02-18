@@ -65,7 +65,7 @@ export const cvData: CVData = {
     avatarInitials: 'JT',
   },
   about:
-    'Instead of handing over a static PDF, I built this site from scratch as a living CV — one that I can update, extend, and deploy instantly. The frontend is React 19 with TypeScript, bundled by Vite, styled with Tailwind CSS v4, and shipped as a progressive web app you can install on any device. Behind the contact form sits a backend I wrote using Vercel serverless functions and a self-hosted SMTP server on my own domain. That backend is designed as a shared API platform, already architected to power services across multiple apps beyond just this one. The frontend deploys automatically to GitHub Pages through a GitHub Actions pipeline, and the backend auto-deploys to Vercel on every push or merge to main. The source code is open for anyone to read.',
+    'Instead of handing over a static PDF, I built this site from scratch as a living CV — one that I can update, extend, and deploy instantly. The frontend is React 19 with TypeScript, bundled by Vite, styled with Tailwind CSS v4, and shipped as a progressive web app you can install on any device. Behind the contact form sits a backend I wrote using Vercel serverless functions and a self-hosted SMTP server on my own domain. That backend is designed as a shared API platform, already architected to power services across multiple apps beyond just this one. The frontend deploys automatically to GitHub Pages through a GitHub Actions pipeline, and the backend auto-deploys to Vercel on every push or merge to main. The activity charts below are embedded live from a separate analytics dashboard I built to track my own Git history — another project in itself. Every project listed further down is live and available to try.',
   experience: [
     {
       id: 'exp-iamapp-presales',
@@ -221,12 +221,12 @@ export const cvData: CVData = {
   ],
   projects: [
     {
-      id: 'proj-see-veo',
-      name: 'see-veo',
+      id: 'proj-graphiki',
+      name: 'Graphiki',
       description:
-        'This site. A hand-coded CV and portfolio built from scratch — proof that the skills listed here are the real deal.',
-      tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'PWA'],
-      link: 'https://github.com/devmade-ai/see-veo',
+        'Visual graph-based knowledge workspace. Build, explore, and analyse networks of ideas, people, companies, and concepts — entirely in your browser with no server or account required.',
+      tech: ['React', 'TypeScript', 'Vite', 'Cytoscape.js', 'IndexedDB', 'PWA'],
+      link: 'https://devmade-ai.github.io/graphiki/',
     },
     {
       id: 'proj-canvagrid',
@@ -245,12 +245,12 @@ export const cvData: CVData = {
       link: 'https://synctone.vercel.app',
     },
     {
-      id: 'proj-repo-tor',
-      name: 'Repo-Tor',
+      id: 'proj-model-pear',
+      name: 'model-pear',
       description:
-        'Git analytics reporting system. Extract and visualise commit history from any repository with interactive dashboards for progress, contributors, and code quality.',
-      tech: [],
-      link: 'https://devmade-ai.github.io/repo-tor/',
+        'Dual-mode pricing and deal structuring tool for South African B2B software companies. Find optimal pricing and compare six transaction models with 47 variants.',
+      tech: ['TypeScript', 'SvelteKit', 'Tailwind CSS', 'Vitest', 'Playwright'],
+      link: 'https://devmade-ai.github.io/model-pear/',
     },
   ],
   contact: {
