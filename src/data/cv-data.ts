@@ -232,7 +232,7 @@ export const cvData: CVData = {
       name: 'CanvaGrid',
       description:
         'Create visual designs — social posts, ads, presentations, and stories. Build grid-based layouts with images, text, and presets, then style and download.',
-      tech: [],
+      tech: ['React', 'Vite', 'Tailwind CSS', 'PWA'],
       link: 'https://devmade-ai.github.io/canva-grid/',
     },
     {
@@ -240,7 +240,7 @@ export const cvData: CVData = {
       name: 'SyncTone',
       description:
         'Anonymous messaging where you tag the tone of your messages. No accounts, no phone numbers — just conversations.',
-      tech: [],
+      tech: ['React Native', 'Expo', 'TypeScript', 'Supabase', 'NativeWind'],
       link: 'https://synctone.vercel.app',
     },
     {
