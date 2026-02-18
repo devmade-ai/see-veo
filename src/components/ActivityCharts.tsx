@@ -31,11 +31,13 @@ function ChartEmbed({ embedId, title }: ChartEmbedProps) {
 
 export default function ActivityCharts() {
   return (
+    <div className="no-print">
     <Section title="Activity">
       <div className="grid gap-6 sm:grid-cols-2">
         <ChartEmbed embedId="daily-distribution" title="Days I work" />
         <ChartEmbed embedId="hourly-distribution" title="Hours I work" />
       </div>
     </Section>
+    </div>
   )
 }
