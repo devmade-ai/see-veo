@@ -1,68 +1,71 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
   <rect width="512" height="512" rx="64" fill="#0f172a"/>
 
-  <!-- Fade/undercut sides (very tight, barely there) -->
-  <rect x="140" y="175" width="18" height="90" rx="4" fill="#1a3d55" opacity="0.6"/>
-  <rect x="354" y="175" width="18" height="90" rx="4" fill="#1a3d55" opacity="0.6"/>
+  <!-- Shoulders / shirt -->
+  <path d="M96 512 Q130 420 200 400 L256 430 L312 400 Q382 420 416 512Z" fill="#1e293b"/>
+  <!-- Collar detail -->
+  <path d="M200 400 L256 440 L312 400" fill="none" stroke="#334155" stroke-width="2.5"/>
 
-  <!-- Ears (tucked closer to head) -->
-  <ellipse cx="152" cy="242" rx="10" ry="18" fill="#3a8ab5"/>
-  <ellipse cx="360" cy="242" rx="10" ry="18" fill="#3a8ab5"/>
+  <!-- Neck -->
+  <rect x="224" y="368" width="64" height="48" rx="4" fill="#2196c8"/>
 
-  <!-- Head / face -->
-  <ellipse cx="256" cy="245" rx="112" ry="116" fill="#4aade0"/>
+  <!-- Ears -->
+  <ellipse cx="148" cy="248" rx="16" ry="24" fill="#2196c8"/>
+  <ellipse cx="364" cy="248" rx="16" ry="24" fill="#2196c8"/>
 
-  <!-- Fade sides (thin, clipped tight against head) -->
-  <path d="M148 200 Q152 170 172 158 L158 270 Q148 260 148 240Z" fill="#1a3d55"/>
-  <path d="M364 200 Q360 170 340 158 L354 270 Q364 260 364 240Z" fill="#1a3d55"/>
+  <!-- Head — oval, slightly angular jawline -->
+  <path d="M148 235 Q148 130 256 115 Q364 130 364 235 L364 280 Q364 330 330 360 L300 380 Q278 392 256 392 Q234 392 212 380 L182 360 Q148 330 148 280Z" fill="#38bdf8"/>
 
-  <!-- Hair top - long, thick, combed from left to right with volume -->
-  <path d="M155 210 Q160 148 256 128 Q340 138 360 175 Q362 185 358 195 Q340 160 280 150 Q220 148 180 168 Q158 182 155 210Z" fill="#1e4a66"/>
-  <!-- Hair volume on top - swept right -->
-  <path d="M165 185 Q180 130 260 118 Q345 125 372 165 Q350 138 275 130 Q200 132 172 162Z" fill="#1e4a66"/>
-  <!-- Quiff/volume bump -->
-  <path d="M175 165 Q195 115 270 108 Q355 115 380 158 Q355 128 278 120 Q205 120 180 148Z" fill="#234f6e"/>
+  <!-- Beard — full, rounded, prominent -->
+  <path d="M148 280 Q148 262 185 270 Q220 280 256 282 Q292 280 327 270 Q364 262 364 280 L364 320 Q360 368 340 390 Q312 418 256 435 Q200 418 172 390 Q152 368 148 320Z" fill="#164e6e"/>
 
-  <!-- Side part (left) -->
-  <path d="M164 190 Q162 210 156 225" fill="none" stroke="#0f172a" stroke-width="2.5" opacity="0.5"/>
+  <!-- Beard highlight / shape -->
+  <path d="M168 300 Q220 315 256 318 Q292 315 344 300" fill="none" stroke="#1a5c82" stroke-width="2" opacity="0.4"/>
+  <path d="M176 330 Q222 348 256 350 Q290 348 336 330" fill="none" stroke="#1a5c82" stroke-width="1.5" opacity="0.3"/>
+  <path d="M190 358 Q226 375 256 378 Q286 375 322 358" fill="none" stroke="#1a5c82" stroke-width="1.5" opacity="0.25"/>
+  <path d="M210 384 Q236 398 256 400 Q276 398 302 384" fill="none" stroke="#1a5c82" stroke-width="1.5" opacity="0.2"/>
+
+  <!-- Hair — thick on top, faded/short on sides -->
+  <!-- Side fade -->
+  <path d="M148 235 Q148 195 160 170 L155 250Z" fill="#0d3148" opacity="0.6"/>
+  <path d="M364 235 Q364 195 352 170 L357 250Z" fill="#0d3148" opacity="0.6"/>
+  <!-- Main hair mass -->
+  <path d="M148 200 Q155 128 256 108 Q350 118 368 168 Q370 185 364 200 Q348 155 280 140 Q205 138 170 165 Q152 182 148 200Z" fill="#0d3148"/>
+  <!-- Volume layer -->
+  <path d="M155 180 Q170 115 260 100 Q356 110 380 158 Q356 125 272 114 Q192 116 162 152Z" fill="#103d58"/>
+  <!-- Top quiff -->
+  <path d="M165 155 Q188 95 268 88 Q362 96 390 148 Q362 108 274 100 Q198 104 172 138Z" fill="#134966"/>
 
   <!-- Eyebrows -->
-  <path d="M186 215 Q204 205 234 210" fill="none" stroke="#1e4a66" stroke-width="6" stroke-linecap="round"/>
-  <path d="M280 210 Q310 205 326 215" fill="none" stroke="#1e4a66" stroke-width="6" stroke-linecap="round"/>
+  <path d="M192 212 Q212 200 240 206" fill="none" stroke="#0d3148" stroke-width="7" stroke-linecap="round"/>
+  <path d="M272 206 Q300 200 320 212" fill="none" stroke="#0d3148" stroke-width="7" stroke-linecap="round"/>
 
-  <!-- Glasses - square frames -->
-  <rect x="179" y="226" width="68" height="48" rx="6" fill="none" stroke="#0f172a" stroke-width="7"/>
-  <rect x="265" y="226" width="68" height="48" rx="6" fill="none" stroke="#0f172a" stroke-width="7"/>
-  <!-- Glasses bridge -->
-  <path d="M247 248 Q256 240 265 248" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
-  <!-- Glasses arms -->
-  <line x1="179" y1="244" x2="155" y2="238" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
-  <line x1="333" y1="244" x2="357" y2="238" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+  <!-- Glasses — square frames, thick -->
+  <rect x="184" y="222" width="64" height="44" rx="3" fill="none" stroke="#0f172a" stroke-width="8"/>
+  <rect x="264" y="222" width="64" height="44" rx="3" fill="none" stroke="#0f172a" stroke-width="8"/>
+  <!-- Lens tint -->
+  <rect x="188" y="226" width="56" height="36" rx="1" fill="#0f172a" opacity="0.12"/>
+  <rect x="268" y="226" width="56" height="36" rx="1" fill="#0f172a" opacity="0.12"/>
+  <!-- Bridge -->
+  <line x1="248" y1="244" x2="264" y2="244" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+  <!-- Arms to ears -->
+  <line x1="184" y1="240" x2="155" y2="236" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+  <line x1="328" y1="240" x2="357" y2="236" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
 
   <!-- Eyes -->
-  <circle cx="213" cy="250" r="9" fill="#0f172a"/>
-  <circle cx="299" cy="250" r="9" fill="#0f172a"/>
+  <circle cx="216" cy="246" r="8" fill="#0f172a"/>
+  <circle cx="296" cy="246" r="8" fill="#0f172a"/>
   <!-- Eye highlights -->
-  <circle cx="216" cy="247" r="3.5" fill="#ffffff"/>
-  <circle cx="302" cy="247" r="3.5" fill="#ffffff"/>
+  <circle cx="219" cy="243" r="3.2" fill="#ffffff"/>
+  <circle cx="299" cy="243" r="3.2" fill="#ffffff"/>
 
   <!-- Nose -->
-  <ellipse cx="256" cy="286" rx="6" ry="4" fill="#3a8ab5" opacity="0.5"/>
-
-  <!-- Triangular beard - wide at cheeks, tapers to a point -->
-  <path d="M158 298 Q158 284 200 292 Q230 298 256 300 Q282 298 312 292 Q354 284 354 298 Q350 340 330 370 Q305 400 256 420 Q207 400 182 370 Q162 340 158 298Z" fill="#1e4a66"/>
-
-  <!-- Beard texture lines following triangular shape -->
-  <path d="M182 325 Q220 338 256 340 Q292 338 330 325" fill="none" stroke="#152d40" stroke-width="2" opacity="0.3"/>
-  <path d="M192 350 Q224 366 256 368 Q288 366 320 350" fill="none" stroke="#152d40" stroke-width="2" opacity="0.25"/>
-  <path d="M206 375 Q232 390 256 392 Q280 390 306 375" fill="none" stroke="#152d40" stroke-width="2" opacity="0.2"/>
-  <path d="M225 395 Q242 408 256 410 Q270 408 287 395" fill="none" stroke="#152d40" stroke-width="1.5" opacity="0.15"/>
+  <path d="M250 276 Q256 286 262 276" fill="none" stroke="#2196c8" stroke-width="2.5" stroke-linecap="round"/>
 
   <!-- Mustache -->
-  <path d="M218 296 Q238 286 256 292 Q274 286 294 296 Q276 308 256 305 Q236 308 218 296Z" fill="#152d40"/>
+  <path d="M224 292 Q240 282 256 288 Q272 282 288 292 Q272 304 256 300 Q240 304 224 292Z" fill="#0d3148"/>
 
-  <!-- Mouth gap — skin-colored strip separating mustache from beard -->
-  <path d="M210 308 Q232 318 256 320 Q280 318 302 308 L302 316 Q280 326 256 328 Q232 326 210 316Z" fill="#4aade0"/>
-  <!-- Lips / mouth line -->
-  <path d="M228 314 Q242 320 256 320 Q270 320 284 314" fill="none" stroke="#3a8ab5" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Mouth / lips line -->
+  <path d="M234 308 Q245 315 256 315 Q267 315 278 308" fill="none" stroke="#1a7ba5" stroke-width="2.5" stroke-linecap="round"/>
 </svg>
