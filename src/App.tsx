@@ -7,7 +7,7 @@ import Education from './components/Education'
 import Skills from './components/Skills'
 import ActivityCharts from './components/ActivityCharts'
 import Projects from './components/Projects'
-import Contact from './components/Contact'
+import InterestForm from './components/InterestForm'
 import UpdatePrompt from './components/UpdatePrompt'
 import InstallInstructionsModal from './components/InstallInstructionsModal'
 import DebugBanner from './components/DebugBanner'
@@ -36,23 +36,42 @@ function App() {
         showManualInstructions={!canInstall && showManualInstructions && !isInstalled}
         onShowInstructions={() => setShowModal(true)}
       />
-      {/* Requirement: Section order — story first, then proof, then CTA, then credentials
-         Approach: About (why I built this) → Projects (show don't tell) → Contact (CTA at
-         peak engagement, right after the visitor has seen proof of work) → credentials detail
+      {/* Requirement: Section order — story first, then proof, then credentials, then CTA
+         Approach: About (why I built this) → Projects (show don't tell) → credentials →
+         InterestForm after Experience (CTA after full professional context) → Education
          Alternatives considered:
-           - Contact at very end: Rejected — too many visitors drop off before reaching it
-           - Contact right after About: Rejected — interrupts the story-then-proof flow */}
+           - Contact section with heading: Rejected — user requested heading removal and
+             splitting contact into footer (LinkedIn/GitHub) and inline form
+           - CTA before credentials: Rejected — user requested form after Experience */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <About text={cvData.about} />
         <ActivityCharts />
         <Projects items={cvData.projects} />
-        <Contact info={cvData.contact} />
         <Skills categories={cvData.skills} />
         <Experience items={cvData.experience} />
+        <InterestForm />
         <Education items={cvData.education} />
       </main>
 
       <footer className="py-8 text-center text-sm text-text-muted no-print">
+        <div className="mb-4 flex justify-center gap-6">
+          <a
+            href={cvData.contact.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:text-primary-light"
+          >
+            LinkedIn
+          </a>
+          <a
+            href={cvData.contact.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:text-primary-light"
+          >
+            GitHub
+          </a>
+        </div>
         <p>
           &copy; {new Date().getFullYear()} {cvData.personal.name}. All rights
           reserved.

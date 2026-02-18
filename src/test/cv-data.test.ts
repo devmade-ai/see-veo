@@ -50,8 +50,7 @@ describe('cvData', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('has contact info with email and social links', () => {
-    expect(cvData.contact.email).toContain('@')
+  it('has contact info with social links', () => {
     expect(cvData.contact.linkedin).toContain('linkedin.com')
     expect(cvData.contact.github).toContain('github.com')
   })
