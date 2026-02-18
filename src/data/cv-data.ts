@@ -221,12 +221,12 @@ export const cvData: CVData = {
   ],
   projects: [
     {
-      id: 'proj-see-veo',
-      name: 'see-veo',
+      id: 'proj-graphiki',
+      name: 'Graphiki',
       description:
-        'This site. A hand-coded CV and portfolio built from scratch — proof that the skills listed here are the real deal.',
-      tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'PWA'],
-      link: 'https://github.com/devmade-ai/see-veo',
+        'Visual graph-based knowledge workspace. Build, explore, and analyse networks of ideas, people, companies, and concepts — entirely in your browser with no server or account required.',
+      tech: ['React', 'TypeScript', 'Vite', 'Cytoscape.js', 'IndexedDB', 'PWA'],
+      link: 'https://github.com/devmade-ai/graphiki',
     },
     {
       id: 'proj-canvagrid',
