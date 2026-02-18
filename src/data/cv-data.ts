@@ -226,7 +226,7 @@ export const cvData: CVData = {
       description:
         'Visual graph-based knowledge workspace. Build, explore, and analyse networks of ideas, people, companies, and concepts — entirely in your browser with no server or account required.',
       tech: ['React', 'TypeScript', 'Vite', 'Cytoscape.js', 'IndexedDB', 'PWA'],
-      link: 'https://github.com/devmade-ai/graphiki',
+      link: 'https://devmade-ai.github.io/graphiki/',
     },
     {
       id: 'proj-canvagrid',
@@ -250,7 +250,7 @@ export const cvData: CVData = {
       description:
         'Dual-mode pricing and deal structuring tool for South African B2B software companies. Find optimal pricing and compare six transaction models with 47 variants.',
       tech: ['TypeScript', 'SvelteKit', 'Tailwind CSS', 'Vitest', 'Playwright'],
-      link: 'https://github.com/devmade-ai/model-pear',
+      link: 'https://devmade-ai.github.io/model-pear/',
     },
   ],
   contact: {
