@@ -1,48 +1,72 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="64" fill="#0f172a"/>
 
-  <!-- Ears (behind head) -->
-  <ellipse cx="152" cy="240" rx="16" ry="22" fill="#38bdf8"/>
-  <ellipse cx="360" cy="240" rx="16" ry="22" fill="#38bdf8"/>
+  <!-- Hair - combed sides/back, swept over and down -->
+  <ellipse cx="256" cy="200" rx="120" ry="105" fill="#0c4a6e"/>
+  <!-- Hair side volume left -->
+  <ellipse cx="145" cy="235" rx="28" ry="55" fill="#0c4a6e"/>
+  <!-- Hair side volume right -->
+  <ellipse cx="367" cy="235" rx="28" ry="55" fill="#0c4a6e"/>
 
-  <!-- Head / face -->
-  <ellipse cx="256" cy="235" rx="110" ry="120" fill="#38bdf8"/>
+  <!-- Ears (peeking out from hair) -->
+  <ellipse cx="148" cy="240" rx="12" ry="18" fill="#f0c060"/>
+  <ellipse cx="364" cy="240" rx="12" ry="18" fill="#f0c060"/>
 
-  <!-- Hair -->
-  <path d="M146 230 Q146 130 256 115 Q366 130 366 230 Q360 170 310 155 Q256 142 202 155 Q152 170 146 230Z" fill="#0c4a6e"/>
+  <!-- Head / face - warm skin tone for emoji style -->
+  <ellipse cx="256" cy="240" rx="105" ry="112" fill="#f0c060"/>
 
-  <!-- Glasses frame - left lens -->
-  <rect x="182" y="210" width="62" height="46" rx="10" fill="none" stroke="#0f172a" stroke-width="8"/>
+  <!-- Hair top - combed back with slight part -->
+  <path d="M151 225 Q151 128 256 112 Q361 128 361 225 Q355 175 315 158 Q270 144 210 158 Q157 175 151 225Z" fill="#0c4a6e"/>
+  <!-- Hair combed texture lines -->
+  <path d="M190 150 Q220 135 256 132 Q292 135 322 150" fill="none" stroke="#083550" stroke-width="3" opacity="0.5"/>
+  <path d="M175 165 Q215 145 256 142 Q297 145 337 165" fill="none" stroke="#083550" stroke-width="2" opacity="0.4"/>
+
+  <!-- Eyebrows -->
+  <path d="M185 208 Q200 198 230 203" fill="none" stroke="#0c4a6e" stroke-width="6" stroke-linecap="round"/>
+  <path d="M282 203 Q312 198 327 208" fill="none" stroke="#0c4a6e" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Glasses frame - left lens (round-ish for emoji feel) -->
+  <rect x="182" y="214" width="64" height="48" rx="14" fill="none" stroke="#0f172a" stroke-width="8"/>
   <!-- Glasses frame - right lens -->
-  <rect x="268" y="210" width="62" height="46" rx="10" fill="none" stroke="#0f172a" stroke-width="8"/>
+  <rect x="266" y="214" width="64" height="48" rx="14" fill="none" stroke="#0f172a" stroke-width="8"/>
   <!-- Glasses bridge -->
-  <path d="M244 232 Q256 226 268 232" fill="none" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+  <path d="M246 238 Q256 230 266 238" fill="none" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
   <!-- Glasses left arm -->
-  <line x1="182" y1="228" x2="160" y2="222" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+  <line x1="182" y1="232" x2="158" y2="226" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
   <!-- Glasses right arm -->
-  <line x1="330" y1="228" x2="352" y2="222" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+  <line x1="330" y1="232" x2="354" y2="226" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
 
-  <!-- Eyes behind glasses -->
-  <circle cx="213" cy="234" r="9" fill="#0f172a"/>
-  <circle cx="299" cy="234" r="9" fill="#0f172a"/>
-  <!-- Eye highlights -->
-  <circle cx="216" cy="231" r="3" fill="#e0f2fe"/>
-  <circle cx="302" cy="231" r="3" fill="#e0f2fe"/>
+  <!-- Eyes - big and emoji-like -->
+  <ellipse cx="214" cy="238" rx="10" ry="11" fill="#0f172a"/>
+  <ellipse cx="298" cy="238" rx="10" ry="11" fill="#0f172a"/>
+  <!-- Eye highlights (big for emoji sparkle) -->
+  <circle cx="218" cy="234" r="4" fill="#ffffff"/>
+  <circle cx="302" cy="234" r="4" fill="#ffffff"/>
+  <circle cx="210" cy="241" r="2" fill="#ffffff" opacity="0.6"/>
+  <circle cx="294" cy="241" r="2" fill="#ffffff" opacity="0.6"/>
 
-  <!-- Nose -->
-  <path d="M256 252 Q250 270 254 274 Q256 276 258 274 Q262 270 256 252" fill="#0ea5e9" stroke="none"/>
+  <!-- Nose - small and simple -->
+  <ellipse cx="256" cy="272" rx="8" ry="5" fill="#d4a44a" opacity="0.7"/>
 
-  <!-- Beard -->
-  <path d="M186 285 Q186 268 210 275 Q234 282 256 284 Q278 282 302 275 Q326 268 326 285 Q326 345 256 368 Q186 345 186 285Z" fill="#0c4a6e"/>
+  <!-- Bushy beard - large, rounded, full coverage -->
+  <path d="M165 280 Q165 265 195 272 Q225 278 256 280 Q287 278 317 272 Q347 265 347 280 Q350 330 335 360 Q315 390 256 400 Q197 390 177 360 Q162 330 165 280Z" fill="#0c4a6e"/>
 
-  <!-- Mustache -->
-  <path d="M220 282 Q238 276 256 280 Q274 276 292 282 Q274 290 256 288 Q238 290 220 282Z" fill="#083550"/>
+  <!-- Beard texture/volume lines -->
+  <path d="M190 310 Q220 320 256 322 Q292 320 322 310" fill="none" stroke="#083550" stroke-width="2" opacity="0.4"/>
+  <path d="M195 340 Q225 352 256 355 Q287 352 317 340" fill="none" stroke="#083550" stroke-width="2" opacity="0.4"/>
+  <path d="M205 368 Q230 380 256 382 Q282 380 307 368" fill="none" stroke="#083550" stroke-width="2" opacity="0.3"/>
+
+  <!-- Mustache - thick and bushy -->
+  <path d="M215 278 Q235 270 256 275 Q277 270 297 278 Q280 292 256 290 Q232 292 215 278Z" fill="#083550"/>
+
+  <!-- Mouth hint (smile under mustache) -->
+  <path d="M238 288 Q256 296 274 288" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
 
   <!-- Neck -->
-  <rect x="230" y="348" width="52" height="28" rx="6" fill="#38bdf8"/>
+  <rect x="232" y="392" width="48" height="22" rx="6" fill="#f0c060"/>
 
   <!-- Shoulders / shirt -->
-  <path d="M160 430 Q160 385 220 375 L292 375 Q352 385 352 430 L352 450 L160 450Z" fill="#0e7490"/>
+  <path d="M155 460 Q155 425 220 412 L292 412 Q357 425 357 460 L357 480 L155 480Z" fill="#0e7490"/>
   <!-- Collar -->
-  <path d="M230 375 L256 400 L282 375" fill="none" stroke="#0c4a6e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M232 412 L256 434 L280 412" fill="none" stroke="#0c4a6e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
