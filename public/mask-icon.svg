@@ -58,9 +58,11 @@
   <path d="M206 375 Q232 390 256 392 Q280 390 306 375" fill="none" stroke="#152d40" stroke-width="2" opacity="0.2"/>
   <path d="M225 395 Q242 408 256 410 Q270 408 287 395" fill="none" stroke="#152d40" stroke-width="1.5" opacity="0.15"/>
 
-  <!-- Mouth (subtle smile above mustache) -->
-  <path d="M236 293 Q256 300 276 293" fill="none" stroke="#152d40" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
-
   <!-- Mustache -->
-  <path d="M220 296 Q238 286 256 292 Q274 286 292 296 Q276 310 256 307 Q236 310 220 296Z" fill="#152d40"/>
+  <path d="M218 296 Q238 286 256 292 Q274 286 294 296 Q276 308 256 305 Q236 308 218 296Z" fill="#152d40"/>
+
+  <!-- Mouth gap — skin-colored strip separating mustache from beard -->
+  <path d="M210 308 Q232 318 256 320 Q280 318 302 308 L302 316 Q280 326 256 328 Q232 326 210 316Z" fill="#4aade0"/>
+  <!-- Lips / mouth line -->
+  <path d="M228 314 Q242 320 256 320 Q270 320 284 314" fill="none" stroke="#3a8ab5" stroke-width="2.5" stroke-linecap="round"/>
 </svg>
