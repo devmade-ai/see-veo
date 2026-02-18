@@ -39,18 +39,10 @@ const sourceColors: Record<DebugSource, string> = {
   App: 'text-text-muted',
 }
 
-// Requirement: Prevent overlap between DebugBanner pill and UpdatePrompt toast
-// Approach: Accept hasUpdate prop and shift pill/panel upward when update toast is visible
-// Alternatives considered:
-//   - Move debug pill to bottom-left: Rejected — user preferred vertical stacking in same corner
-//   - Shared context for overlay stacking: Rejected — over-engineered for two components
+// Requirement: Floating debug panel for PWA / email diagnostics
+// Note: UpdatePrompt moved to a top banner, so no vertical offset is needed here.
 
-interface DebugBannerProps {
-  /** When true, shifts the banner upward to avoid overlapping the UpdatePrompt toast */
-  hasUpdate?: boolean
-}
-
-export default function DebugBanner({ hasUpdate = false }: DebugBannerProps) {
+export default function DebugBanner() {
   const [expanded, setExpanded] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('diagnostics')
   const [entries, setEntries] = useState<DebugEntry[]>([])
@@ -309,7 +301,7 @@ export default function DebugBanner({ hasUpdate = false }: DebugBannerProps) {
             void runDiagnostics()
           }
         }}
-        className={`fixed right-4 z-50 flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-mono shadow-lg transition-all hover:bg-surface-light no-print ${hasUpdate ? 'bottom-18' : 'bottom-4'}`}
+        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-mono shadow-lg transition-all hover:bg-surface-light no-print"
       >
         <span className="text-primary">DBG</span>
         <span className="text-text-muted">{entries.length}</span>
@@ -324,7 +316,7 @@ export default function DebugBanner({ hasUpdate = false }: DebugBannerProps) {
 
   // Expanded panel
   return (
-    <div className={`fixed right-0 z-50 m-2 flex max-h-[60vh] w-[calc(100vw-1rem)] max-w-lg flex-col rounded-xl border border-border bg-surface shadow-2xl no-print sm:right-4 sm:m-0 ${hasUpdate ? 'bottom-14 sm:bottom-18' : 'bottom-0 sm:bottom-4'}`}>
+    <div className="fixed bottom-0 right-0 z-50 m-2 flex max-h-[60vh] w-[calc(100vw-1rem)] max-w-lg flex-col rounded-xl border border-border bg-surface shadow-2xl no-print sm:bottom-4 sm:right-4 sm:m-0">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-3 py-2">
         <div className="flex items-center gap-1">

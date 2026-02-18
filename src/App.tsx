@@ -36,20 +36,20 @@ function App() {
         showManualInstructions={!canInstall && showManualInstructions && !isInstalled}
         onShowInstructions={() => setShowModal(true)}
       />
-      {/* Requirement: Section order — story first, then proof, then credentials, then CTA
-         Approach: About (why I built this) → Projects (show don't tell) → credentials →
-         InterestForm after Experience (CTA after full professional context) → Education
+      {/* Requirement: Section order — story first, then proof, then CTA, then credentials
+         Approach: About → Projects → Skills → InterestForm (CTA after skills showcase)
+           → Experience → Education
          Alternatives considered:
+           - CTA after Experience: Rejected — user moved form to follow Skills instead
            - Contact section with heading: Rejected — user requested heading removal and
-             splitting contact into footer (LinkedIn/GitHub) and inline form
-           - CTA before credentials: Rejected — user requested form after Experience */}
+             splitting contact into footer (LinkedIn/GitHub) and inline form */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <About text={cvData.about} />
         <ActivityCharts />
         <Projects items={cvData.projects} />
         <Skills categories={cvData.skills} />
-        <Experience items={cvData.experience} />
         <InterestForm />
+        <Experience items={cvData.experience} />
         <Education items={cvData.education} />
       </main>
 
@@ -100,7 +100,7 @@ function App() {
         />
       )}
 
-      <DebugBanner hasUpdate={hasUpdate} />
+      <DebugBanner />
     </div>
   )
 }
