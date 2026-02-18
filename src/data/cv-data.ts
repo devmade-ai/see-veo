@@ -49,7 +49,6 @@ export interface ProjectItem {
 }
 
 export interface ContactInfo {
-  email: string
   linkedin: string
   github: string
   website?: string
@@ -254,7 +253,6 @@ export const cvData: CVData = {
     },
   ],
   contact: {
-    email: 'jacotheron87@gmail.com',
     linkedin: 'https://www.linkedin.com/in/jacotheron87',
     github: 'https://github.com/devmade-ai',
   },

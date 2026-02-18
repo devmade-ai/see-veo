@@ -346,7 +346,7 @@ export default function InterestForm() {
 
   if (status === 'success') {
     return (
-      <div role="status" className="mt-8 rounded-lg border border-accent/30 bg-accent/10 p-6 text-center no-print">
+      <div role="status" className="mb-16 rounded-lg border border-accent/30 bg-accent/10 p-6 text-center no-print">
         <p className="text-lg font-medium text-accent">Message sent!</p>
         <p className="mt-2 text-sm text-text-muted">
           Thanks for reaching out. I'll get back to you soon.
@@ -363,7 +363,7 @@ export default function InterestForm() {
   }
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="mt-8 space-y-4 no-print">
+    <form onSubmit={(e) => void handleSubmit(e)} className="mb-16 space-y-4 no-print">
       <p className="text-sm text-text-muted">
         Interested in working together? Drop me a message.
       </p>
