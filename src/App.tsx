@@ -38,19 +38,20 @@ function App() {
         onShowInstructions={() => setShowModal(true)}
       />
       {/* Requirement: Section order — story first, then proof, then CTA, then credentials
-         Approach: About → Projects → Timeline → Skills → Activity → InterestForm
+         Approach: About → Projects → Skills → Activity → Timeline → InterestForm
            → Experience → Education
          Alternatives considered:
-           - Timeline below Activity charts: Rejected — user wants it right after Projects
-           - CTA after Experience: Rejected — user moved form to follow Skills instead
+           - Timeline after Projects: Previous layout — moved below Activity so the
+             distribution charts and timeline are grouped together
+           - CTA after Experience: Rejected — user moved form to follow Activity instead
            - Contact section with heading: Rejected — user requested heading removal and
              splitting contact into footer (LinkedIn/GitHub) and inline form */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <About paragraphs={cvData.about} />
         <Projects items={cvData.projects} />
-        <ActivityTimeline />
         <Skills categories={cvData.skills} />
         <ActivityCharts />
+        <ActivityTimeline />
         <InterestForm />
         <Experience items={cvData.experience} />
         <Education items={cvData.education} />
