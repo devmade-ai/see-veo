@@ -11,11 +11,13 @@ import { useIframeAutoResize } from '../hooks/useIframeAutoResize'
 /** Base URL for the repo-tor embed dashboard */
 const EMBED_BASE = 'https://devmade-ai.github.io/repo-tor/'
 
-// Requirement: Chart colors must align with see-veo theme palette and support 12+ repos
-// Approach: 15-color series starting with @theme tokens (primary, secondary, accent), then
-//   visually distinct hues chosen for readability on dark backgrounds. 15 colors avoids
-//   cycling/repeats as the repo count grows.
+// Requirement: Chart colors and background must align with see-veo theme palette, support 12+ repos
+// Approach: bg=transparent so iframe inherits the card's bg-surface color. 15-color series
+//   starting with @theme tokens (primary, secondary, accent), then visually distinct hues
+//   chosen for readability on dark backgrounds. 15 colors avoids cycling/repeats as the
+//   repo count grows.
 // Alternatives considered:
+//   - bg=1e293b (hardcoded surface hex): Rejected — breaks if surface token changes
 //   - Named palette preset: Rejected — presets only have 6 colors, not enough for 12+ repos
 //   - accent+muted params: Rejected — those are for single-dataset charts, not stacked bars
 //   - 6-color series: Rejected — cycles at 7+ repos, making them indistinguishable
@@ -52,7 +54,7 @@ export default function ActivityTimeline() {
         </h3>
         <iframe
           ref={iframeRef}
-          src={`${EMBED_BASE}?embed=activity-timeline&theme=dark&colors=${CHART_COLORS}`}
+          src={`${EMBED_BASE}?embed=activity-timeline&theme=dark&bg=transparent&colors=${CHART_COLORS}`}
           title="Commit Activity"
           className={`w-full border-none${height == null ? ' h-96 sm:h-[28rem]' : ''}`}
           style={height != null ? { height: `${height}px` } : undefined}

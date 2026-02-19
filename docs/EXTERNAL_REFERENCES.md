@@ -56,6 +56,7 @@ gh api repos/devmade-ai/repo-tor/contents/docs/EMBED_REFERENCE.md --jq '.content
 |-------|-------------|
 | `embed` | Required. Chart ID(s), comma-separated |
 | `theme` | `light` or `dark` |
+| `bg` | Hex or `transparent`. Background color of embedded element (default: `#1B1B1B`) |
 | `palette` | Named preset: `default`, `warm`, `cool`, `earth`, `vibrant`, `mono` |
 | `colors` | Custom hex series for multi-dataset charts |
 | `accent` | Primary hex color for single-dataset charts |
@@ -77,4 +78,4 @@ entirely passive — no listener means no effect.
 
 ---
 
-*Last updated: 2026-02-19 — Added auto-resize postMessage protocol docs*
+*Last updated: 2026-02-19 — Added bg parameter; all embeds now use bg=transparent*
