@@ -38,8 +38,8 @@ function App() {
         onShowInstructions={() => setShowModal(true)}
       />
       {/* Requirement: Section order — story first, then proof, then CTA, then credentials
-         Approach: About → Skills → Projects → Activity → Timeline → InterestForm
-           → Experience → Education
+         Approach: About → Skills → Projects → Activity → Timeline
+           → Experience → Education → InterestForm
          Alternatives considered:
            - Skills after Projects: Previous layout — moved right after About so
              readers see capabilities early before diving into project details
@@ -52,9 +52,9 @@ function App() {
         <Projects items={cvData.projects} />
         <ActivityCharts />
         <ActivityTimeline />
-        <InterestForm />
         <Experience items={cvData.experience} />
         <Education items={cvData.education} />
+        <InterestForm />
       </main>
 
       <footer className="py-8 text-center text-sm text-text-muted no-print">
