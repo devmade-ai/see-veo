@@ -6,7 +6,7 @@
 //   - Static images: Rejected — loses interactivity and live data updates
 
 import Section from './Section'
-import { useIframeAutoResize } from '../hooks/useIframeAutoResize'
+import { useRepoTorEmbed } from '../hooks/useRepoTorEmbed'
 
 /** Base URL for the repo-tor embed dashboard */
 const EMBED_BASE = 'https://devmade-ai.github.io/repo-tor/'
@@ -31,26 +31,21 @@ interface ChartEmbedProps {
 }
 
 function ChartEmbed({ embedId, title }: ChartEmbedProps) {
-  const { iframeRef, height } = useIframeAutoResize()
-
   // Requirement: Container height determined by iframe content via postMessage
-  // Approach: Apply dynamic height from repo-tor:resize messages via style attr.
-  //   Tailwind classes (h-80 / sm:h-96) serve as the initial fallback before the
-  //   first message arrives. style={{}} is used here despite the project's Tailwind-
-  //   first rule because the value is dynamic and only known at runtime.
+  // Approach: Tailwind classes (h-80 / sm:h-96) act as fallback until embed.js
+  //   receives the first repo-tor:resize message and sets inline style.height,
+  //   which overrides the CSS class automatically.
   // Alternatives considered:
-  //   - Tailwind arbitrary value [Npx]: Rejected — height isn't known at build time
-  //   - CSS variable via ref: Rejected — more indirection for the same result
+  //   - Custom postMessage listener with React state: Rejected — embed.js handles
+  //     this natively, setting iframe.style.height directly without React overhead
 
   return (
     <div className="flex flex-col overflow-hidden rounded-lg border border-border bg-surface">
       <h3 className="mb-2 px-4 pt-3 text-sm font-medium text-text-muted">{title}</h3>
       <iframe
-        ref={iframeRef}
         src={`${EMBED_BASE}?embed=${embedId}&theme=dark&bg=transparent&accent=${CHART_ACCENT}&muted=${CHART_MUTED}`}
         title={title}
-        className={`mt-auto w-full border-none${height == null ? ' h-80 sm:h-96' : ''}`}
-        style={height != null ? { height: `${height}px` } : undefined}
+        className="mt-auto h-80 w-full border-none sm:h-96"
         loading="lazy"
       />
     </div>
@@ -58,6 +53,8 @@ function ChartEmbed({ embedId, title }: ChartEmbedProps) {
 }
 
 export default function ActivityCharts() {
+  useRepoTorEmbed()
+
   return (
     <div className="no-print">
     <Section title="Activity">
