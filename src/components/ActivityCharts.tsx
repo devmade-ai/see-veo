@@ -29,12 +29,12 @@ interface ChartEmbedProps {
 
 function ChartEmbed({ embedId, title }: ChartEmbedProps) {
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-surface">
+    <div className="flex flex-col overflow-hidden rounded-lg border border-border bg-surface">
       <h3 className="mb-2 px-4 pt-3 text-sm font-medium text-text-muted">{title}</h3>
       <iframe
         src={`${EMBED_BASE}?embed=${embedId}&theme=dark&accent=${CHART_ACCENT}&muted=${CHART_MUTED}`}
         title={title}
-        className="h-80 w-full border-none sm:h-96"
+        className="mt-auto h-80 w-full border-none sm:h-96"
         loading="lazy"
       />
     </div>
