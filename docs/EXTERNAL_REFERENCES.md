@@ -29,16 +29,16 @@ gh api repos/devmade-ai/repo-tor/contents/docs/EMBED_REFERENCE.md --jq '.content
 
 **Available embed IDs used by this project:**
 
-| Embed ID | Chart Type | Description |
-|----------|-----------|-------------|
-| `daily-distribution` | Bar | Commits by day of week (Mon-Sun) |
-| `hourly-distribution` | Bar | Commits by hour of day (0-23) |
+| Embed ID | Chart Type | Component | Description |
+|----------|-----------|-----------|-------------|
+| `activity-timeline` | Stacked bar | `ActivityTimeline` | Daily commit counts over 60 days, by repo (full-width, `colors` param) |
+| `daily-distribution` | Bar | `ActivityCharts` | Commits by day of week (Mon-Sun, `accent`+`muted` params) |
+| `hourly-distribution` | Bar | `ActivityCharts` | Commits by hour of day (0-23, `accent`+`muted` params) |
 
 **Other embed IDs available for future use:**
 
 | Embed ID | Chart Type | Description |
 |----------|-----------|-------------|
-| `activity-timeline` | Stacked bar | Daily commit counts over 60 days, by repo |
 | `code-changes-timeline` | Stacked bar | Net code changes per day |
 | `feature-vs-bugfix-trend` | Line | Monthly feature vs bug fix counts |
 | `complexity-over-time` | Line | Average commit complexity per month |
@@ -63,4 +63,4 @@ gh api repos/devmade-ai/repo-tor/contents/docs/EMBED_REFERENCE.md --jq '.content
 
 ---
 
-*Last updated: 2026-02-19*
+*Last updated: 2026-02-19 — Added activity-timeline to active embeds*

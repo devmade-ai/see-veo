@@ -6,6 +6,7 @@ import Experience from './components/Experience'
 import Education from './components/Education'
 import Skills from './components/Skills'
 import ActivityCharts from './components/ActivityCharts'
+import ActivityTimeline from './components/ActivityTimeline'
 import Projects from './components/Projects'
 import InterestForm from './components/InterestForm'
 import UpdatePrompt from './components/UpdatePrompt'
@@ -37,21 +38,27 @@ function App() {
         onShowInstructions={() => setShowModal(true)}
       />
       {/* Requirement: Section order — story first, then proof, then CTA, then credentials
-         Approach: About → Projects → Skills → Activity → InterestForm (CTA after skills showcase)
+         Approach: About → Projects → Timeline (full-width) → Skills → Activity → InterestForm
            → Experience → Education
          Alternatives considered:
-           - Activity above Projects: Rejected — user moved Activity to follow Skills
-           - CTA after Experience: Rejected — user moved form to follow Skills instead
-           - Contact section with heading: Rejected — user requested heading removal and
-             splitting contact into footer (LinkedIn/GitHub) and inline form */}
-      <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-        <About text={cvData.about} />
-        <Projects items={cvData.projects} />
-        <Skills categories={cvData.skills} />
-        <ActivityCharts />
-        <InterestForm />
-        <Experience items={cvData.experience} />
-        <Education items={cvData.education} />
+           - Timeline inside max-w-4xl: Rejected — 60-day stacked bar needs width to be readable
+           - Timeline below Activity charts: Rejected — user wants it right after Projects
+           - Single main wrapper: Rejected — can't mix full-width and constrained sections */}
+      <main className="py-12">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <About text={cvData.about} />
+          <Projects items={cvData.projects} />
+        </div>
+        <div className="mb-16">
+          <ActivityTimeline />
+        </div>
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <Skills categories={cvData.skills} />
+          <ActivityCharts />
+          <InterestForm />
+          <Experience items={cvData.experience} />
+          <Education items={cvData.education} />
+        </div>
       </main>
 
       <footer className="py-8 text-center text-sm text-text-muted no-print">
