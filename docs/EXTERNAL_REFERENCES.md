@@ -61,6 +61,20 @@ gh api repos/devmade-ai/repo-tor/contents/docs/EMBED_REFERENCE.md --jq '.content
 | `accent` | Primary hex color for single-dataset charts |
 | `muted` | Secondary hex color (after-hours, weekends) |
 
+**Auto-resize protocol (postMessage):**
+
+repo-tor embeds post `{ type: 'repo-tor:resize', height: <number> }` to `window.parent`
+whenever content height changes (initial render, window resize, chart animations). Messages
+are debounced via `requestAnimationFrame` on the sender side.
+
+This project listens for these messages in `src/hooks/useIframeAutoResize.ts`, which:
+- Validates `event.origin` against `https://devmade-ai.github.io`
+- Matches `event.source` to the correct iframe ref (supports multiple embeds)
+- Falls back to static Tailwind height classes until the first message arrives
+
+Opt-out: remove the hook usage and set a fixed `height` on the iframe. The protocol is
+entirely passive — no listener means no effect.
+
 ---
 
-*Last updated: 2026-02-19 — Added activity-timeline to active embeds*
+*Last updated: 2026-02-19 — Added auto-resize postMessage protocol docs*
