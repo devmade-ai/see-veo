@@ -1,8 +1,8 @@
-// Requirement: Full-width activity timeline chart below Projects, showing commits across all repos
+// Requirement: Activity timeline chart below Projects, showing commits across all repos
 // Approach: Standalone iframe embed of repo-tor's activity-timeline (stacked bar, one color per repo)
-//   using the same card pattern as ActivityCharts but wider to give the 60-day timeline room to breathe
+//   using the same card pattern as ActivityCharts
 // Alternatives considered:
-//   - Inline inside ActivityCharts component: Rejected — different layout (full-width vs constrained grid)
+//   - Inline inside ActivityCharts component: Rejected — different purpose (timeline vs distribution)
 //   - accent param: Rejected — activity-timeline is multi-dataset, needs colors series not single accent
 //   - Default palette: Rejected — doesn't match our theme tokens
 
@@ -38,7 +38,7 @@ const CHART_COLORS = [
 
 export default function ActivityTimeline() {
   return (
-    <div className="no-print mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="mb-16 no-print">
       <div className="overflow-hidden rounded-lg border border-border bg-surface">
         <h3 className="mb-2 px-4 pt-3 text-sm font-medium text-text-muted">
           Commit Activity
@@ -50,6 +50,6 @@ export default function ActivityTimeline() {
           loading="lazy"
         />
       </div>
-    </div>
+    </section>
   )
 }
