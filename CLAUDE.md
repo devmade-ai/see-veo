@@ -14,6 +14,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 
 - `src/data/cv-data.ts` — All CV content and TypeScript interfaces. Edit this single file to update the resume.
 - `src/components/` — One component per CV section (Hero, About, Experience, Education, Skills, Projects, Contact) plus reusable helpers (Section, TimelineItem, SkillBadge) and `InterestForm` for the contact form.
+- `src/hooks/` — Custom React hooks. `useIframeAutoResize` listens for repo-tor's `postMessage` resize protocol to auto-size chart iframes; PWA hooks for install/update prompts.
 - `src/index.css` — Tailwind import, custom `@theme` color tokens (dark palette), and print styles.
 - `src/App.tsx` — Composes all sections into a single-page layout. No routing.
 - `vite.config.ts` — Vite config with `base: '/see-veo/'` for GitHub Pages, Tailwind plugin, and PWA plugin.
