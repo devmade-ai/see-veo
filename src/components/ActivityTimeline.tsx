@@ -9,14 +9,32 @@
 /** Base URL for the repo-tor embed dashboard */
 const EMBED_BASE = 'https://devmade-ai.github.io/repo-tor/'
 
-// Requirement: Chart colors must align with see-veo theme palette
-// Approach: Custom colors series built from @theme tokens in index.css, passed via colors URL param
-//   Primary (#38bdf8), secondary (#818cf8), accent (#34d399) first, then complementary tones
+// Requirement: Chart colors must align with see-veo theme palette and support 12+ repos
+// Approach: 15-color series starting with @theme tokens (primary, secondary, accent), then
+//   visually distinct hues chosen for readability on dark backgrounds. 15 colors avoids
+//   cycling/repeats as the repo count grows.
 // Alternatives considered:
-//   - Named palette preset: Rejected — none of the presets match our custom dark theme
+//   - Named palette preset: Rejected — presets only have 6 colors, not enough for 12+ repos
 //   - accent+muted params: Rejected — those are for single-dataset charts, not stacked bars
+//   - 6-color series: Rejected — cycles at 7+ repos, making them indistinguishable
 
-const CHART_COLORS = ['38bdf8', '818cf8', '34d399', 'f472b6', 'fbbf24', '22d3ee'].join(',')
+const CHART_COLORS = [
+  '38bdf8', // primary — sky blue
+  '818cf8', // secondary — indigo
+  '34d399', // accent — emerald
+  'f472b6', // pink
+  'fbbf24', // amber
+  '22d3ee', // cyan
+  'fb923c', // orange
+  'a78bfa', // violet
+  '4ade80', // green
+  'f87171', // red
+  '2dd4bf', // teal
+  'e879f9', // fuchsia
+  '60a5fa', // blue
+  'facc15', // yellow
+  'c084fc', // purple
+].join(',')
 
 export default function ActivityTimeline() {
   return (
