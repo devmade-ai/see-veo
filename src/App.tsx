@@ -46,7 +46,7 @@ function App() {
            - Contact section with heading: Rejected — user requested heading removal and
              splitting contact into footer (LinkedIn/GitHub) and inline form */}
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-        <About text={cvData.about} />
+        <About paragraphs={cvData.about} />
         <Projects items={cvData.projects} />
         <ActivityTimeline />
         <Skills categories={cvData.skills} />
