@@ -187,6 +187,24 @@ These footers are required on every commit. No exceptions.
 
 ---
 
+## External Dependencies
+
+### repo-tor Embed Charts
+
+The `ActivityCharts` component embeds charts from [devmade-ai/repo-tor](https://github.com/devmade-ai/repo-tor) via iframes. Full embed documentation lives in that repo's `docs/` folder. To fetch these docs in a session:
+
+```bash
+# Implementation details (architecture, URL params, color system)
+WebFetch: https://raw.githubusercontent.com/devmade-ai/repo-tor/main/docs/EMBED_IMPLEMENTATION.md
+
+# Quick reference (all embed IDs, chart types, color customization)
+WebFetch: https://raw.githubusercontent.com/devmade-ai/repo-tor/main/docs/EMBED_REFERENCE.md
+```
+
+A local summary with all embed IDs, URL params, and available palettes is at `docs/EXTERNAL_REFERENCES.md`.
+
+---
+
 ## Project-Specific Configuration
 
 ### Paths
