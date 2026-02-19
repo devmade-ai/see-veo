@@ -1,6 +1,6 @@
 export interface CVData {
   personal: PersonalInfo
-  about: string
+  about: string[]
   experience: ExperienceItem[]
   education: EducationItem[]
   skills: SkillCategory[]
@@ -63,8 +63,12 @@ export const cvData: CVData = {
     location: 'City of Cape Town, Western Cape, South Africa',
     avatarInitials: 'JT',
   },
-  about:
-    'Rather than delivering a fixed PDF, this project was built as a live CV that can be updated, expanded, and deployed at any time. The frontend uses React 19 with TypeScript, bundled with Vite and styled using Tailwind CSS v4, delivered as a progressive web app installable on any device. The contact form connects to a custom backend built with Vercel serverless functions and a self-hosted SMTP server running on a personal domain. The backend acts as a reusable API platform designed to support multiple future applications. The frontend deploys automatically to GitHub Pages through a GitHub Actions pipeline, while the backend deploys to Vercel on every push or merge to the main branch. The activity charts shown below stream live data from a separate analytics dashboard created to track personal Git history. All listed projects are live and accessible for testing.',
+  about: [
+    'Instead of sending a traditional CV that never changes, this was created as a living online profile that grows over time. It works more like a personal space on the web than a document, allowing updates, new projects, and improvements to appear instantly without starting over.',
+    'The site was carefully built to feel fast, simple, and easy to use on any device, even allowing visitors to install it like an app. Behind the scenes, messages sent through the contact form travel through a custom system designed and hosted personally, giving full control over how communication works and how future features can be added.',
+    'Everything runs automatically once changes are made. New updates publish themselves online, keeping the site current without manual uploads or maintenance. Even the activity charts update live, pulling information from a separate tool built to track ongoing work and progress.',
+    'Each project shown on the site is not just a description but something real that can be opened, explored, and experienced, reflecting an approach focused on building and sharing working ideas rather than static summaries.',
+  ],
   experience: [
     {
       id: 'exp-iamapp-presales',
