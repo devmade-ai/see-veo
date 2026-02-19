@@ -62,20 +62,23 @@ gh api repos/devmade-ai/repo-tor/contents/docs/EMBED_REFERENCE.md --jq '.content
 | `accent` | Primary hex color for single-dataset charts |
 | `muted` | Secondary hex color (after-hours, weekends) |
 
-**Auto-resize protocol (postMessage):**
+**Auto-resize (embed.js):**
 
-repo-tor embeds post `{ type: 'repo-tor:resize', height: <number> }` to `window.parent`
-whenever content height changes (initial render, window resize, chart animations). Messages
-are debounced via `requestAnimationFrame` on the sender side.
+repo-tor provides an `embed.js` helper script that auto-discovers all repo-tor iframes
+on the page and handles `repo-tor:resize` postMessage events. Embedders include it once:
 
-This project listens for these messages in `src/hooks/useIframeAutoResize.ts`, which:
-- Validates `event.origin` against `https://devmade-ai.github.io`
-- Matches `event.source` to the correct iframe ref (supports multiple embeds)
-- Falls back to static Tailwind height classes until the first message arrives
+```html
+<script src="https://devmade-ai.github.io/repo-tor/embed.js"></script>
+```
 
-Opt-out: remove the hook usage and set a fixed `height` on the iframe. The protocol is
-entirely passive — no listener means no effect.
+This project loads the script dynamically via `src/hooks/useRepoTorEmbed.ts`, which
+appends the `<script>` tag once on first render. Iframes use static Tailwind height
+classes as fallback until the first resize message arrives and embed.js sets the
+inline `style.height`.
+
+Opt-out: remove the hook usage and omit the script. Iframes stay at their static CSS height.
+The postMessage calls are entirely passive — no listener means no effect.
 
 ---
 
-*Last updated: 2026-02-19 — Added bg parameter; all embeds now use bg=transparent*
+*Last updated: 2026-02-19 — Switched from custom useIframeAutoResize listener to repo-tor's embed.js helper script*

@@ -6,7 +6,7 @@
 //   - accent param: Rejected — activity-timeline is multi-dataset, needs colors series not single accent
 //   - Default palette: Rejected — doesn't match our theme tokens
 
-import { useIframeAutoResize } from '../hooks/useIframeAutoResize'
+import { useRepoTorEmbed } from '../hooks/useRepoTorEmbed'
 
 /** Base URL for the repo-tor embed dashboard */
 const EMBED_BASE = 'https://devmade-ai.github.io/repo-tor/'
@@ -41,7 +41,7 @@ const CHART_COLORS = [
 ].join(',')
 
 export default function ActivityTimeline() {
-  const { iframeRef, height } = useIframeAutoResize()
+  useRepoTorEmbed()
 
   // Requirement: Container height determined by iframe content via postMessage
   // (same pattern as ActivityCharts — see ChartEmbed for full decision context)
@@ -53,11 +53,9 @@ export default function ActivityTimeline() {
           Commit Activity
         </h3>
         <iframe
-          ref={iframeRef}
           src={`${EMBED_BASE}?embed=activity-timeline&theme=dark&bg=transparent&colors=${CHART_COLORS}`}
           title="Commit Activity"
-          className={`w-full border-none${height == null ? ' h-96 sm:h-[28rem]' : ''}`}
-          style={height != null ? { height: `${height}px` } : undefined}
+          className="h-96 w-full border-none sm:h-[28rem]"
           loading="lazy"
         />
       </div>
