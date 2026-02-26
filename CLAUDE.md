@@ -204,6 +204,27 @@ WebFetch: https://raw.githubusercontent.com/devmade-ai/repo-tor/main/docs/EMBED_
 
 A local summary with all embed IDs, URL params, and available palettes is at `docs/EXTERNAL_REFERENCES.md`.
 
+### Deployed Projects (Projects Section)
+
+Project cards in `src/data/cv-data.ts` are sourced from deployed repos across the `devmade-ai` and `illuminAI-select` GitHub accounts. To refresh or add new projects:
+
+1. **List all repos** using the GitHub API with the `GITHUB_ALL_REPO_TOKEN` env var (user-scoped PAT):
+   ```bash
+   curl -s -H "Authorization: token $GITHUB_ALL_REPO_TOKEN" \
+     "https://api.github.com/user/repos?per_page=100&visibility=all"
+   ```
+2. **Identify deployed repos** — look for `has_pages: true` (GitHub Pages) or a `homepage` field pointing to Vercel.
+3. **Read each repo's README and package.json** to extract the project name, a non-technical description, and the tech stack. For private repos, use the API contents endpoint with the `Accept: application/vnd.github.v3.raw` header.
+4. **Add entries** to the `projects` array in `src/data/cv-data.ts`.
+
+**Excluded repos** (not shown in Projects):
+- `glow-props` — excluded by owner
+- `canva-grid-assets` — asset storage, not a standalone project
+- `plant-fur` — excluded by owner
+- `coin-zapp` — excluded by owner
+- `tool-till-tees` — excluded by owner
+- `see-veo` — this repo (the CV site itself)
+
 ---
 
 ## Project-Specific Configuration
