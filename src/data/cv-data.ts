@@ -255,6 +255,69 @@ export const cvData: CVData = {
       tech: ['TypeScript', 'SvelteKit', 'Tailwind CSS', 'Vitest', 'Playwright'],
       link: 'https://devmade-ai.github.io/model-pear/',
     },
+    {
+      id: 'proj-sancio',
+      name: 'Sancio',
+      description:
+        'Build agreements piece by piece. Create individual text modules that can be written, discussed, and approved separately — the complete agreement takes shape as modules are added and locked in over time.',
+      tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Supabase', 'PWA'],
+      link: 'https://devmade-ai.github.io/sun-sea-o/',
+    },
+    {
+      id: 'proj-four-ems',
+      name: 'Four Ems',
+      description:
+        'A form builder that lets you create multi-page forms with conditional logic, collect responses, and embed forms on any website — no coding required.',
+      tech: [
+        'React',
+        'TypeScript',
+        'Vite',
+        'Tailwind CSS',
+        'Zustand',
+        'Supabase',
+        'dnd-kit',
+        'PWA',
+      ],
+      link: 'https://devmade-ai.github.io/four-ems/',
+    },
+    {
+      id: 'proj-budgy-ting',
+      name: 'Budgy Ting',
+      description:
+        'A personal budgeting tool to plan monthly budgets, track actual spending by importing bank statements, and visually compare expected versus actual. Everything stays in your browser — no accounts, no servers.',
+      tech: ['Vue 3', 'TypeScript', 'Vite', 'UnoCSS', 'Dexie.js', 'PWA'],
+      link: 'https://devmade-ai.github.io/budgy-ting/',
+    },
+    {
+      id: 'proj-fuelhunt',
+      name: 'FuelHunt',
+      description:
+        'A fuel station finder for South Africa. Search by your current location, filter by fuel type, and get directions to the cheapest fuel nearby.',
+      tech: [
+        'React Native',
+        'Expo',
+        'TypeScript',
+        'Supabase',
+        'Mapbox',
+      ],
+      link: 'https://few-lap.vercel.app',
+    },
+    {
+      id: 'proj-repo-tor',
+      name: 'repo-tor',
+      description:
+        'Turn any project\'s coding history into easy-to-read charts and reports, showing who contributed, when work happened, and how the project evolved over time.',
+      tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Chart.js', 'PWA'],
+      link: 'https://devmade-ai.github.io/repo-tor/',
+    },
+    {
+      id: 'proj-chatty-chart',
+      name: 'Chatty Chart',
+      description:
+        'An interactive visual tool for sales meetings that shows clients how much of their communication data goes unanalysed. Adjust sliders and see a grid of 10,000 squares reveal the gap between what\'s being analysed and what\'s being missed.',
+      tech: ['HTML5', 'CSS3', 'JavaScript'],
+      link: 'https://illuminai-select.github.io/chatty-chart/',
+    },
   ],
   contact: {
     linkedin: 'https://www.linkedin.com/in/jacotheron87',
