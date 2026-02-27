@@ -286,7 +286,7 @@ export const cvData: CVData = {
       description:
         'A personal budgeting tool to plan monthly budgets, track actual spending by importing bank statements, and visually compare expected versus actual. Everything stays in your browser — no accounts, no servers.',
       tech: ['Vue 3', 'TypeScript', 'Vite', 'UnoCSS', 'Dexie.js', 'PWA'],
-      link: 'https://devmade-ai.github.io/budgy-ting/',
+      link: 'https://budgy-ting.vercel.app/',
     },
     {
       id: 'proj-fuelhunt',
