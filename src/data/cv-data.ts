@@ -229,7 +229,7 @@ export const cvData: CVData = {
       description:
         'Visual graph-based knowledge workspace. Build, explore, and analyse networks of ideas, people, companies, and concepts — entirely in your browser with no server or account required.',
       tech: ['React', 'TypeScript', 'Vite', 'Cytoscape.js', 'IndexedDB', 'PWA'],
-      link: 'https://devmade-ai.github.io/graphiki/',
+      link: 'https://graphiki.vercel.app/',
     },
     {
       id: 'proj-canvagrid',
