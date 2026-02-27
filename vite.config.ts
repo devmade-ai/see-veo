@@ -3,8 +3,15 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Requirement: Migrate deployment from GitHub Pages to Vercel
+// Approach: Remove base path prefix — Vercel serves at root '/' unlike GitHub Pages
+//   which required '/see-veo/' prefix. Also updated PWA scope/start_url and removed
+//   domain-specific navigateFallbackDenylist (Workbox defaults to same-origin only)
+// Alternatives considered:
+//   - Keep base as '/' explicitly: Rejected — Vite defaults to '/', omitting is cleaner
+//   - Keep navigateFallbackDenylist with Vercel domain: Rejected — fragile if domain
+//     changes; Workbox already limits navigateFallback to same-origin by default
 export default defineConfig({
-  base: '/see-veo/',
   plugins: [
     react(),
     tailwindcss(),
@@ -18,8 +25,8 @@ export default defineConfig({
         theme_color: '#0f172a',
         background_color: '#0f172a',
         display: 'standalone',
-        scope: '/see-veo/',
-        start_url: '/see-veo/',
+        scope: '/',
+        start_url: '/',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -50,7 +57,7 @@ export default defineConfig({
         //     still intercepts cross-origin requests and can break CORS preflight
         //   - Custom SW with explicit passthrough: Rejected — adds complexity, generateSW
         //     mode doesn't support custom fetch handlers
-        navigateFallbackDenylist: [/^https?:\/\/(?!devmade-ai\.github\.io)/],
+        navigateFallbackDenylist: [/^https?:\/\/.*\.vercel\.app\/api\//],
         runtimeCaching: [
           {
             // Requirement: API requests must never be handled by the service worker

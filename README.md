@@ -8,7 +8,7 @@ A personal CV/resume built as a Progressive Web App (PWA) with React, TypeScript
 - PWA support (installable, works offline)
 - Print-friendly styles
 - Single data file for easy content updates
-- Automated GitHub Pages deployment
+- Automated Vercel deployment
 
 ## Development
 
@@ -30,9 +30,7 @@ Edit `src/data/cv-data.ts` to update all CV content (personal info, experience, 
 
 ## Deployment
 
-Pushes to `main` automatically deploy to GitHub Pages via GitHub Actions.
-
-**Setup:** In your GitHub repo Settings > Pages, set the Source to "GitHub Actions".
+Pushes to `main` automatically deploy to Vercel. Connect the repo in the Vercel dashboard and add any required env vars (e.g. `VITE_INTEREST_API_URL`) under **Settings > Environment Variables**.
 
 ## Tech Stack
 

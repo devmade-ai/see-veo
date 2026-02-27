@@ -8,7 +8,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - Vite 7 with `@vitejs/plugin-react`
 - Tailwind CSS v4 via `@tailwindcss/vite` (no tailwind.config — all config is CSS-first in `src/index.css` using `@theme`)
 - PWA via `vite-plugin-pwa` (Workbox service worker, web manifest)
-- GitHub Pages deployment via GitHub Actions (`.github/workflows/deploy.yml`)
+- Vercel deployment (auto-deploys on push to `main`, configured via `vercel.json`)
 
 ## Project Structure
 
@@ -17,7 +17,8 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - `src/hooks/` — Custom React hooks. `useRepoTorEmbed` loads repo-tor's `embed.js` helper script to auto-size chart iframes; PWA hooks for install/update prompts.
 - `src/index.css` — Tailwind import, custom `@theme` color tokens (dark palette), and print styles.
 - `src/App.tsx` — Composes all sections into a single-page layout. No routing.
-- `vite.config.ts` — Vite config with `base: '/see-veo/'` for GitHub Pages, Tailwind plugin, and PWA plugin.
+- `vite.config.ts` — Vite config with Tailwind plugin and PWA plugin.
+- `vercel.json` — Vercel deployment config with SPA rewrites.
 - `vitest.config.ts` — Vitest config with jsdom environment and React plugin.
 - `src/test/` — Test files (Vitest + Testing Library).
 
@@ -33,7 +34,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 
 - Dark theme only (no light/dark toggle). Colors defined via Tailwind v4 `@theme` tokens.
 - Single-page app with no client-side routing.
-- PWA `base`, `scope`, and `start_url` all use `/see-veo/` for GitHub Pages compatibility.
+- PWA `scope` and `start_url` use `/` — Vercel serves at root, no base-path prefix needed.
 - Print styles in `src/index.css` override to white background. Elements with class `no-print` are hidden when printing.
 - Interest notification form in Contact section — POSTs to an **external** API endpoint (separate project, not part of this repo) configured via `VITE_INTEREST_API_URL` env variable. Hidden when printing. Degrades gracefully when API is not configured or offline.
 
