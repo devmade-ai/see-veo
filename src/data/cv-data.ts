@@ -261,7 +261,7 @@ export const cvData: CVData = {
       description:
         'Build agreements piece by piece. Create individual text modules that can be written, discussed, and approved separately — the complete agreement takes shape as modules are added and locked in over time.',
       tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Supabase', 'PWA'],
-      link: 'https://devmade-ai.github.io/sun-sea-o/',
+      link: 'https://sun-sea-o.vercel.app/',
     },
     {
       id: 'proj-four-ems',
@@ -278,7 +278,7 @@ export const cvData: CVData = {
         'dnd-kit',
         'PWA',
       ],
-      link: 'https://devmade-ai.github.io/four-ems/',
+      link: 'https://four-ems.vercel.app/',
     },
     {
       id: 'proj-budgy-ting',
