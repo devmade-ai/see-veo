@@ -237,7 +237,7 @@ export const cvData: CVData = {
       description:
         'Create visual designs — social posts, ads, presentations, and stories. Build grid-based layouts with images, text, and presets, then style and download.',
       tech: ['React', 'Vite', 'Tailwind CSS', 'PWA'],
-      link: 'https://devmade-ai.github.io/canva-grid/',
+      link: 'https://canva-grid.vercel.app/',
     },
     {
       id: 'proj-synctone',
