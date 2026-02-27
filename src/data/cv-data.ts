@@ -253,7 +253,7 @@ export const cvData: CVData = {
       description:
         'Dual-mode pricing and deal structuring tool for South African B2B software companies. Find optimal pricing and compare six transaction models with 47 variants.',
       tech: ['TypeScript', 'SvelteKit', 'Tailwind CSS', 'Vitest', 'Playwright'],
-      link: 'https://devmade-ai.github.io/model-pear/',
+      link: 'https://model-pear-web.vercel.app/',
     },
     {
       id: 'proj-sancio',
