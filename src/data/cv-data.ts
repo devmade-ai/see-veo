@@ -229,7 +229,7 @@ export const cvData: CVData = {
       description:
         'Visual graph-based knowledge workspace. Build, explore, and analyse networks of ideas, people, companies, and concepts — entirely in your browser with no server or account required.',
       tech: ['React', 'TypeScript', 'Vite', 'Cytoscape.js', 'IndexedDB', 'PWA'],
-      link: 'https://devmade-ai.github.io/graphiki/',
+      link: 'https://graphiki.vercel.app/',
     },
     {
       id: 'proj-canvagrid',
@@ -237,7 +237,7 @@ export const cvData: CVData = {
       description:
         'Create visual designs — social posts, ads, presentations, and stories. Build grid-based layouts with images, text, and presets, then style and download.',
       tech: ['React', 'Vite', 'Tailwind CSS', 'PWA'],
-      link: 'https://devmade-ai.github.io/canva-grid/',
+      link: 'https://canva-grid.vercel.app/',
     },
     {
       id: 'proj-synctone',
@@ -253,7 +253,7 @@ export const cvData: CVData = {
       description:
         'Dual-mode pricing and deal structuring tool for South African B2B software companies. Find optimal pricing and compare six transaction models with 47 variants.',
       tech: ['TypeScript', 'SvelteKit', 'Tailwind CSS', 'Vitest', 'Playwright'],
-      link: 'https://devmade-ai.github.io/model-pear/',
+      link: 'https://model-pear-web.vercel.app/',
     },
     {
       id: 'proj-sancio',
@@ -261,7 +261,7 @@ export const cvData: CVData = {
       description:
         'Build agreements piece by piece. Create individual text modules that can be written, discussed, and approved separately — the complete agreement takes shape as modules are added and locked in over time.',
       tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Supabase', 'PWA'],
-      link: 'https://devmade-ai.github.io/sun-sea-o/',
+      link: 'https://sun-sea-o.vercel.app/',
     },
     {
       id: 'proj-four-ems',
@@ -278,7 +278,7 @@ export const cvData: CVData = {
         'dnd-kit',
         'PWA',
       ],
-      link: 'https://devmade-ai.github.io/four-ems/',
+      link: 'https://four-ems.vercel.app/',
     },
     {
       id: 'proj-budgy-ting',
@@ -286,7 +286,7 @@ export const cvData: CVData = {
       description:
         'A personal budgeting tool to plan monthly budgets, track actual spending by importing bank statements, and visually compare expected versus actual. Everything stays in your browser — no accounts, no servers.',
       tech: ['Vue 3', 'TypeScript', 'Vite', 'UnoCSS', 'Dexie.js', 'PWA'],
-      link: 'https://devmade-ai.github.io/budgy-ting/',
+      link: 'https://budgy-ting.vercel.app/',
     },
     {
       id: 'proj-fuelhunt',
