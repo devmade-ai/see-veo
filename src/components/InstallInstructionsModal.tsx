@@ -1,7 +1,12 @@
 // Requirement: Accessible modal for PWA install instructions on unsupported browsers
-// Approach: Added role="dialog", aria-modal, aria-labelledby for screen reader support
+// Approach: role="dialog", aria-modal, aria-labelledby, Escape key handler, and focus
+//   trap for screen reader and keyboard accessibility
 // Alternatives considered:
 //   - Headless UI dialog: Rejected — adds a dependency for a single modal
+//   - No focus trap: Rejected — keyboard users can Tab behind the modal, violating
+//     WCAG 2.1 SC 2.4.3 (Focus Order) for aria-modal="true" dialogs
+
+import { useEffect, useRef } from 'react'
 
 interface InstallInstructionsModalProps {
   browser: string
@@ -16,12 +21,53 @@ export default function InstallInstructionsModal({
   note,
   onClose,
 }: InstallInstructionsModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  // Requirement: Escape key must close the modal (standard dialog behavior)
+  // Requirement: Focus must be trapped inside the modal while open
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+
+      // Focus trap: cycle Tab focus within the dialog
+      if (e.key === 'Tab' && dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable.length === 0) return
+
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    // Auto-focus the close button so keyboard users land inside the modal
+    const closeBtn = dialogRef.current?.querySelector<HTMLElement>('button')
+    closeBtn?.focus()
+
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 no-print"
       onClick={onClose}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="install-modal-title"

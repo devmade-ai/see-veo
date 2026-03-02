@@ -12,9 +12,7 @@
 //     and only loads when chart components are actually rendered
 
 import { useEffect } from 'react'
-
-/** URL of the repo-tor embed helper script */
-const EMBED_SCRIPT_URL = 'https://devmade-ai.github.io/repo-tor/embed.js'
+import { EMBED_SCRIPT_URL } from '../constants/embed'
 
 /**
  * Loads the repo-tor `embed.js` script once. The script auto-discovers all
@@ -31,6 +29,9 @@ export function useRepoTorEmbed() {
     const script = document.createElement('script')
     script.src = EMBED_SCRIPT_URL
     script.async = true
+    script.onerror = () => {
+      console.warn('[repo-tor] Failed to load embed.js — charts will use fallback height')
+    }
     document.head.appendChild(script)
   }, [])
 }

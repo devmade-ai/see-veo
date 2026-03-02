@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { detectBrowser, isStandalone } from '../utils/pwa'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>
@@ -11,23 +12,6 @@ interface InstallInstructions {
   note?: string
 }
 
-function detectBrowser() {
-  const ua = navigator.userAgent
-  if (ua.includes('Brave')) return 'brave'
-  if (ua.includes('Edg/')) return 'edge'
-  if (ua.includes('Chrome')) return 'chrome'
-  if (ua.includes('Safari') && !ua.includes('Chrome')) return 'safari'
-  if (ua.includes('Firefox')) return 'firefox'
-  return 'unknown'
-}
-
-function isStandalone() {
-  return (
-    window.matchMedia('(display-mode: standalone)').matches ||
-    (navigator as unknown as { standalone?: boolean }).standalone === true
-  )
-}
-
 export function usePWAInstall() {
   const [canInstall, setCanInstall] = useState(false)
   const [isInstalled, setIsInstalled] = useState(isStandalone)
@@ -35,11 +19,9 @@ export function usePWAInstall() {
   const browser = detectBrowser()
   const supportsAutoInstall = ['chrome', 'edge', 'brave'].includes(browser)
 
-  // Compute initial manual instructions state from browser detection rather than
-  // calling setState inside useEffect (which triggers cascading renders)
-  const [showManualInstructions, setShowManualInstructions] = useState(
-    () => !supportsAutoInstall && !isStandalone()
-  )
+  // No external consumer mutates this value, so a plain computed value suffices.
+  // Previously this was useState with an exported setter, but nothing called it.
+  const showManualInstructions = !supportsAutoInstall && !isStandalone()
 
   useEffect(() => {
     const handlePrompt = (e: Event) => {
@@ -117,11 +99,8 @@ export function usePWAInstall() {
   return {
     canInstall,
     install,
-    browser,
     isInstalled,
     showManualInstructions,
-    setShowManualInstructions,
-    supportsAutoInstall,
     getInstallInstructions,
   }
 }

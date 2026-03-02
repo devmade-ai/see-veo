@@ -17,6 +17,7 @@ import {
   type DebugSeverity,
   type DebugSource,
 } from '../utils/debugLog'
+import { isStandalone } from '../utils/pwa'
 
 type Tab = 'diagnostics' | 'log'
 
@@ -145,15 +146,20 @@ export default function DebugBanner() {
       })
       setDiagnostics([...checks])
 
+      // Requirement: Probe reachability without triggering side effects on the API
+      // Approach: HEAD request with no-cors — confirms network path without sending
+      //   a request body that the server would process as a real submission
+      // Alternatives considered:
+      //   - POST with body '{}': Rejected — sends a real (malformed) request to the API
+      //   - GET: Works but semantically HEAD is more appropriate for reachability probes
       let serverReachable = false
       try {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 5000)
         const res = await fetch(apiUrl, {
-          method: 'POST',
+          method: 'HEAD',
           mode: 'no-cors',
           signal: controller.signal,
-          body: '{}',
         })
         clearTimeout(timeoutId)
         // An opaque response means the server responded (reachable)
@@ -242,13 +248,11 @@ export default function DebugBanner() {
     }
 
     // 6. Standalone / installed
-    const isStandalone =
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (navigator as unknown as { standalone?: boolean }).standalone === true
+    const standalone = isStandalone()
     checks.push({
       label: 'Install State',
-      status: isStandalone ? 'pass' : 'warn',
-      detail: isStandalone ? 'Running as installed app' : 'Running in browser',
+      status: standalone ? 'pass' : 'warn',
+      detail: standalone ? 'Running as installed app' : 'Running in browser',
     })
 
     // 7. User agent
