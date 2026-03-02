@@ -13,6 +13,7 @@
 
 import { useEffect } from 'react'
 import { EMBED_SCRIPT_URL } from '../constants/embed'
+import { debugLog } from '../utils/debugLog'
 
 /**
  * Loads the repo-tor `embed.js` script once. The script auto-discovers all
@@ -30,7 +31,10 @@ export function useRepoTorEmbed() {
     script.src = EMBED_SCRIPT_URL
     script.async = true
     script.onerror = () => {
-      console.warn('[repo-tor] Failed to load embed.js — charts will use fallback height')
+      debugLog('App', 'warn', 'embed-script-failed', {
+        url: EMBED_SCRIPT_URL,
+        fallback: 'Charts will use CSS fallback height',
+      })
     }
     document.head.appendChild(script)
   }, [])

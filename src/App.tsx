@@ -30,6 +30,16 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background text-text">
+      {/* Requirement: Keyboard accessibility — skip link for screen readers and Tab users
+         Approach: Visually hidden anchor that becomes visible on focus, jumps to main content
+         Alternatives considered:
+           - No skip link: Rejected — violates WCAG 2.1 SC 2.4.1 (Bypass Blocks) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-background focus:outline-none"
+      >
+        Skip to content
+      </a>
       <Hero
         personal={cvData.personal}
         canInstall={canInstall}
@@ -46,7 +56,7 @@ function App() {
            - CTA after Experience: Rejected — user moved form to follow Activity instead
            - Contact section with heading: Rejected — user requested heading removal and
              splitting contact into footer (LinkedIn/GitHub) and inline form */}
-      <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+      <main id="main-content" className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <About paragraphs={cvData.about} />
         <Skills categories={cvData.skills} />
         <Projects items={cvData.projects} />
@@ -58,7 +68,7 @@ function App() {
       </main>
 
       <footer className="py-8 text-center text-sm text-text-muted no-print">
-        <div className="mb-4 flex justify-center gap-6">
+        <nav aria-label="Social links" className="mb-4 flex justify-center gap-6">
           <a
             href={cvData.contact.linkedin}
             target="_blank"
@@ -75,7 +85,7 @@ function App() {
           >
             GitHub
           </a>
-        </div>
+        </nav>
         <p>
           &copy; {new Date().getFullYear()} {cvData.personal.name}. All rights
           reserved.
