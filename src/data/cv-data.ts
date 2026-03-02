@@ -308,7 +308,7 @@ export const cvData: CVData = {
       description:
         'Turn any project\'s coding history into easy-to-read charts and reports, showing who contributed, when work happened, and how the project evolved over time.',
       tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Chart.js', 'PWA'],
-      link: 'https://devmade-ai.github.io/repo-tor/',
+      link: 'https://repo-tor.vercel.app/',
     },
     {
       id: 'proj-chatty-chart',
