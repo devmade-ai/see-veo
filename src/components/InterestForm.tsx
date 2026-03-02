@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { debugLog } from '../utils/debugLog'
+import { validatePayload } from '../utils/validation'
 
 // Requirement: Allow visitors to express interest via a one-off email notification
 // Approach: Client-side form that POSTs to a serverless API endpoint which sends via SMTP
@@ -89,14 +90,14 @@ async function diagnoseFailure(apiUrl: string): Promise<FailureCause> {
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
 
-interface FormData {
+interface InterestFormData {
   name: string
   email: string
   message: string
 }
 
 export default function InterestForm() {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<InterestFormData>({
     name: '',
     email: '',
     message: '',
@@ -130,6 +131,23 @@ export default function InterestForm() {
     if (honeypot) {
       debugLog('InterestForm', 'info', 'honeypot-triggered')
       setStatus('success')
+      return
+    }
+
+    // Client-side validation using the shared validatePayload utility.
+    // Catches invalid input before making a network request, providing
+    // faster feedback and reducing unnecessary API calls.
+    const validated = validatePayload(formData)
+    if (!validated) {
+      debugLog('InterestForm', 'warn', 'validation-failed', {
+        name: formData.name.length,
+        email: formData.email.length,
+        message: formData.message.length,
+      })
+      setStatus('error')
+      setErrorMessage(
+        'Please check your details. Make sure your name, email, and message are filled in correctly.'
+      )
       return
     }
 

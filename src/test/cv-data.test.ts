@@ -50,6 +50,38 @@ describe('cvData', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
+  it('has at least one project entry', () => {
+    expect(cvData.projects.length).toBeGreaterThan(0)
+  })
+
+  it('has all required fields in project entries', () => {
+    for (const item of cvData.projects) {
+      expect(item.id).toBeTruthy()
+      expect(item.name).toBeTruthy()
+      expect(item.description).toBeTruthy()
+      expect(Array.isArray(item.tech)).toBe(true)
+      expect(item.tech.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('has all required fields in education entries', () => {
+    for (const item of cvData.education) {
+      expect(item.id).toBeTruthy()
+      expect(item.institution).toBeTruthy()
+      expect(item.degree).toBeTruthy()
+      expect(item.period).toBeTruthy()
+    }
+  })
+
+  it('has at least one skill category with skills', () => {
+    expect(cvData.skills.length).toBeGreaterThan(0)
+    for (const cat of cvData.skills) {
+      expect(cat.id).toBeTruthy()
+      expect(cat.category).toBeTruthy()
+      expect(cat.skills.length).toBeGreaterThan(0)
+    }
+  })
+
   it('has contact info with social links', () => {
     expect(cvData.contact.linkedin).toContain('linkedin.com')
     expect(cvData.contact.github).toContain('github.com')

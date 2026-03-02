@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { detectBrowser, isStandalone } from '../utils/pwa'
 
 interface BeforeInstallPromptEvent extends Event {
@@ -12,16 +12,23 @@ interface InstallInstructions {
   note?: string
 }
 
+// Browser detection is derived from navigator.userAgent which never changes
+// within a page session. Computed once at module level to avoid re-running
+// on every render and to keep the useEffect dependency array honest (empty).
+const browser = detectBrowser()
+const supportsAutoInstall = ['chrome', 'edge', 'brave'].includes(browser)
+
 export function usePWAInstall() {
   const [canInstall, setCanInstall] = useState(false)
   const [isInstalled, setIsInstalled] = useState(isStandalone)
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null)
-  const browser = detectBrowser()
-  const supportsAutoInstall = ['chrome', 'edge', 'brave'].includes(browser)
 
   // No external consumer mutates this value, so a plain computed value suffices.
   // Previously this was useState with an exported setter, but nothing called it.
-  const showManualInstructions = !supportsAutoInstall && !isStandalone()
+  const showManualInstructions = useMemo(
+    () => !supportsAutoInstall && !isStandalone(),
+    [isInstalled], // eslint-disable-line react-hooks/exhaustive-deps -- recalculate when install state changes
+  )
 
   useEffect(() => {
     const handlePrompt = (e: Event) => {
@@ -43,7 +50,7 @@ export function usePWAInstall() {
       window.removeEventListener('beforeinstallprompt', handlePrompt)
       window.removeEventListener('appinstalled', handleInstalled)
     }
-  }, [supportsAutoInstall])
+  }, [])
 
   const install = useCallback(async () => {
     if (!deferredPrompt.current) return false
@@ -94,7 +101,7 @@ export function usePWAInstall() {
         'Or use the browser menu \u2192 "Install app..."',
       ],
     }
-  }, [browser])
+  }, [])
 
   return {
     canInstall,

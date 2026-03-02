@@ -13,19 +13,23 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 ## Project Structure
 
 - `src/data/cv-data.ts` — All CV content and TypeScript interfaces. Edit this single file to update the resume.
-- `src/components/` — One component per CV section (Hero, About, Experience, Education, Skills, Projects, Contact) plus reusable helpers (Section, TimelineItem, SkillBadge) and `InterestForm` for the contact form.
-- `src/hooks/` — Custom React hooks. `useRepoTorEmbed` loads repo-tor's `embed.js` helper script to auto-size chart iframes; PWA hooks for install/update prompts.
+- `src/components/` — One component per CV section (Hero, About, Experience, Education, Skills, Projects) plus feature components (ActivityCharts, ActivityTimeline, InterestForm, DebugBanner, UpdatePrompt, InstallInstructionsModal) and reusable helpers (Section, TimelineItem, SkillBadge).
+- `src/hooks/` — Custom React hooks. `useRepoTorEmbed` loads repo-tor's `embed.js` helper script to auto-size chart iframes; `usePWAInstall` and `usePWAUpdate` for install/update prompts.
+- `src/constants/embed.ts` — Centralized repo-tor embed configuration (base URL, script URL, chart colors).
+- `src/utils/` — Shared utilities: `debugLog.ts` (pub/sub event store for mobile debugging), `pwa.ts` (browser detection, standalone check), `validation.ts` (email pattern, form payload validation).
 - `src/index.css` — Tailwind import, custom `@theme` color tokens (dark palette), and print styles.
 - `src/App.tsx` — Composes all sections into a single-page layout. No routing.
-- `vite.config.ts` — Vite config with Tailwind plugin and PWA plugin.
+- `vite.config.ts` — Vite config with Tailwind plugin, PWA plugin, and Workbox runtime caching rules.
 - `vercel.json` — Vercel deployment config with SPA rewrites.
-- `vitest.config.ts` — Vitest config with jsdom environment and React plugin.
+- `vitest.config.ts` — Vitest config with jsdom environment, React plugin, and setup file (`src/test/setup.ts`).
 - `src/test/` — Test files (Vitest + Testing Library).
+- `.env.example` — Example environment variables (`VITE_INTEREST_API_URL`).
 
 ## Commands
 
 - `npm run dev` — Start dev server
 - `npm run build` — TypeScript check + production build (`tsc -b && vite build`)
+- `npm run lint` — Run ESLint
 - `npm run preview` — Preview production build locally
 - `npm run test` — Run Vitest test suite
 - `npm run test:watch` — Run Vitest in watch mode
@@ -36,7 +40,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - Single-page app with no client-side routing.
 - PWA `scope` and `start_url` use `/` — Vercel serves at root, no base-path prefix needed.
 - Print styles in `src/index.css` override to white background. Elements with class `no-print` are hidden when printing.
-- Interest notification form in Contact section — POSTs to an **external** API endpoint (separate project, not part of this repo) configured via `VITE_INTEREST_API_URL` env variable. Hidden when printing. Degrades gracefully when API is not configured or offline.
+- Interest notification form (`InterestForm` component, rendered inline after Education) — POSTs to an **external** API endpoint (separate project, not part of this repo) configured via `VITE_INTEREST_API_URL` env variable. Hidden when printing. Degrades gracefully when API is not configured or offline. Client-side validation via shared `validatePayload` utility before network requests.
 
 ---
 
@@ -108,7 +112,7 @@ Assume all end users are non-technical. This is non-negotiable.
 - Provide feedback for all user actions (loading states, success confirmations, etc.)
 - Design for the least technical person who will use this
 
-> **Project note:** The site includes an interest/contact form in the Contact section. All UX rules above apply to this and any future interactive features.
+> **Project note:** The site includes an interest/contact form (`InterestForm` component). All UX rules above apply to this and any future interactive features.
 
 ### Cleanup
 
@@ -166,7 +170,7 @@ Epic: feature-name
 Semver: patch|minor|major
 ```
 
-**Tags:** Use from the project's tag list (see docs/EXTRACTION_PLAYBOOK.md)
+**Tags:** Free-form descriptive tags relevant to the change (e.g., `audit`, `a11y`, `validation`, `pwa`, `embed`, `form`, `testing`, `styling`, `data`, `infrastructure`)
 **Complexity:** 1=trivial, 2=small, 3=medium, 4=large, 5=major rewrite
 **Urgency:** 1=planned, 2=normal, 3=elevated, 4=urgent, 5=critical
 **Impact:** internal, user-facing, infrastructure, or api
