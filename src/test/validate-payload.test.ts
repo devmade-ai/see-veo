@@ -1,38 +1,12 @@
-import { describe, it, expect } from 'vitest'
-
 // Requirement: Test the validatePayload and email regex logic used by the external API
-// Approach: Replicate the validation logic locally for unit testing, ensuring this
-//   frontend stays in sync with the API's contract
+// Approach: Import and test the real functions from utils/validation
 // Alternatives considered:
+//   - Local copy of functions: Rejected — tests a copy, not the real code
 //   - Integration tests only: Rejected — unit tests catch edge cases faster
 //   - Shared package: Rejected — adds coupling between two independently deployed projects
 
-const EMAIL_PATTERN = /^[a-zA-Z0-9](?:[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]*[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/
-
-interface InterestPayload {
-  name: string
-  email: string
-  message: string
-}
-
-function validatePayload(data: unknown): InterestPayload | null {
-  if (typeof data !== 'object' || data === null) return null
-
-  const obj = data as Record<string, unknown>
-  const { name, email, message } = obj
-
-  if (typeof name !== 'string' || name.trim().length === 0 || name.length > 100) return null
-  if (typeof email !== 'string' || email.length > 254) return null
-  if (typeof message !== 'string' || message.trim().length === 0 || message.length > 2000) return null
-
-  if (!EMAIL_PATTERN.test(email.trim())) return null
-
-  return {
-    name: name.trim(),
-    email: email.trim(),
-    message: message.trim(),
-  }
-}
+import { describe, it, expect } from 'vitest'
+import { validatePayload, EMAIL_PATTERN } from '../utils/validation'
 
 describe('validatePayload', () => {
   it('accepts a valid payload', () => {

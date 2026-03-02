@@ -68,7 +68,7 @@ repo-tor provides an `embed.js` helper script that auto-discovers all repo-tor i
 on the page and handles `repo-tor:resize` postMessage events. Embedders include it once:
 
 ```html
-<script src="https://devmade-ai.github.io/repo-tor/embed.js"></script>
+<script src="https://repo-tor.vercel.app/embed.js"></script>
 ```
 
 This project loads the script dynamically via `src/hooks/useRepoTorEmbed.ts`, which
@@ -79,6 +79,11 @@ inline `style.height`.
 Opt-out: remove the hook usage and omit the script. Iframes stay at their static CSS height.
 The postMessage calls are entirely passive — no listener means no effect.
 
+**Configuration:**
+
+All embed constants (base URL, script URL, chart colors) are centralized in
+`src/constants/embed.ts`. Components import from there — no duplication.
+
 ---
 
-*Last updated: 2026-02-19 — Switched from custom useIframeAutoResize listener to repo-tor's embed.js helper script*
+*Last updated: 2026-03-02 — Migrated embed URLs from GitHub Pages to Vercel, centralized constants*

@@ -1,24 +1,14 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
-
 // Requirement: Test browser detection logic used for PWA install instructions
-// Approach: Mock navigator.userAgent and test each detection path
+// Approach: Import and test the real detectBrowser function from utils/pwa
 // Alternatives considered:
+//   - Local copy of function: Rejected — tests a copy, not the real code, so
+//     regressions in the actual function go undetected
 //   - Test via component rendering: Rejected — slower, couples test to UI
 
-function detectBrowser(ua: string) {
-  if (ua.includes('Brave')) return 'brave'
-  if (ua.includes('Edg/')) return 'edge'
-  if (ua.includes('Chrome')) return 'chrome'
-  if (ua.includes('Safari') && !ua.includes('Chrome')) return 'safari'
-  if (ua.includes('Firefox')) return 'firefox'
-  return 'unknown'
-}
+import { describe, it, expect } from 'vitest'
+import { detectBrowser } from '../utils/pwa'
 
 describe('detectBrowser', () => {
-  afterEach(() => {
-    vi.restoreAllMocks()
-  })
-
   it('detects Chrome', () => {
     expect(detectBrowser('Mozilla/5.0 Chrome/120.0.0.0 Safari/537.36')).toBe('chrome')
   })

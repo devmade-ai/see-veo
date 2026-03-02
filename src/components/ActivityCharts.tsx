@@ -7,23 +7,7 @@
 
 import Section from './Section'
 import { useRepoTorEmbed } from '../hooks/useRepoTorEmbed'
-
-/** Base URL for the repo-tor embed dashboard */
-const EMBED_BASE = 'https://devmade-ai.github.io/repo-tor/'
-
-// Requirement: Chart colors and background must match the see-veo theme palette
-// Approach: Pass bg=transparent so iframe inherits the card's bg-surface color,
-//   plus accent and muted URL params mapped from @theme tokens in index.css
-// Alternatives considered:
-//   - bg=1e293b (hardcoded surface hex): Rejected — breaks if surface token changes
-//   - CSS variable overrides: Rejected — CSS vars can't cross iframe boundaries
-//   - Named palette preset: Rejected — none of the presets match our custom theme
-//   - colors param: Rejected — daily/hourly are single-dataset charts, accent+muted is correct
-
-/** Primary theme color (--color-primary: #38bdf8) for work-hours / weekday bars */
-const CHART_ACCENT = '38bdf8'
-/** Secondary theme color (--color-secondary: #818cf8) for after-hours / weekend bars */
-const CHART_MUTED = '818cf8'
+import { EMBED_BASE, CHART_ACCENT, CHART_MUTED } from '../constants/embed'
 
 interface ChartEmbedProps {
   embedId: string
@@ -47,6 +31,7 @@ function ChartEmbed({ embedId, title }: ChartEmbedProps) {
         title={title}
         className="mt-auto h-80 w-full border-none sm:h-96"
         loading="lazy"
+        sandbox="allow-scripts"
       />
     </div>
   )
