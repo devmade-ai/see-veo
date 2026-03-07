@@ -15,6 +15,18 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Requirement: Capture beforeinstallprompt before React mounts
+         Approach: Inline script stores the event on window so the React hook can retrieve it
+         Alternatives considered:
+           - Move listener to main.tsx before createRoot: Rejected — module scripts are deferred,
+             so the event may still fire before the module executes
+           - Synchronous external script: Rejected — adds a network request; inline is instant -->
+    <script>
+      window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        window.__pwaInstallPrompt = e;
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
