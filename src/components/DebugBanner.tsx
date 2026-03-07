@@ -312,13 +312,20 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
     //     consumes it, so it would always be null after mount
     const browser = detectBrowser()
     const expectsPrompt = ['chrome', 'edge', 'brave'].includes(browser)
+    // Requirement: Accurate Install Prompt diagnostic on Brave Mobile and similar browsers
+    // Approach: Explain the most common reasons the prompt hasn't fired instead of
+    //   suggesting a timing bug that the early-capture script already addresses
+    // Alternatives considered:
+    //   - Keep old "fired before React mounted" message: Rejected — misleading since
+    //     index.html inline script captures early events; real causes are browser
+    //     engagement heuristics, prior dismissal, or privacy shields (Brave)
     checks = [...checks, {
       label: 'Install Prompt',
       status: canInstall ? 'pass' : expectsPrompt ? 'warn' : 'pass',
       detail: canInstall
         ? 'Ready — install button visible'
         : expectsPrompt
-          ? 'Not captured — beforeinstallprompt may have fired before React mounted'
+          ? 'Not available — visit a few times or check browser privacy settings'
           : 'N/A — this browser uses manual install',
     }]
 

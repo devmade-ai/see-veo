@@ -4,9 +4,17 @@
 //   - Keep in usePWAInstall hook: Rejected — DebugBanner duplicated isStandalone,
 //     and tests duplicated detectBrowser, causing drift risk
 
-/** Detect the current browser from the user agent string */
+// Requirement: Detect Brave on mobile where UA string lacks "Brave" identifier
+// Approach: Check navigator.brave API first (Brave exposes this on all platforms),
+//   then fall back to UA string matching for older versions or test environments
+// Alternatives considered:
+//   - UA string only: Rejected — Brave Mobile strips "Brave" from the UA,
+//     causing misdetection as Chrome (see debug report 2026-03-07)
+//   - Async isBrave() call: Rejected — detectBrowser is used synchronously at
+//     module level; the mere existence of navigator.brave is sufficient
+/** Detect the current browser from the user agent string and navigator APIs */
 export function detectBrowser(ua = navigator.userAgent) {
-  if (ua.includes('Brave')) return 'brave'
+  if ((typeof navigator !== 'undefined' && 'brave' in navigator) || ua.includes('Brave')) return 'brave'
   if (ua.includes('Edg/')) return 'edge'
   if (ua.includes('Chrome')) return 'chrome'
   if (ua.includes('Safari') && !ua.includes('Chrome')) return 'safari'
