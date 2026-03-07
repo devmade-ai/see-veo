@@ -79,8 +79,22 @@ export function getDebugEntries(): DebugEntry[] {
   return [...entries]
 }
 
+// Requirement: Copy All must include diagnostics detail, not just event log
+// Approach: Accept optional diagnostics array so DebugBanner can pass its local
+//   state into the report. Diagnostics section renders before the event log.
+// Alternatives considered:
+//   - Store diagnostics in the shared log module: Rejected — diagnostics are
+//     async and component-scoped; duplicating that state here adds coupling
+//   - Only include diagnostics in the event log entry: Rejected — the
+//     diagnostics-ran event is a single JSON blob, harder to read than a table
+export interface DiagnosticResult {
+  label: string
+  status: string
+  detail: string
+}
+
 /** Format all entries as a plain-text report for pasting into another session */
-export function formatDebugReport(): string {
+export function formatDebugReport(diagnostics?: DiagnosticResult[]): string {
   const lines: string[] = [
     '## Debug Report',
     '',
@@ -90,9 +104,18 @@ export function formatDebugReport(): string {
     `Online: ${navigator.onLine}`,
     `Protocol: ${window.location.protocol}`,
     '',
-    `### Event Log (${entries.length} entries)`,
-    '',
   ]
+
+  if (diagnostics && diagnostics.length > 0) {
+    lines.push(`### Diagnostics (${diagnostics.length} checks)`, '')
+    for (const check of diagnostics) {
+      const icon = check.status === 'pass' ? '✓' : check.status === 'fail' ? '✗' : '⚠'
+      lines.push(`${icon} [${check.status.toUpperCase()}] ${check.label}: ${check.detail}`)
+    }
+    lines.push('')
+  }
+
+  lines.push(`### Event Log (${entries.length} entries)`, '')
 
   for (const entry of entries) {
     const time = new Date(entry.timestamp).toLocaleTimeString()

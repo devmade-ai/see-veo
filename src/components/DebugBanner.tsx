@@ -346,7 +346,7 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
     setDiagnostics(checks)
 
     debugLog('App', 'info', 'diagnostics-ran', {
-      results: checks.map((c) => ({ label: c.label, status: c.status })),
+      results: checks.map((c) => ({ label: c.label, status: c.status, detail: c.detail })),
     })
   }, [])
 
@@ -354,7 +354,7 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
   // (moved out of useEffect to avoid calling setState inside an effect)
 
   const handleCopy = async () => {
-    const text = formatDebugReport()
+    const text = formatDebugReport(diagnostics)
     try {
       await navigator.clipboard.writeText(text)
       setCopyState('copied')
@@ -484,7 +484,7 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
           <textarea
             readOnly
             rows={6}
-            value={formatDebugReport()}
+            value={formatDebugReport(diagnostics)}
             onFocus={(e) => e.target.select()}
             className="w-full rounded border border-border bg-background p-1.5 text-xs font-mono text-text-muted focus:border-primary focus:outline-none"
           />
