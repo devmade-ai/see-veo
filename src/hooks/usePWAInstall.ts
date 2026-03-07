@@ -16,7 +16,9 @@ interface InstallInstructions {
 // within a page session. Computed once at module level to avoid re-running
 // on every render and to keep the useEffect dependency array honest (empty).
 const browser = detectBrowser()
-const supportsAutoInstall = ['chrome', 'edge', 'brave'].includes(browser)
+// All Chromium-based browsers support the beforeinstallprompt event.
+// Browsers not in this list (Safari, Firefox) require manual install instructions.
+const supportsAutoInstall = ['chrome', 'edge', 'brave', 'opera', 'samsung', 'vivaldi', 'arc'].includes(browser)
 
 export function usePWAInstall() {
   const [canInstall, setCanInstall] = useState(false)
@@ -109,11 +111,31 @@ export function usePWAInstall() {
         note: 'Firefox removed PWA support in 2021. Use Chrome, Edge, or Brave instead.',
       }
     }
+    // Requirement: Samsung Internet uses a download icon instead of a generic install icon
+    // Approach: Dedicated instructions referencing Samsung's specific UI elements
+    // Alternatives considered:
+    //   - Use generic Chromium instructions: Rejected — Samsung Internet's install UI
+    //     differs (download icon, not install icon) and users may not find it
+    if (browser === 'samsung') {
+      return {
+        browser: 'Samsung Internet',
+        steps: [
+          'Tap the download icon in the address bar',
+          'Or tap the menu (three lines) → "Add page to" → "Home screen"',
+        ],
+      }
+    }
+    // Prettify browser names for the generic fallback
+    const browserNames: Record<string, string> = {
+      opera: 'Opera',
+      vivaldi: 'Vivaldi',
+      arc: 'Arc',
+    }
     return {
-      browser: browser.charAt(0).toUpperCase() + browser.slice(1),
+      browser: browserNames[browser] ?? browser.charAt(0).toUpperCase() + browser.slice(1),
       steps: [
         'Click the install icon in the address bar',
-        'Or use the browser menu \u2192 "Install app..."',
+        'Or use the browser menu → "Install app..."',
       ],
     }
   }, [])

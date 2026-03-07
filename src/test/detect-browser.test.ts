@@ -48,6 +48,26 @@ describe('detectBrowser', () => {
     expect(detectBrowser('Mozilla/5.0 Firefox/120.0')).toBe('firefox')
   })
 
+  it('detects Opera via OPR/ token', () => {
+    expect(detectBrowser('Mozilla/5.0 Chrome/120.0.0.0 Safari/537.36 OPR/106.0.0.0')).toBe('opera')
+  })
+
+  it('detects Opera via Opera token', () => {
+    expect(detectBrowser('Mozilla/5.0 Opera/9.80')).toBe('opera')
+  })
+
+  it('detects Samsung Internet', () => {
+    expect(detectBrowser('Mozilla/5.0 (Linux; Android 13) Chrome/111.0.0.0 Mobile Safari/537.36 SamsungBrowser/23.0')).toBe('samsung')
+  })
+
+  it('detects Vivaldi', () => {
+    expect(detectBrowser('Mozilla/5.0 Chrome/120.0.0.0 Safari/537.36 Vivaldi/6.5.3206.50')).toBe('vivaldi')
+  })
+
+  it('detects Arc', () => {
+    expect(detectBrowser('Mozilla/5.0 Chrome/120.0.0.0 Safari/537.36 Arc/1.24.0')).toBe('arc')
+  })
+
   it('returns unknown for unrecognized UA', () => {
     expect(detectBrowser('SomeRandomBrowser/1.0')).toBe('unknown')
   })
