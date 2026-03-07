@@ -17,9 +17,14 @@ import {
   type DebugSeverity,
   type DebugSource,
 } from '../utils/debugLog'
-import { isStandalone } from '../utils/pwa'
+import { detectBrowser, isStandalone } from '../utils/pwa'
 
 type Tab = 'diagnostics' | 'log'
+
+interface DebugBannerProps {
+  /** Whether the native install prompt was captured */
+  canInstall?: boolean
+}
 
 interface DiagnosticCheck {
   label: string
@@ -43,7 +48,7 @@ const sourceColors: Record<DebugSource, string> = {
 // Requirement: Floating debug panel for PWA / email diagnostics
 // Note: UpdatePrompt moved to a top banner, so no vertical offset is needed here.
 
-export default function DebugBanner() {
+export default function DebugBanner({ canInstall }: DebugBannerProps) {
   const [expanded, setExpanded] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('diagnostics')
   const [entries, setEntries] = useState<DebugEntry[]>([])
@@ -298,7 +303,33 @@ export default function DebugBanner() {
       detail: standalone ? 'Running as installed app' : 'Running in browser',
     }]
 
-    // 7. User agent
+    // 7. Install prompt — whether beforeinstallprompt was captured
+    // Requirement: Surface install prompt state in diagnostics so missing "Install as App"
+    //   button can be diagnosed without devtools
+    // Approach: Accept canInstall as a prop from App (sourced from usePWAInstall hook)
+    // Alternatives considered:
+    //   - Read window.__pwaInstallPrompt directly: Rejected — it's deleted after the hook
+    //     consumes it, so it would always be null after mount
+    const browser = detectBrowser()
+    const expectsPrompt = ['chrome', 'edge', 'brave'].includes(browser)
+    checks = [...checks, {
+      label: 'Install Prompt',
+      status: canInstall ? 'pass' : expectsPrompt ? 'warn' : 'pass',
+      detail: canInstall
+        ? 'Ready — install button visible'
+        : expectsPrompt
+          ? 'Not captured — beforeinstallprompt may have fired before React mounted'
+          : 'N/A — this browser uses manual install',
+    }]
+
+    // 8. Detected browser — useful since Brave reports as Chrome in the UA string
+    checks = [...checks, {
+      label: 'Detected Browser',
+      status: 'pass',
+      detail: browser.charAt(0).toUpperCase() + browser.slice(1),
+    }]
+
+    // 9. User agent
     checks = [...checks, {
       label: 'User Agent',
       status: 'pass',
