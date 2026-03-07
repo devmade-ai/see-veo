@@ -28,25 +28,28 @@ const MAX_ATTEMPTS = 2
 const ERROR_AUTO_DISMISS_MS = 8_000
 const CORS_PROBE_TIMEOUT_MS = 3_000
 
-// Requirement: Distinguish three failure modes when fetch throws TypeError on mobile Chrome:
+// Requirement: Distinguish failure modes when fetch throws TypeError on mobile:
 //   (a) API not deployed — Vercel returns 404 without CORS headers → looks like network error
 //   (b) API deployed but CORS misconfigured — function runs but browser blocks response
 //   (c) Server genuinely unreachable — network/DNS failure
+//   (d) Browser privacy features blocking cross-origin requests (Brave Shields, etc.)
 // Approach: Check health endpoint (GET /api/health with cors) to detect deployment status,
-//   then no-cors probe to detect CORS vs network. Health endpoint has no CORS restrictions
-//   on Vercel's default 200 response, so it cleanly separates "deployed" from "not deployed".
+//   then no-cors probe to distinguish "server down" from "browser blocking".
+//   When cors health fails but no-cors succeeds, the server IS up — the failure is
+//   browser-level blocking, not "API not deployed".
 // Alternatives considered:
-//   - no-cors probe only: Rejected — cannot tell "404 without CORS" from "200 with CORS
-//     blocking", both return opaque response. Vercel serves 404 for missing functions and
-//     the server IS reachable, so opaque succeeds in both cases
+//   - no-cors probe only: Rejected — opaque responses can't distinguish 200 from 404;
+//     Vercel serves both and the server IS reachable, so opaque succeeds in both cases
 //   - Assume always network: Rejected — gives "could not reach server" when the API
 //     is just not deployed, which is confusing and not actionable
-type FailureCause = 'not-deployed' | 'cors' | 'network'
+//   - Assume always not-deployed when cors fails: Rejected — misdiagnoses on Brave and
+//     other privacy-focused browsers that block cross-origin fetches
+type FailureCause = 'not-deployed' | 'cors' | 'network' | 'browser-blocked'
 
 async function diagnoseFailure(apiUrl: string): Promise<FailureCause> {
   // Step 1: Check health endpoint to verify the API is deployed.
-  // The /api/health endpoint returns {"status":"ok"} and since Vercel serverless
-  // functions set their own headers, a working health endpoint proves deployment.
+  // Uses cors-mode GET so we can read the status code. If it succeeds, we know
+  // the API is deployed and can proceed to check CORS on the actual endpoint.
   const healthUrl = apiUrl.replace(/\/[^/]+$/, '/health')
   try {
     const controller = new AbortController()
@@ -62,8 +65,9 @@ async function diagnoseFailure(apiUrl: string): Promise<FailureCause> {
       return 'not-deployed'
     }
   } catch {
-    // Health endpoint fetch failed — could be CORS blocking or not deployed.
-    // Try a no-cors probe to see if the server is reachable at all.
+    // Health endpoint fetch failed — could be CORS blocking, browser privacy
+    // features, or genuinely not deployed. Try a no-cors probe to check if
+    // the server is reachable at all.
     try {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), CORS_PROBE_TIMEOUT_MS)
@@ -74,8 +78,13 @@ async function diagnoseFailure(apiUrl: string): Promise<FailureCause> {
       })
       clearTimeout(timeoutId)
       if (res.type === 'opaque') {
-        // Server responded but health endpoint doesn't exist — not deployed
-        return 'not-deployed'
+        // Server responded (opaque = reachable) but the cors fetch was blocked.
+        // This typically means browser privacy features (Brave Shields, tracker
+        // protection) are intercepting the cross-origin request, NOT that the
+        // API is down. Cannot distinguish 200 from 404 in opaque mode, but
+        // the server being reachable makes "browser-blocked" more accurate than
+        // "not-deployed" for privacy-focused browsers.
+        return 'browser-blocked'
       }
     } catch {
       // Server completely unreachable
@@ -345,6 +354,15 @@ export default function InterestForm() {
           setErrorMessage(
             'This feature is temporarily unavailable — the messaging service is offline. '
             + 'Please reach out directly via email instead.'
+          )
+          break
+        case 'browser-blocked':
+          // Requirement: Actionable message for privacy-focused browser users
+          // Approach: Suggest disabling shields/tracker blocking for this site,
+          //   with a fallback to email. Non-technical language per UX rules.
+          setErrorMessage(
+            'Your browser\'s privacy settings may be blocking this form. '
+            + 'Try disabling ad/tracker blocking for this site, or reach out directly via email instead.'
           )
           break
         case 'cors':

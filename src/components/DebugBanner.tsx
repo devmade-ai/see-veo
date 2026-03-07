@@ -99,19 +99,25 @@ export default function DebugBanner() {
     //   (a) API not deployed — function returns 404, no CORS headers
     //   (b) API deployed but CORS misconfigured — function runs but browser blocks
     //   (c) Network failure — server genuinely unreachable
-    // Approach: Three-phase probe:
-    //   1. Health endpoint (no-cors) — detects deployment status without CORS
+    //   (d) Browser privacy features blocking cross-origin requests (Brave Shields, etc.)
+    // Approach: Three-phase probe with post-check refinement:
+    //   1. Health endpoint (cors) — reads status code to verify deployment
     //   2. Send-interest endpoint (no-cors) — confirms network path to actual endpoint
     //   3. OPTIONS with cors — verifies CORS headers are set correctly
+    //   After steps 1+2: if health failed but server is reachable, amend the
+    //   "API Deployed" result to warn about browser blocking instead of claiming
+    //   the API is down.
     // Alternatives considered:
+    //   - Health endpoint with no-cors: Rejected — opaque responses can't distinguish
+    //     200 from 404, making the deployment check meaningless
     //   - Single OPTIONS request: Rejected — 404-without-CORS and CORS-misconfigured
     //     both throw identical TypeError on mobile Chrome, impossible to distinguish
-    //   - Skip health check: Rejected — cannot tell "not deployed" from "CORS blocking"
     if (apiUrl) {
       // 4a. Health endpoint — verifies the API is actually deployed on Vercel.
-      // Uses the /api/health endpoint which returns {"status":"ok"} with no CORS
-      // restrictions. A no-cors opaque response means the function exists and runs.
-      // A network error (even with the server reachable) means 404 / not deployed.
+      // Uses cors-mode GET to /api/health so we can read the status code.
+      // If the fetch succeeds (res.ok), the API is confirmed deployed.
+      // If it throws (CORS blocked, browser privacy features, or truly not deployed),
+      // the catch reports a preliminary 'fail' that step 4a→4b refinement may amend.
       const healthUrl = apiUrl.replace(/\/[^/]+$/, '/health')
       checks = [...checks, {
         label: 'API Deployed',
@@ -186,6 +192,32 @@ export default function DebugBanner() {
           status: 'fail',
           detail: err instanceof Error ? err.message : 'Connection failed',
         })
+      }
+
+      // 4a→4b refinement: If the cors-mode health fetch threw (apiDeployed=false)
+      // but the no-cors reachability probe passed (serverReachable=true), the
+      // server IS up — the health failure is most likely the browser blocking the
+      // cross-origin response (e.g., Brave Shields, tracker protection, strict
+      // CORS on the health endpoint). Update the "API Deployed" label to reflect
+      // this so the user doesn't see "API not deployed" for a running server.
+      // Requirement: Accurate diagnostic messages on privacy-focused mobile browsers
+      // Approach: Post-check refinement — keep cors health check for status-code
+      //   accuracy, then amend the message when the reachability probe contradicts it
+      // Alternatives considered:
+      //   - Switch health check to no-cors: Rejected — opaque responses can't
+      //     distinguish 200 from 404, making the check meaningless
+      //   - Remove health check: Rejected — still useful when it succeeds (non-blocking browsers)
+      if (!apiDeployed && serverReachable) {
+        checks = checks.map((c) =>
+          c.label === 'API Deployed'
+            ? {
+                ...c,
+                status: 'warn' as const,
+                detail: 'Server is up but health check was blocked — likely browser privacy settings or CORS',
+              }
+            : c,
+        )
+        setDiagnostics(checks)
       }
 
       // 4c. CORS headers check via explicit cors OPTIONS request.
