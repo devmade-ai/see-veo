@@ -17,7 +17,7 @@ import {
   type DebugSeverity,
   type DebugSource,
 } from '../utils/debugLog'
-import { detectBrowser, isStandalone } from '../utils/pwa'
+import { detectBrowser, isStandalone, CHROMIUM_BROWSERS } from '../utils/pwa'
 
 type Tab = 'diagnostics' | 'log'
 
@@ -311,7 +311,7 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
     //   - Read window.__pwaInstallPrompt directly: Rejected — it's deleted after the hook
     //     consumes it, so it would always be null after mount
     const browser = detectBrowser()
-    const expectsPrompt = ['chrome', 'edge', 'brave', 'opera', 'samsung', 'vivaldi', 'arc'].includes(browser)
+    const expectsPrompt = CHROMIUM_BROWSERS.includes(browser)
     // Requirement: Accurate Install Prompt diagnostic on Brave Mobile and similar browsers
     // Approach: Explain the most common reasons the prompt hasn't fired instead of
     //   suggesting a timing bug that the early-capture script already addresses
