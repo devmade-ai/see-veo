@@ -43,6 +43,21 @@ export function usePWAInstall() {
       deferredPrompt.current = null
     }
 
+    // Requirement: Recover beforeinstallprompt events that fired before React mounted
+    // Approach: index.html captures the event on window.__pwaInstallPrompt via an inline
+    //   script that runs synchronously before the deferred module bundle. The hook checks
+    //   for this early-captured event on mount and consumes it.
+    // Alternatives considered:
+    //   - Move listener into main.tsx before createRoot: Rejected — module scripts are
+    //     deferred, so the event can still fire before the module executes
+    //   - Poll for the event with setInterval: Rejected — fragile and wasteful
+    const win = window as unknown as { __pwaInstallPrompt?: BeforeInstallPromptEvent }
+    if (win.__pwaInstallPrompt) {
+      deferredPrompt.current = win.__pwaInstallPrompt
+      setCanInstall(true)
+      delete win.__pwaInstallPrompt
+    }
+
     window.addEventListener('beforeinstallprompt', handlePrompt)
     window.addEventListener('appinstalled', handleInstalled)
 
