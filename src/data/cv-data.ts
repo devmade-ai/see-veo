@@ -59,7 +59,7 @@ export const cvData: CVData = {
     name: 'Jaco Theron',
     title: 'Solutions / Software / Sales Engineer & Analyst',
     tagline:
-      'Jack of all trades, master of none, but oftentimes better than a master of one',
+      'Jack of all trades, master of none, often better than a master of one',
     location: 'City of Cape Town, Western Cape, South Africa',
     avatarInitials: 'JT',
   },
