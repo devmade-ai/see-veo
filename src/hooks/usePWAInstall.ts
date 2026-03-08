@@ -20,29 +20,15 @@ const browser = detectBrowser()
 // Browsers not in this list (Safari, Firefox) require manual install instructions.
 const supportsAutoInstall = CHROMIUM_BROWSERS.includes(browser)
 
-// Requirement: Brave's privacy shields block beforeinstallprompt on mobile,
-//   leaving users with no install path (see debug report 2026-03-08)
-// Approach: Treat Brave like Safari/Firefox — always show manual install
-//   instructions. If beforeinstallprompt does fire (Brave desktop without
-//   shields), the native "Install as an App" button still appears alongside.
-// Alternatives considered:
-//   - Timeout-based fallback for all Chromium browsers: Rejected — arbitrary
-//     delay, fragile, and a workaround rather than a proper fix
-//   - Remove Brave from CHROMIUM_BROWSERS: Rejected — Brave IS Chromium-based
-//     and that constant is used for diagnostics too (DebugBanner)
-const promptUnreliable = browser === 'brave'
-
 export function usePWAInstall() {
   const [canInstall, setCanInstall] = useState(false)
   const [isInstalled, setIsInstalled] = useState(isStandalone)
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null)
 
-  // Show manual instructions when:
-  //   1. Browser doesn't support beforeinstallprompt at all (Safari, Firefox), OR
-  //   2. Browser is Brave, where shields commonly block the prompt on mobile
-  // In both cases, only show when not already installed as a standalone PWA.
+  // No external consumer mutates this value, so a plain computed value suffices.
+  // Previously this was useState with an exported setter, but nothing called it.
   const showManualInstructions = useMemo(
-    () => (!supportsAutoInstall || promptUnreliable) && !isStandalone(),
+    () => !supportsAutoInstall && !isStandalone(),
     [isInstalled], // eslint-disable-line react-hooks/exhaustive-deps -- recalculate when install state changes
   )
 
@@ -123,23 +109,6 @@ export function usePWAInstall() {
         browser: 'Firefox Desktop',
         steps: [],
         note: 'Firefox removed PWA support in 2021. Use Chrome, Edge, or Brave instead.',
-      }
-    }
-    // Requirement: Brave mobile blocks beforeinstallprompt, so users see manual
-    //   instructions instead — these must use mobile-appropriate language ("tap")
-    // Approach: Dedicated Brave mobile instructions referencing the menu path
-    // Alternatives considered:
-    //   - Use generic Chromium instructions: Rejected — says "Click" not "Tap",
-    //     and references an address bar install icon that may not appear on Brave
-    if (browser === 'brave' && isMobile) {
-      return {
-        browser: 'Brave',
-        steps: [
-          'Tap the menu (three dots) at the bottom right',
-          'Tap "Add to Home screen"',
-          'Tap "Add" to confirm',
-        ],
-        note: 'If Brave Shields are blocking the install prompt, these steps let you install manually.',
       }
     }
     // Requirement: Samsung Internet uses a download icon instead of a generic install icon
