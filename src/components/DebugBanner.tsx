@@ -17,7 +17,7 @@ import {
   type DebugSeverity,
   type DebugSource,
 } from '../utils/debugLog'
-import { detectBrowser, isStandalone } from '../utils/pwa'
+import { detectBrowser, isStandalone, CHROMIUM_BROWSERS } from '../utils/pwa'
 
 type Tab = 'diagnostics' | 'log'
 
@@ -311,14 +311,21 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
     //   - Read window.__pwaInstallPrompt directly: Rejected — it's deleted after the hook
     //     consumes it, so it would always be null after mount
     const browser = detectBrowser()
-    const expectsPrompt = ['chrome', 'edge', 'brave'].includes(browser)
+    const expectsPrompt = CHROMIUM_BROWSERS.includes(browser)
+    // Requirement: Accurate Install Prompt diagnostic on Brave Mobile and similar browsers
+    // Approach: Explain the most common reasons the prompt hasn't fired instead of
+    //   suggesting a timing bug that the early-capture script already addresses
+    // Alternatives considered:
+    //   - Keep old "fired before React mounted" message: Rejected — misleading since
+    //     index.html inline script captures early events; real causes are browser
+    //     engagement heuristics, prior dismissal, or privacy shields (Brave)
     checks = [...checks, {
       label: 'Install Prompt',
       status: canInstall ? 'pass' : expectsPrompt ? 'warn' : 'pass',
       detail: canInstall
         ? 'Ready — install button visible'
         : expectsPrompt
-          ? 'Not captured — beforeinstallprompt may have fired before React mounted'
+          ? 'Not available — visit a few times or check browser privacy settings'
           : 'N/A — this browser uses manual install',
     }]
 
@@ -339,7 +346,7 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
     setDiagnostics(checks)
 
     debugLog('App', 'info', 'diagnostics-ran', {
-      results: checks.map((c) => ({ label: c.label, status: c.status })),
+      results: checks.map((c) => ({ label: c.label, status: c.status, detail: c.detail })),
     })
   }, [])
 
@@ -347,7 +354,7 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
   // (moved out of useEffect to avoid calling setState inside an effect)
 
   const handleCopy = async () => {
-    const text = formatDebugReport()
+    const text = formatDebugReport(diagnostics)
     try {
       await navigator.clipboard.writeText(text)
       setCopyState('copied')
@@ -477,7 +484,7 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
           <textarea
             readOnly
             rows={6}
-            value={formatDebugReport()}
+            value={formatDebugReport(diagnostics)}
             onFocus={(e) => e.target.select()}
             className="w-full rounded border border-border bg-background p-1.5 text-xs font-mono text-text-muted focus:border-primary focus:outline-none"
           />
