@@ -20,32 +20,30 @@ const browser = detectBrowser()
 // Browsers not in this list (Safari, Firefox) require manual install instructions.
 const supportsAutoInstall = CHROMIUM_BROWSERS.includes(browser)
 
-// Requirement: Show manual install instructions on Chromium browsers (e.g. Brave)
-//   that block the beforeinstallprompt event due to privacy shields
-// Approach: After a short timeout, if beforeinstallprompt hasn't fired on a Chromium
-//   browser, flip a flag so manual instructions become available as a fallback
+// Requirement: Brave's privacy shields block beforeinstallprompt on mobile,
+//   leaving users with no install path (see debug report 2026-03-08)
+// Approach: Treat Brave like Safari/Firefox — always show manual install
+//   instructions. If beforeinstallprompt does fire (Brave desktop without
+//   shields), the native "Install as an App" button still appears alongside.
 // Alternatives considered:
-//   - Detect Brave specifically and always show manual: Rejected — other Chromium
-//     browsers with strict privacy settings could have the same issue
-//   - Longer timeout (10s+): Rejected — user may scroll past the hero section
-//   - No timeout, just always show manual for Chromium: Rejected — native prompt
-//     is a better UX when available; manual should only be the fallback
-const PROMPT_TIMEOUT_MS = 3000
+//   - Timeout-based fallback for all Chromium browsers: Rejected — arbitrary
+//     delay, fragile, and a workaround rather than a proper fix
+//   - Remove Brave from CHROMIUM_BROWSERS: Rejected — Brave IS Chromium-based
+//     and that constant is used for diagnostics too (DebugBanner)
+const promptUnreliable = browser === 'brave'
 
 export function usePWAInstall() {
   const [canInstall, setCanInstall] = useState(false)
   const [isInstalled, setIsInstalled] = useState(isStandalone)
-  const [promptTimedOut, setPromptTimedOut] = useState(false)
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null)
 
   // Show manual instructions when:
   //   1. Browser doesn't support beforeinstallprompt at all (Safari, Firefox), OR
-  //   2. Browser supports it but the prompt hasn't fired after a timeout (e.g. Brave
-  //      shields blocking the event) AND the native prompt isn't already available
+  //   2. Browser is Brave, where shields commonly block the prompt on mobile
   // In both cases, only show when not already installed as a standalone PWA.
   const showManualInstructions = useMemo(
-    () => (!supportsAutoInstall || (promptTimedOut && !canInstall)) && !isStandalone(),
-    [isInstalled, promptTimedOut, canInstall], // eslint-disable-line react-hooks/exhaustive-deps -- recalculate when install/prompt state changes
+    () => (!supportsAutoInstall || promptUnreliable) && !isStandalone(),
+    [isInstalled], // eslint-disable-line react-hooks/exhaustive-deps -- recalculate when install state changes
   )
 
   useEffect(() => {
@@ -79,24 +77,9 @@ export function usePWAInstall() {
     window.addEventListener('beforeinstallprompt', handlePrompt)
     window.addEventListener('appinstalled', handleInstalled)
 
-    // Requirement: Fallback for Chromium browsers that block beforeinstallprompt
-    // (e.g. Brave with shields enabled — see debug report 2026-03-08)
-    // Approach: Start a timeout on mount. If beforeinstallprompt hasn't fired by
-    //   then and the browser is Chromium, flag it so manual instructions appear.
-    //   The timeout is cleared if the prompt fires or the app is already installed.
-    let promptTimer: ReturnType<typeof setTimeout> | undefined
-    if (supportsAutoInstall && !isStandalone()) {
-      promptTimer = setTimeout(() => {
-        if (!deferredPrompt.current) {
-          setPromptTimedOut(true)
-        }
-      }, PROMPT_TIMEOUT_MS)
-    }
-
     return () => {
       window.removeEventListener('beforeinstallprompt', handlePrompt)
       window.removeEventListener('appinstalled', handleInstalled)
-      if (promptTimer) clearTimeout(promptTimer)
     }
   }, [])
 
@@ -140,6 +123,23 @@ export function usePWAInstall() {
         browser: 'Firefox Desktop',
         steps: [],
         note: 'Firefox removed PWA support in 2021. Use Chrome, Edge, or Brave instead.',
+      }
+    }
+    // Requirement: Brave mobile blocks beforeinstallprompt, so users see manual
+    //   instructions instead — these must use mobile-appropriate language ("tap")
+    // Approach: Dedicated Brave mobile instructions referencing the menu path
+    // Alternatives considered:
+    //   - Use generic Chromium instructions: Rejected — says "Click" not "Tap",
+    //     and references an address bar install icon that may not appear on Brave
+    if (browser === 'brave' && isMobile) {
+      return {
+        browser: 'Brave',
+        steps: [
+          'Tap the menu (three dots) at the bottom right',
+          'Tap "Add to Home screen"',
+          'Tap "Add" to confirm',
+        ],
+        note: 'If Brave Shields are blocking the install prompt, these steps let you install manually.',
       }
     }
     // Requirement: Samsung Internet uses a download icon instead of a generic install icon
