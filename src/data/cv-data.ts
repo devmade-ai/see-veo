@@ -46,6 +46,7 @@ export interface ProjectItem {
   description: string
   tech: string[]
   link?: string
+  screenshot?: string
 }
 
 export interface ContactInfo {

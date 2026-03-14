@@ -35,4 +35,10 @@
     break-inside: avoid;
     page-break-inside: avoid;
   }
+
+  /* Project screenshots: keep visible in print but ensure they render well */
+  img[alt$="screenshot"] {
+    max-height: 8rem;
+    object-fit: cover;
+  }
 }
