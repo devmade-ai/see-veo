@@ -4,7 +4,7 @@ import type { ProjectItem } from '../data/cv-data'
 
 // Requirement: Display project cards with screenshot on the left, text on the right
 // Approach: Horizontal flex layout per card, portrait screenshot on left (fixed width),
-//   text content fills remaining space. Falls back to favicon then placeholder.
+//   text content fills remaining space. Falls back to initials placeholder.
 // Alternatives considered:
 //   - Screenshot above card (blog-style): Rejected — portrait phone screenshots are too tall
 //   - Card flip animation: Rejected — gimmicky for a CV site
