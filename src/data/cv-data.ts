@@ -228,31 +228,31 @@ export const cvData: CVData = {
       id: 'proj-graphiki',
       name: 'Graphiki',
       description:
-        'Visual graph-based knowledge workspace. Build, explore, and analyse networks of ideas, people, companies, and concepts — entirely in your browser with no server or account required.',
-      tech: ['React', 'TypeScript', 'Vite', 'Cytoscape.js', 'IndexedDB', 'PWA'],
+        'A visual knowledge workspace for building and exploring networks of connected ideas, people, companies, and concepts. Runs entirely in the browser as an offline-first app — no server or account required, all data stays on your device.',
+      tech: ['React', 'TypeScript', 'Vite', 'Cytoscape.js', 'Dexie.js', 'Hugging Face', 'PWA'],
       link: 'https://graphiki.vercel.app/',
     },
     {
       id: 'proj-canvagrid',
       name: 'CanvaGrid',
       description:
-        'Create visual designs — social posts, ads, presentations, and stories. Build grid-based layouts with images, text, and presets, then style and download.',
-      tech: ['React', 'Vite', 'Tailwind CSS', 'PWA'],
+        'A browser-based visual design tool for creating social media posts, presentations, and print materials. Upload images, add text overlays, choose from ready-made layouts and themes, and export designs in 28 formats across platforms like Instagram, Facebook, LinkedIn, and print sizes.',
+      tech: ['React', 'Vite', 'Tailwind CSS', 'html-to-image', 'pdf-lib', 'PWA'],
       link: 'https://canva-grid.vercel.app/',
     },
     {
       id: 'proj-synctone',
       name: 'SyncTone',
       description:
-        'Anonymous messaging where you tag the tone of your messages. No accounts, no phone numbers — just conversations.',
-      tech: ['React Native', 'Expo', 'TypeScript', 'Supabase', 'NativeWind'],
+        'An anonymous messaging app where you tag the tone of your messages — happy, sarcastic, sincere — to show how they were intended. Tone tags are revealed when the recipient opens the chat. No accounts or personal information required.',
+      tech: ['React Native', 'Expo', 'TypeScript', 'Supabase', 'NativeWind', 'Zustand'],
       link: 'https://synctone.vercel.app',
     },
     {
       id: 'proj-model-pear',
       name: 'model-pear',
       description:
-        'Dual-mode pricing and deal structuring tool for South African B2B software companies. Find optimal pricing and compare six transaction models with 47 variants.',
+        'A dual-mode pricing and deal structuring tool for South African B2B software companies. Calculate the right price to hit profit margins while ensuring clients see return on investment, and compare six deal models with 47 variants to find the best structure for both parties.',
       tech: ['TypeScript', 'SvelteKit', 'Tailwind CSS', 'Vitest', 'Playwright'],
       link: 'https://model-pear-web.vercel.app/',
     },
@@ -260,15 +260,15 @@ export const cvData: CVData = {
       id: 'proj-sancio',
       name: 'Sancio',
       description:
-        'Build agreements piece by piece. Create individual text modules that can be written, discussed, and approved separately — the complete agreement takes shape as modules are added and locked in over time.',
-      tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Supabase', 'PWA'],
+        'A digital agreement-building tool where contracts are assembled piece by piece from individual text modules. Each module can be independently authored, negotiated between parties, and signed — allowing agreements to take shape progressively rather than all at once.',
+      tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'React Router', 'Supabase', 'PWA'],
       link: 'https://sun-sea-o.vercel.app/',
     },
     {
       id: 'proj-four-ems',
       name: 'Four Ems',
       description:
-        'A form builder that lets you create multi-page forms with conditional logic, collect responses, and embed forms on any website — no coding required.',
+        'A form builder that lets you create multi-page forms with conditional logic, collect responses, and embed forms into other websites. Works as an installable app with cloud-stored data.',
       tech: [
         'React',
         'TypeScript',
@@ -283,23 +283,24 @@ export const cvData: CVData = {
     },
     {
       id: 'proj-budgy-ting',
-      name: 'Budgy Ting',
+      name: 'budgy-ting',
       description:
-        'A personal budgeting tool to plan monthly budgets, track actual spending by importing bank statements, and visually compare expected versus actual. Everything stays in your browser — no accounts, no servers.',
-      tech: ['Vue 3', 'TypeScript', 'Vite', 'UnoCSS', 'Dexie.js', 'PWA'],
+        'A privacy-focused budgeting app that runs entirely on your device. Import bank statements, automatically detect recurring spending patterns, and forecast your cashflow with statistical models — no account or server required.',
+      tech: ['Vue 3', 'TypeScript', 'Vite', 'Tailwind CSS', 'Dexie.js', 'ApexCharts', 'Hugging Face', 'PWA'],
       link: 'https://budgy-ting.vercel.app/',
     },
     {
       id: 'proj-fuelhunt',
       name: 'FuelHunt',
       description:
-        'A fuel station finder for South Africa. Search by your current location, filter by fuel type, and get directions to the cheapest fuel nearby.',
+        'A fuel station finder for South Africa that helps locate the cheapest fuel nearby. Search by location, filter by fuel type, and get directions to your chosen station via a full-screen map.',
       tech: [
         'React Native',
         'Expo',
         'TypeScript',
         'Supabase',
         'Mapbox',
+        'PostGIS',
       ],
       link: 'https://few-lap.vercel.app',
     },
@@ -307,7 +308,7 @@ export const cvData: CVData = {
       id: 'proj-repo-tor',
       name: 'repo-tor',
       description:
-        'Turn any project\'s coding history into easy-to-read charts and reports, showing who contributed, when work happened, and how the project evolved over time.',
+        'A dashboard that visualises Git commit history across multiple repositories, turning development activity into easy-to-read charts and summaries. Offers six interactive views covering timelines, contributor breakdowns, code health, and project discovery.',
       tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Chart.js', 'PWA'],
       link: 'https://repo-tor.vercel.app/',
     },
@@ -315,7 +316,7 @@ export const cvData: CVData = {
       id: 'proj-chatty-chart',
       name: 'Chatty Chart',
       description:
-        'An interactive visual tool for sales meetings that shows clients how much of their communication data goes unanalysed. Adjust sliders and see a grid of 10,000 squares reveal the gap between what\'s being analysed and what\'s being missed.',
+        'An interactive sales presentation tool that visually demonstrates how much valuable communication data goes unanalysed. Uses a grid of 10,000 squares and interactive controls to let clients see the gap between data volume and analytics coverage.',
       tech: ['HTML5', 'CSS3', 'JavaScript'],
       link: 'https://illuminai-select.github.io/chatty-chart/',
     },
