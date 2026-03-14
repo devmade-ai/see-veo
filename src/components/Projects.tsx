@@ -24,7 +24,7 @@ export default function Projects({ items }: ProjectsProps) {
             className="flex overflow-hidden rounded-lg border border-border bg-surface transition-colors hover:border-primary"
           >
             {/* Screenshot / favicon / placeholder — fixed width on left */}
-            <div className="w-24 shrink-0 overflow-hidden border-r border-border sm:w-28 print:w-20">
+            <div className="aspect-[9/16] w-24 shrink-0 overflow-hidden border-r border-border sm:w-28 print:w-20">
               <ProjectImage
                 screenshot={project.screenshot}
                 name={project.name}
