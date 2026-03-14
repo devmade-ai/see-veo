@@ -27,7 +27,6 @@ export default function Projects({ items }: ProjectsProps) {
             <div className="w-24 shrink-0 overflow-hidden border-r border-border sm:w-28 print:w-20">
               <ProjectImage
                 screenshot={project.screenshot}
-                link={project.link}
                 name={project.name}
               />
             </div>

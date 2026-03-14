@@ -1,30 +1,18 @@
 import { useState } from 'react'
 
-// Requirement: Display project screenshots with graceful fallback chain
-// Approach: screenshot → Google Favicon API → SVG placeholder
+// Requirement: Display project screenshots with graceful fallback
+// Approach: screenshot → initials placeholder
 // Alternatives considered:
+//   - Google Favicon API: Rejected — external dependency, privacy concern
 //   - Direct /favicon.ico fetch: Rejected — not all Vite apps serve at that path
-//   - Self-hosted favicons: Rejected — extra maintenance, Google API is reliable
-//   - No fallback: Rejected — empty space looks broken
+//   - Self-hosted favicons: Rejected — extra maintenance per project
 
 interface ProjectImageProps {
   screenshot?: string
-  link?: string
   name: string
 }
 
-type FallbackStage = 'screenshot' | 'favicon' | 'placeholder'
-
-/** Extracts the domain from a full URL for the Google Favicon API */
-function getDomain(url: string): string {
-  try {
-    return new URL(url).hostname
-  } catch {
-    return ''
-  }
-}
-
-/** Generic app placeholder shown when no screenshot or favicon is available */
+/** Generic app placeholder shown when no screenshot is available */
 function PlaceholderIcon({ name }: { name: string }) {
   const initials = name
     .split(' ')
@@ -42,48 +30,19 @@ function PlaceholderIcon({ name }: { name: string }) {
   )
 }
 
-export default function ProjectImage({ screenshot, link, name }: ProjectImageProps) {
-  const [stage, setStage] = useState<FallbackStage>(
-    screenshot ? 'screenshot' : link ? 'favicon' : 'placeholder'
-  )
+export default function ProjectImage({ screenshot, name }: ProjectImageProps) {
+  const [failed, setFailed] = useState(false)
 
-  const handleError = () => {
-    if (stage === 'screenshot' && link) {
-      setStage('favicon')
-    } else {
-      setStage('placeholder')
-    }
-  }
-
-  if (stage === 'placeholder') {
+  if (!screenshot || failed) {
     return <PlaceholderIcon name={name} />
   }
 
-  if (stage === 'favicon') {
-    const domain = getDomain(link!)
-    if (!domain) return <PlaceholderIcon name={name} />
-
-    return (
-      <div className="flex h-full w-full items-center justify-center bg-background">
-        <img
-          src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
-          alt={`${name} icon`}
-          width={48}
-          height={48}
-          className="rounded-lg"
-          onError={() => setStage('placeholder')}
-        />
-      </div>
-    )
-  }
-
-  // stage === 'screenshot'
   return (
     <img
       src={screenshot}
       alt={`${name} screenshot`}
       className="h-full w-full object-cover object-top"
-      onError={handleError}
+      onError={() => setFailed(true)}
     />
   )
 }
