@@ -314,6 +314,7 @@ Project cards in `src/data/cv-data.ts` are sourced from deployed repos across th
 - `plant-fur` — excluded by owner
 - `coin-zapp` — excluded by owner
 - `tool-till-tees` — excluded by owner
+- `chatty-chart` — excluded by owner
 - `see-veo` — this repo (the CV site itself)
 
 ---

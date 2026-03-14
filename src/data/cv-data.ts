@@ -312,14 +312,6 @@ export const cvData: CVData = {
       tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Chart.js', 'PWA'],
       link: 'https://repo-tor.vercel.app/',
     },
-    {
-      id: 'proj-chatty-chart',
-      name: 'Chatty Chart',
-      description:
-        'An interactive sales presentation tool that visually demonstrates how much valuable communication data goes unanalysed. Uses a grid of 10,000 squares and interactive controls to let clients see the gap between data volume and analytics coverage.',
-      tech: ['HTML5', 'CSS3', 'JavaScript'],
-      link: 'https://illuminai-select.github.io/chatty-chart/',
-    },
   ],
   contact: {
     linkedin: 'https://www.linkedin.com/in/jacotheron87',
