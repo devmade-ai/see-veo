@@ -36,7 +36,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 
 ## Key Decisions
 
-- Dark theme only (no light/dark toggle). Colors defined via Tailwind v4 `@theme` tokens.
+- Dark minimal theme (no light/dark toggle). Near-monochrome neutral grays defined via Tailwind v4 `@theme` tokens. Project cards use per-project accent colors (stored in `cv-data.ts`) for visual identity.
 - Single-page app with no client-side routing.
 - PWA `scope` and `start_url` use `/` — Vercel serves at root, no base-path prefix needed.
 - Print styles in `src/index.css` override to white background. Elements with class `no-print` are hidden when printing.

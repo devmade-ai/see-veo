@@ -2,6 +2,15 @@
 
 Record of completed work and changes.
 
+## 2026-03-24
+
+### Theme & Visual Design
+- Redesigned theme from saturated dark (sky blue, indigo, emerald accents) to dark minimal (near-monochrome neutral grays)
+- Added per-project accent colors to project cards: left border, colored initials placeholder, tinted tech badges, colored "View Project" link
+- Added `accent` optional field to `ProjectItem` interface
+- Assigned 9 distinct brand colors across all projects
+- Updated Hero avatar from blue ring to neutral gray
+
 ## 2026-03-23
 
 ### Documentation
