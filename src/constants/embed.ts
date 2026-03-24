@@ -12,10 +12,10 @@ export const EMBED_BASE = 'https://repo-tor.vercel.app/'
 /** URL of the repo-tor embed helper script for iframe auto-resize */
 export const EMBED_SCRIPT_URL = `${EMBED_BASE}embed.js`
 
-/** Primary theme color (--color-primary: #38bdf8) for work-hours / weekday bars */
+/** Chart accent color for work-hours / weekday bars (sky blue — kept for embed contrast) */
 export const CHART_ACCENT = '38bdf8'
 
-/** Secondary theme color (--color-secondary: #818cf8) for after-hours / weekend bars */
+/** Chart muted color for after-hours / weekend bars (indigo — kept for embed contrast) */
 export const CHART_MUTED = '818cf8'
 
 /** 15-color series for multi-dataset charts (activity-timeline stacked bars).

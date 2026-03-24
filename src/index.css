@@ -9,6 +9,8 @@
 @theme {
   --color-primary: #d4d4d4;
   --color-primary-light: #e5e5e5;
+  --color-secondary: #a3a3a3;
+  --color-accent: #4ade80;
   --color-surface: #171717;
   --color-surface-light: #262626;
   --color-background: #0a0a0a;

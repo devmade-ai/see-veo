@@ -28,7 +28,7 @@ export default function Projects({ items }: ProjectsProps) {
           return (
             <div
               key={project.id}
-              className="flex overflow-hidden rounded-lg border border-border bg-surface transition-colors hover:border-border"
+              className="flex overflow-hidden rounded-lg border border-border bg-surface transition-colors hover:border-text-muted/40"
               style={{
                 borderLeftWidth: '3px',
                 borderLeftColor: accent,
