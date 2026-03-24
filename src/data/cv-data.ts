@@ -233,7 +233,7 @@ export const cvData: CVData = {
         'A visual knowledge workspace for building and exploring networks of connected ideas, people, companies, and concepts. Runs entirely in the browser as an offline-first app — no server or account required, all data stays on your device.',
       tech: ['React', 'TypeScript', 'Vite', 'Cytoscape.js', 'Dexie.js', 'Hugging Face', 'PWA'],
       link: 'https://graphiki.vercel.app/',
-      accent: '#8b5cf6',
+      accent: '#6366f1',
     },
     {
       id: 'proj-canvagrid',
@@ -242,7 +242,7 @@ export const cvData: CVData = {
         'A browser-based visual design tool for creating social media posts, presentations, and print materials. Upload images, add text overlays, choose from ready-made layouts and themes, and export designs in 28 formats across platforms like Instagram, Facebook, LinkedIn, and print sizes.',
       tech: ['React', 'Vite', 'Tailwind CSS', 'html-to-image', 'pdf-lib', 'PWA'],
       link: 'https://canva-grid.vercel.app/',
-      accent: '#14b8a6',
+      accent: '#8B5CF6',
     },
     {
       id: 'proj-synctone',
@@ -251,7 +251,7 @@ export const cvData: CVData = {
         'An anonymous messaging app where you tag the tone of your messages — happy, sarcastic, sincere — to show how they were intended. Tone tags are revealed when the recipient opens the chat. No accounts or personal information required.',
       tech: ['React Native', 'Expo', 'TypeScript', 'Supabase', 'NativeWind', 'Zustand'],
       link: 'https://synctone.vercel.app',
-      accent: '#f59e0b',
+      accent: '#C9A57B',
     },
     {
       id: 'proj-model-pear',
@@ -260,7 +260,7 @@ export const cvData: CVData = {
         'A dual-mode pricing and deal structuring tool for South African B2B software companies. Calculate the right price to hit profit margins while ensuring clients see return on investment, and compare six deal models with 47 variants to find the best structure for both parties.',
       tech: ['TypeScript', 'SvelteKit', 'Tailwind CSS', 'Vitest', 'Playwright'],
       link: 'https://model-pear-web.vercel.app/',
-      accent: '#10b981',
+      accent: '#2D68FF',
     },
     {
       id: 'proj-sancio',
@@ -269,7 +269,7 @@ export const cvData: CVData = {
         'A digital agreement-building tool where contracts are assembled piece by piece from individual text modules. Each module can be independently authored, negotiated between parties, and signed — allowing agreements to take shape progressively rather than all at once.',
       tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'React Router', 'Supabase', 'PWA'],
       link: 'https://sun-sea-o.vercel.app/',
-      accent: '#f43f5e',
+      accent: '#64748b',
     },
     {
       id: 'proj-four-ems',
@@ -287,7 +287,7 @@ export const cvData: CVData = {
         'PWA',
       ],
       link: 'https://four-ems.vercel.app/',
-      accent: '#3b82f6',
+      accent: '#2563eb',
     },
     {
       id: 'proj-budgy-ting',
@@ -296,7 +296,7 @@ export const cvData: CVData = {
         'A privacy-focused budgeting app that runs entirely on your device. Import bank statements, automatically detect recurring spending patterns, and forecast your cashflow with statistical models — no account or server required.',
       tech: ['Vue 3', 'TypeScript', 'Vite', 'Tailwind CSS', 'Dexie.js', 'ApexCharts', 'Hugging Face', 'PWA'],
       link: 'https://budgy-ting.vercel.app/',
-      accent: '#84cc16',
+      accent: '#10b981',
     },
     {
       id: 'proj-fuelhunt',
@@ -312,7 +312,7 @@ export const cvData: CVData = {
         'PostGIS',
       ],
       link: 'https://few-lap.vercel.app',
-      accent: '#f97316',
+      accent: '#0D9488',
     },
     {
       id: 'proj-repo-tor',
@@ -321,7 +321,7 @@ export const cvData: CVData = {
         'A dashboard that visualises Git commit history across multiple repositories, turning development activity into easy-to-read charts and summaries. Offers six interactive views covering timelines, contributor breakdowns, code health, and project discovery.',
       tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Chart.js', 'PWA'],
       link: 'https://repo-tor.vercel.app/',
-      accent: '#38bdf8',
+      accent: '#2D68FF',
     },
   ],
   contact: {
