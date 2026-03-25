@@ -1,7 +1,32 @@
+import { readFileSync } from 'fs'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import type { Plugin } from 'vite'
+
+// Requirement: Theme colors in index.html and PWA manifest must stay in sync with CSS
+// Approach: Parse src/index.css @theme tokens at build time. CSS is the single source of
+//   truth — no separate constants file, no manual sync. The themeColorInjector plugin
+//   replaces %THEME_*% placeholders in index.html with the parsed values.
+// Alternatives considered:
+//   - Separate constants file imported by both CSS and config: Rejected — CSS @theme
+//     can't import from TypeScript; would still need manual sync
+//   - Hardcode colors in each file: Rejected — values drifted multiple times already
+const css = readFileSync('src/index.css', 'utf-8')
+const THEME_BACKGROUND = css.match(/--color-background:\s*(#[0-9a-fA-F]+)/)?.[1] ?? '#0a0a0a'
+const THEME_PRIMARY = css.match(/--color-primary:\s*(#[0-9a-fA-F]+)/)?.[1] ?? '#d4d4d4'
+
+function themeColorInjector(): Plugin {
+  return {
+    name: 'theme-color-injector',
+    transformIndexHtml(html) {
+      return html
+        .replace(/%THEME_BACKGROUND%/g, THEME_BACKGROUND)
+        .replace(/%THEME_PRIMARY%/g, THEME_PRIMARY)
+    },
+  }
+}
 
 // Requirement: Migrate deployment from GitHub Pages to Vercel
 // Approach: Remove base path prefix — Vercel serves at root '/' unlike GitHub Pages
@@ -15,6 +40,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    themeColorInjector(),
     VitePWA({
       registerType: 'prompt',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
@@ -22,27 +48,39 @@ export default defineConfig({
         name: 'Jaco Theron - Solutions Engineer',
         short_name: 'JT Resume',
         description: 'Personal CV and resume of Jaco Theron, Solutions / Software / Sales Engineer & Analyst',
-        theme_color: '#0f172a',
-        background_color: '#0f172a',
+        // Requirement: Stable PWA identity and reliable install prompt on Chromium browsers
+        // Approach: Explicit id prevents Chrome from deriving it from start_url (which breaks
+        //   on config changes); prefer_related_applications: false ensures Chrome doesn't skip
+        //   beforeinstallprompt thinking a native app exists
+        // Alternatives considered:
+        //   - Omit id (let Chrome derive from start_url): Rejected — identity breaks on
+        //     config changes or redeployments, causing duplicate installs
+        //   - Omit prefer_related_applications: Rejected — Chrome may suppress install prompt
+        id: '/',
+        theme_color: THEME_BACKGROUND,
+        background_color: THEME_BACKGROUND,
         display: 'standalone',
         scope: '/',
         start_url: '/',
+        prefer_related_applications: false,
         icons: [
           {
             src: 'pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png',
+            purpose: 'any',
           },
           {
             src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
+            purpose: 'any',
           },
           {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
+            src: 'pwa-1024x1024.png',
+            sizes: '1024x1024',
             type: 'image/png',
-            purpose: 'any maskable',
+            purpose: 'maskable',
           },
         ],
       },

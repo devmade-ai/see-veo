@@ -17,9 +17,9 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - `src/hooks/` — Custom React hooks. `useRepoTorEmbed` loads repo-tor's `embed.js` helper script to auto-size chart iframes; `usePWAInstall` and `usePWAUpdate` for install/update prompts.
 - `src/constants/embed.ts` — Centralized repo-tor embed configuration (base URL, script URL, chart colors).
 - `src/utils/` — Shared utilities: `debugLog.ts` (pub/sub event store for mobile debugging), `pwa.ts` (browser detection, standalone check), `validation.ts` (email pattern, form payload validation).
-- `src/index.css` — Tailwind import, custom `@theme` color tokens (dark palette), and print styles.
+- `src/index.css` — Tailwind import, custom `@theme` color tokens (dark palette), and print styles. Single source of truth for theme colors — `vite.config.ts` parses this file to feed PWA manifest and HTML meta tags.
 - `src/App.tsx` — Composes all sections into a single-page layout. No routing.
-- `vite.config.ts` — Vite config with Tailwind plugin, PWA plugin, and Workbox runtime caching rules.
+- `vite.config.ts` — Vite config with Tailwind plugin, PWA plugin, `themeColorInjector` plugin (injects theme colors into HTML), and Workbox runtime caching rules.
 - `vercel.json` — Vercel deployment config with SPA rewrites.
 - `vitest.config.ts` — Vitest config with jsdom environment, React plugin, and setup file (`src/test/setup.ts`).
 - `src/test/` — Test files (Vitest + Testing Library).
@@ -36,7 +36,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 
 ## Key Decisions
 
-- Dark theme only (no light/dark toggle). Colors defined via Tailwind v4 `@theme` tokens.
+- Dark minimal theme (no light/dark toggle). Near-monochrome neutral grays defined via Tailwind v4 `@theme` tokens. Project cards use per-project accent colors (stored in `cv-data.ts`) for visual identity.
 - Single-page app with no client-side routing.
 - PWA `scope` and `start_url` use `/` — Vercel serves at root, no base-path prefix needed.
 - Print styles in `src/index.css` override to white background. Elements with class `no-print` are hidden when printing.

@@ -1,4 +1,4 @@
-# AI Fuckups
+# AI Mistakes
 
 Log of AI mistakes during development sessions. Exists so patterns get spotted and not repeated.
 

@@ -31,7 +31,7 @@ export default function Hero({
         <img
           src={`${import.meta.env.BASE_URL}mask-icon.svg`}
           alt={personal.name}
-          className="mx-auto mb-6 h-24 w-24 rounded-full bg-primary object-cover p-2"
+          className="mx-auto mb-6 h-24 w-24 rounded-full bg-surface-light object-cover p-2"
         />
         <h1 className="mb-2 text-4xl font-bold tracking-tight text-text sm:text-5xl">
           {personal.name}

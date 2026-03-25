@@ -20,10 +20,35 @@ const browser = detectBrowser()
 // Browsers not in this list (Safari, Firefox) require manual install instructions.
 const supportsAutoInstall = CHROMIUM_BROWSERS.includes(browser)
 
+// Requirement: Recover beforeinstallprompt events that fired before React mounted
+// Approach: Consume the early-captured event during state initialization (not inside
+//   useEffect) to avoid the react-hooks/set-state-in-effect lint error. index.html
+//   captures the event on window.__pwaInstallPrompt via an inline script that runs
+//   synchronously before the deferred module bundle.
+// Alternatives considered:
+//   - Consume in useEffect with setState: Rejected — ESLint react-hooks/set-state-in-effect
+//     flags synchronous setState inside effects as it causes cascading renders
+//   - Move listener into main.tsx before createRoot: Rejected — module scripts are
+//     deferred, so the event can still fire before the module executes
+//   - Poll for the event with setInterval: Rejected — fragile and wasteful
+// Consume once at module level so the value is available for both the ref
+// initializer and the useState initializer without reading ref.current during render.
+const earlyPrompt = consumeEarlyPrompt()
+
+function consumeEarlyPrompt(): BeforeInstallPromptEvent | null {
+  const win = window as unknown as { __pwaInstallPrompt?: BeforeInstallPromptEvent }
+  if (win.__pwaInstallPrompt) {
+    const event = win.__pwaInstallPrompt
+    delete win.__pwaInstallPrompt
+    return event
+  }
+  return null
+}
+
 export function usePWAInstall() {
-  const [canInstall, setCanInstall] = useState(false)
+  const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(earlyPrompt)
+  const [canInstall, setCanInstall] = useState(earlyPrompt !== null)
   const [isInstalled, setIsInstalled] = useState(isStandalone)
-  const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null)
 
   // No external consumer mutates this value, so a plain computed value suffices.
   // Previously this was useState with an exported setter, but nothing called it.
@@ -43,21 +68,6 @@ export function usePWAInstall() {
       setIsInstalled(true)
       setCanInstall(false)
       deferredPrompt.current = null
-    }
-
-    // Requirement: Recover beforeinstallprompt events that fired before React mounted
-    // Approach: index.html captures the event on window.__pwaInstallPrompt via an inline
-    //   script that runs synchronously before the deferred module bundle. The hook checks
-    //   for this early-captured event on mount and consumes it.
-    // Alternatives considered:
-    //   - Move listener into main.tsx before createRoot: Rejected — module scripts are
-    //     deferred, so the event can still fire before the module executes
-    //   - Poll for the event with setInterval: Rejected — fragile and wasteful
-    const win = window as unknown as { __pwaInstallPrompt?: BeforeInstallPromptEvent }
-    if (win.__pwaInstallPrompt) {
-      deferredPrompt.current = win.__pwaInstallPrompt
-      setCanInstall(true)
-      delete win.__pwaInstallPrompt
     }
 
     window.addEventListener('beforeinstallprompt', handlePrompt)
