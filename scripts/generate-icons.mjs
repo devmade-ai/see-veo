@@ -21,6 +21,7 @@ async function generate() {
   const sizes = [
     { name: 'pwa-192x192.png', size: 192 },
     { name: 'pwa-512x512.png', size: 512 },
+    { name: 'pwa-1024x1024.png', size: 1024 },
     { name: 'apple-touch-icon.png', size: 180 },
   ];
 

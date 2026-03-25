@@ -10,6 +10,8 @@ Record of completed work and changes.
 - Added `themeColorInjector` Vite plugin to inject parsed values into `index.html` meta tags
 - `index.html` uses `%THEME_BACKGROUND%` / `%THEME_PRIMARY%` placeholders replaced at build time
 - PWA manifest `theme_color` and `background_color` use the parsed CSS values
+- Updated `mask-icon.svg` colors from old navy/sky-blue theme to current neutral grays
+- Generated dedicated 1024x1024 maskable icon; PWA manifest now uses it instead of reusing 512x512
 
 ## 2026-03-24
 
