@@ -7,9 +7,6 @@
      - Light minimal theme: User chose dark minimal
      - Warm grays: Tested — cool neutrals felt more professional */
 @theme {
-  /* IMPORTANT: --color-primary and --color-background are mirrored in
-     src/constants/theme.ts (used by PWA manifest and index.html meta tags).
-     If you change these values, update theme.ts to match. */
   --color-primary: #d4d4d4;
   --color-primary-light: #e5e5e5;
   --color-secondary: #a3a3a3;

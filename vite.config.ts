@@ -1,19 +1,22 @@
+import { readFileSync } from 'fs'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
-import { THEME_BACKGROUND, THEME_PRIMARY } from './src/constants/theme'
 import type { Plugin } from 'vite'
 
-// Requirement: Inject theme colors into index.html meta tags at build time
-// Approach: Custom Vite plugin using transformIndexHtml replaces %THEME_*% placeholders
-//   with values from the shared constants file (src/constants/theme.ts). This ensures
-//   index.html, PWA manifest, and CSS @theme tokens all derive from the same source.
+// Requirement: Theme colors in index.html and PWA manifest must stay in sync with CSS
+// Approach: Parse src/index.css @theme tokens at build time. CSS is the single source of
+//   truth — no separate constants file, no manual sync. The themeColorInjector plugin
+//   replaces %THEME_*% placeholders in index.html with the parsed values.
 // Alternatives considered:
-//   - Vite's built-in env variable substitution: Rejected — only works for import.meta.env
-//     in JS/TS, not in raw HTML attributes
-//   - html-webpack-plugin style templating: Rejected — Vite doesn't use webpack; its
-//     transformIndexHtml hook is the idiomatic approach
+//   - Separate constants file imported by both CSS and config: Rejected — CSS @theme
+//     can't import from TypeScript; would still need manual sync
+//   - Hardcode colors in each file: Rejected — values drifted multiple times already
+const css = readFileSync('src/index.css', 'utf-8')
+const THEME_BACKGROUND = css.match(/--color-background:\s*(#[0-9a-fA-F]+)/)?.[1] ?? '#0a0a0a'
+const THEME_PRIMARY = css.match(/--color-primary:\s*(#[0-9a-fA-F]+)/)?.[1] ?? '#d4d4d4'
+
 function themeColorInjector(): Plugin {
   return {
     name: 'theme-color-injector',
