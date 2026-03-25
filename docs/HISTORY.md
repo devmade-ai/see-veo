@@ -4,6 +4,11 @@ Record of completed work and changes.
 
 ## 2026-03-25
 
+### Accessibility
+- Fixed text contrast: bumped `--color-text-muted` from `#737373` to `#a3a3a3` for WCAG AA compliance
+- Fixed 5 project accent colors that failed AA as text: Graphiki (`#818cf8`), Sancio (`#94a3b8`), Four Ems (`#60a5fa`), model-pear (`#7dd3fc`), repo-tor (`#60a5fa`)
+- Updated default project accent fallback from `#737373` to `#a3a3a3`
+
 ### Infrastructure
 - Centralized theme colors: `src/index.css` @theme is the single source of truth
 - `vite.config.ts` parses CSS at build time to extract `--color-background` and `--color-primary`

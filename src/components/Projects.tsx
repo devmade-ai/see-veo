@@ -17,7 +17,7 @@ interface ProjectsProps {
 }
 
 /** Default accent for projects without a custom color */
-const DEFAULT_ACCENT = '#737373'
+const DEFAULT_ACCENT = '#a3a3a3'
 
 export default function Projects({ items }: ProjectsProps) {
   return (

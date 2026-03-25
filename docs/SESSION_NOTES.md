@@ -1,16 +1,15 @@
 # Session Notes
 
-**Worked on:** Centralized theme color management to eliminate color drift
+**Worked on:** Text contrast and readability audit after dark theme change
 
 **Accomplished:**
-- Made `src/index.css` @theme the single source of truth for theme colors
-- `vite.config.ts` parses CSS at build time to extract `--color-background` and `--color-primary`
-- `themeColorInjector` Vite plugin injects parsed values into `index.html` placeholders
-- No separate constants file — CSS drives everything
+- Audited all components for WCAG AA contrast compliance
+- Bumped `--color-text-muted` from `#737373` (4.18:1) to `#a3a3a3` (7.85:1 on `#0a0a0a`, 5.56:1 on `#262626`)
+- Fixed 5 project accent colors that failed AA when used as text: Graphiki, Sancio, Four Ems, model-pear, repo-tor
+- Updated default project accent fallback from `#737373` to `#a3a3a3`
 
-**Current state:** All changes build and 52 tests pass. Change a color in `index.css` @theme and it automatically flows to PWA manifest and HTML meta tags.
+**Current state:** All changes build and 52 tests pass. All text now meets WCAG AA contrast minimums.
 
 **Key context:**
-- `index.html` uses `%THEME_BACKGROUND%` and `%THEME_PRIMARY%` placeholders
-- `vite.config.ts` reads `src/index.css` with `readFileSync` and regex-extracts the two color values
-- No `src/constants/theme.ts` — deleted as unnecessary indirection
+- `text-muted` and `secondary` are now both `#a3a3a3` — kept as separate tokens (different semantic roles, may diverge)
+- Project accent colors are used as text colors for tech badges and "View Project" links — must maintain 4.5:1 on `#0a0a0a`

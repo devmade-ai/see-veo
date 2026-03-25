@@ -233,7 +233,7 @@ export const cvData: CVData = {
         'A visual knowledge workspace for building and exploring networks of connected ideas, people, companies, and concepts. Runs entirely in the browser as an offline-first app — no server or account required, all data stays on your device.',
       tech: ['React', 'TypeScript', 'Vite', 'Cytoscape.js', 'Dexie.js', 'Hugging Face', 'PWA'],
       link: 'https://graphiki.vercel.app/',
-      accent: '#6366f1',
+      accent: '#818cf8',
     },
     {
       id: 'proj-canvagrid',
@@ -260,7 +260,7 @@ export const cvData: CVData = {
         'A dual-mode pricing and deal structuring tool for South African B2B software companies. Calculate the right price to hit profit margins while ensuring clients see return on investment, and compare six deal models with 47 variants to find the best structure for both parties.',
       tech: ['TypeScript', 'SvelteKit', 'Tailwind CSS', 'Vitest', 'Playwright'],
       link: 'https://model-pear-web.vercel.app/',
-      accent: '#2D68FF',
+      accent: '#7dd3fc',
     },
     {
       id: 'proj-sancio',
@@ -269,7 +269,7 @@ export const cvData: CVData = {
         'A digital agreement-building tool where contracts are assembled piece by piece from individual text modules. Each module can be independently authored, negotiated between parties, and signed — allowing agreements to take shape progressively rather than all at once.',
       tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'React Router', 'Supabase', 'PWA'],
       link: 'https://sun-sea-o.vercel.app/',
-      accent: '#64748b',
+      accent: '#94a3b8',
     },
     {
       id: 'proj-four-ems',
@@ -287,7 +287,7 @@ export const cvData: CVData = {
         'PWA',
       ],
       link: 'https://four-ems.vercel.app/',
-      accent: '#2563eb',
+      accent: '#60a5fa',
     },
     {
       id: 'proj-budgy-ting',
@@ -321,7 +321,7 @@ export const cvData: CVData = {
         'A dashboard that visualises Git commit history across multiple repositories, turning development activity into easy-to-read charts and summaries. Offers six interactive views covering timelines, contributor breakdowns, code health, and project discovery.',
       tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Chart.js', 'PWA'],
       link: 'https://repo-tor.vercel.app/',
-      accent: '#2D68FF',
+      accent: '#60a5fa',
     },
   ],
   contact: {
