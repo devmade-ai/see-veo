@@ -32,17 +32,25 @@ export default defineConfig({
             src: 'pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png',
+            purpose: 'any',
           },
           {
             src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
+            purpose: 'any',
           },
           {
+            // Requirement: Separate icon purposes — never combine 'any maskable'
+            // Approach: Dedicated entry with purpose 'maskable' using 512x512 until
+            //   a 1024x1024 maskable icon is generated (see TODO.md)
+            // Alternatives considered:
+            //   - Combined 'any maskable': Rejected — browsers pick the wrong variant
+            //     (CLAUDE.md PWA guidance explicitly warns against this)
             src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable',
+            purpose: 'maskable',
           },
         ],
       },
