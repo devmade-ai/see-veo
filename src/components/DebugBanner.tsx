@@ -348,7 +348,7 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
     debugLog('App', 'info', 'diagnostics-ran', {
       results: checks.map((c) => ({ label: c.label, status: c.status, detail: c.detail })),
     })
-  }, [])
+  }, [canInstall])
 
   // Trigger diagnostics on first expand via the click handler below
   // (moved out of useEffect to avoid calling setState inside an effect)

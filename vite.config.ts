@@ -48,11 +48,21 @@ export default defineConfig({
         name: 'Jaco Theron - Solutions Engineer',
         short_name: 'JT Resume',
         description: 'Personal CV and resume of Jaco Theron, Solutions / Software / Sales Engineer & Analyst',
+        // Requirement: Stable PWA identity and reliable install prompt on Chromium browsers
+        // Approach: Explicit id prevents Chrome from deriving it from start_url (which breaks
+        //   on config changes); prefer_related_applications: false ensures Chrome doesn't skip
+        //   beforeinstallprompt thinking a native app exists
+        // Alternatives considered:
+        //   - Omit id (let Chrome derive from start_url): Rejected — identity breaks on
+        //     config changes or redeployments, causing duplicate installs
+        //   - Omit prefer_related_applications: Rejected — Chrome may suppress install prompt
+        id: '/',
         theme_color: THEME_BACKGROUND,
         background_color: THEME_BACKGROUND,
         display: 'standalone',
         scope: '/',
         start_url: '/',
+        prefer_related_applications: false,
         icons: [
           {
             src: 'pwa-192x192.png',

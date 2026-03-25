@@ -9,6 +9,12 @@ Record of completed work and changes.
 - Fixed 5 project accent colors that failed AA as text: Graphiki (`#818cf8`), Sancio (`#94a3b8`), Four Ems (`#60a5fa`), model-pear (`#7dd3fc`), repo-tor (`#60a5fa`)
 - Updated default project accent fallback from `#737373` to `#a3a3a3`
 
+### Code Quality
+- Fixed ESLint error in `usePWAInstall.ts`: moved early prompt consumption to module level to avoid setState in useEffect
+- Fixed ESLint error/warning in `DebugBanner.tsx`: added `canInstall` to `useCallback` dependency array
+- Added `id: '/'` and `prefer_related_applications: false` to PWA manifest (per CLAUDE.md best practices)
+- Added Inter font via Google Fonts with preconnect hints and weights 400/500/600/700
+
 ### Infrastructure
 - Centralized theme colors: `src/index.css` @theme is the single source of truth
 - `vite.config.ts` parses CSS at build time to extract `--color-background` and `--color-primary`
