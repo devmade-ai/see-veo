@@ -1,17 +1,18 @@
 # Session Notes
 
-**Worked on:** Documentation fixes + dark minimal theme redesign with per-project accent colors
+**Worked on:** Centralized theme color management to eliminate color drift
 
 **Accomplished:**
-- Fixed documentation: expanded README, created missing docs (SESSION_NOTES, TODO, HISTORY, USER_ACTIONS, AI_MISTAKES), consolidated ai-fuckups.md
-- Redesigned theme: stripped saturated colors (sky blue, indigo, emerald) → near-monochrome neutral grays
-- Added per-project accent colors: each project card has a brand color used for left border, initials placeholder, tech badges, and "View Project" link
-- Updated CLAUDE.md to reflect new theme approach
+- Created `src/constants/theme.ts` as single source of truth for theme colors used outside CSS
+- Updated `vite.config.ts` to import theme constants for PWA manifest colors
+- Added `themeColorInjector` Vite plugin using `transformIndexHtml` to inject colors into `index.html`
+- Replaced hardcoded hex values in `index.html` with `%THEME_BACKGROUND%` / `%THEME_PRIMARY%` placeholders
+- Added sync warning comment in `index.css` @theme block
 
-**Current state:** All changes build and pass tests. Theme is dark minimal with neutral grays. Project cards are the only colored elements on the page — each has a distinct accent color.
+**Current state:** All changes build and 52 tests pass. Theme colors now flow from `src/constants/theme.ts` → PWA manifest + HTML meta tags. CSS @theme tokens in `index.css` still need manual sync (with comment reminder).
 
 **Key context:**
-- `accent` field added to `ProjectItem` interface (optional, falls back to #737373)
-- Theme colors in `src/index.css` are now all neutral grays — no saturated colors
-- Inline `style` is used intentionally on project cards for data-driven accent colors (Tailwind can't resolve dynamic per-item hex values)
-- 9 projects have accent colors: violet, teal, amber, emerald, rose, blue, lime, orange, sky
+- `src/constants/theme.ts` exports `THEME_BACKGROUND` (#0a0a0a) and `THEME_PRIMARY` (#d4d4d4)
+- `index.html` uses `%THEME_BACKGROUND%` and `%THEME_PRIMARY%` placeholders (not raw hex)
+- `vite.config.ts` uses `THEME_BACKGROUND` constant for `theme_color` and `background_color`
+- `index.css` @theme has a comment warning to keep values in sync with `theme.ts`

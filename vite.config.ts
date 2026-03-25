@@ -2,6 +2,28 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import { THEME_BACKGROUND, THEME_PRIMARY } from './src/constants/theme'
+import type { Plugin } from 'vite'
+
+// Requirement: Inject theme colors into index.html meta tags at build time
+// Approach: Custom Vite plugin using transformIndexHtml replaces %THEME_*% placeholders
+//   with values from the shared constants file (src/constants/theme.ts). This ensures
+//   index.html, PWA manifest, and CSS @theme tokens all derive from the same source.
+// Alternatives considered:
+//   - Vite's built-in env variable substitution: Rejected — only works for import.meta.env
+//     in JS/TS, not in raw HTML attributes
+//   - html-webpack-plugin style templating: Rejected — Vite doesn't use webpack; its
+//     transformIndexHtml hook is the idiomatic approach
+function themeColorInjector(): Plugin {
+  return {
+    name: 'theme-color-injector',
+    transformIndexHtml(html) {
+      return html
+        .replace(/%THEME_BACKGROUND%/g, THEME_BACKGROUND)
+        .replace(/%THEME_PRIMARY%/g, THEME_PRIMARY)
+    },
+  }
+}
 
 // Requirement: Migrate deployment from GitHub Pages to Vercel
 // Approach: Remove base path prefix — Vercel serves at root '/' unlike GitHub Pages
@@ -15,6 +37,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    themeColorInjector(),
     VitePWA({
       registerType: 'prompt',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
@@ -22,8 +45,8 @@ export default defineConfig({
         name: 'Jaco Theron - Solutions Engineer',
         short_name: 'JT Resume',
         description: 'Personal CV and resume of Jaco Theron, Solutions / Software / Sales Engineer & Analyst',
-        theme_color: '#0a0a0a',
-        background_color: '#0a0a0a',
+        theme_color: THEME_BACKGROUND,
+        background_color: THEME_BACKGROUND,
         display: 'standalone',
         scope: '/',
         start_url: '/',

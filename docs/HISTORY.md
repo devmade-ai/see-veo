@@ -2,6 +2,15 @@
 
 Record of completed work and changes.
 
+## 2026-03-25
+
+### Infrastructure
+- Centralized theme colors: created `src/constants/theme.ts` as single source of truth for `THEME_BACKGROUND` and `THEME_PRIMARY`
+- Added `themeColorInjector` Vite plugin to inject theme colors into `index.html` meta tags at build time via `transformIndexHtml`
+- `index.html` now uses `%THEME_BACKGROUND%` / `%THEME_PRIMARY%` placeholders instead of hardcoded hex values
+- `vite.config.ts` PWA manifest imports `THEME_BACKGROUND` from shared constants instead of hardcoded `#0a0a0a`
+- Added sync warning comment in `index.css` @theme block referencing `theme.ts`
+
 ## 2026-03-24
 
 ### Theme & Visual Design

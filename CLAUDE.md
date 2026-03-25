@@ -15,11 +15,12 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - `src/data/cv-data.ts` — All CV content and TypeScript interfaces. Edit this single file to update the resume.
 - `src/components/` — One component per CV section (Hero, About, Experience, Education, Skills, Projects) plus feature components (ActivityCharts, ActivityTimeline, InterestForm, DebugBanner, UpdatePrompt, InstallInstructionsModal) and reusable helpers (Section, TimelineItem, SkillBadge).
 - `src/hooks/` — Custom React hooks. `useRepoTorEmbed` loads repo-tor's `embed.js` helper script to auto-size chart iframes; `usePWAInstall` and `usePWAUpdate` for install/update prompts.
+- `src/constants/theme.ts` — Canonical theme colors (`THEME_BACKGROUND`, `THEME_PRIMARY`) used by PWA manifest and injected into `index.html` at build time. Single source of truth — update here when theme colors change.
 - `src/constants/embed.ts` — Centralized repo-tor embed configuration (base URL, script URL, chart colors).
 - `src/utils/` — Shared utilities: `debugLog.ts` (pub/sub event store for mobile debugging), `pwa.ts` (browser detection, standalone check), `validation.ts` (email pattern, form payload validation).
 - `src/index.css` — Tailwind import, custom `@theme` color tokens (dark palette), and print styles.
 - `src/App.tsx` — Composes all sections into a single-page layout. No routing.
-- `vite.config.ts` — Vite config with Tailwind plugin, PWA plugin, and Workbox runtime caching rules.
+- `vite.config.ts` — Vite config with Tailwind plugin, PWA plugin, `themeColorInjector` plugin (injects theme colors into HTML), and Workbox runtime caching rules.
 - `vercel.json` — Vercel deployment config with SPA rewrites.
 - `vitest.config.ts` — Vitest config with jsdom environment, React plugin, and setup file (`src/test/setup.ts`).
 - `src/test/` — Test files (Vitest + Testing Library).
