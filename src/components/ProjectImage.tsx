@@ -9,11 +9,11 @@ import { useState } from 'react'
 interface ProjectImageProps {
   screenshot?: string
   name: string
-  /** Project brand color for the initials placeholder */
-  accent?: string
+  /** Project brand color for the initials placeholder (resolved by caller) */
+  accent: string
 }
 
-function PlaceholderIcon({ name, accent }: { name: string; accent?: string }) {
+function PlaceholderIcon({ name, accent }: { name: string; accent: string }) {
   const initials = name
     .split(' ')
     .map((w) => w[0])
@@ -25,11 +25,11 @@ function PlaceholderIcon({ name, accent }: { name: string; accent?: string }) {
     <div className="flex h-full w-full items-center justify-center bg-background">
       <div
         className="flex h-12 w-12 items-center justify-center rounded-lg"
-        style={{ backgroundColor: `${accent ?? '#737373'}20` }}
+        style={{ backgroundColor: `${accent}20` }}
       >
         <span
           className="text-lg font-semibold"
-          style={{ color: accent ?? '#737373' }}
+          style={{ color: accent }}
         >
           {initials}
         </span>
