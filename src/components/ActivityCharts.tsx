@@ -31,7 +31,7 @@ function ChartEmbed({ embedId, title }: ChartEmbedProps) {
         title={title}
         className="mt-auto h-64 w-full border-none sm:h-80 md:h-96"
         loading="lazy"
-        sandbox="allow-scripts"
+        sandbox="allow-scripts allow-same-origin"
       />
     </div>
   )
