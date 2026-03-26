@@ -415,7 +415,10 @@ export default function InterestForm() {
           <p role="alert" className="text-sm text-red-400">{errorMessage}</p>
           <button
             type="button"
-            onClick={() => { setStatus('idle'); setErrorMessage('') }}
+            onClick={() => {
+              if (errorTimerRef.current) { clearTimeout(errorTimerRef.current); errorTimerRef.current = null }
+              setStatus('idle'); setErrorMessage('')
+            }}
             className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center text-red-400 hover:text-red-300"
             aria-label="Dismiss error"
           >

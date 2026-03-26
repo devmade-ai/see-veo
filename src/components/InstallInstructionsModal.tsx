@@ -23,6 +23,18 @@ export default function InstallInstructionsModal({
 }: InstallInstructionsModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
 
+  // Requirement: Restore focus to the trigger element when modal closes (WCAG 2.4.3)
+  // Approach: Capture activeElement on mount, restore on unmount
+  // Alternatives considered:
+  //   - Accept a ref prop from parent: Rejected — couples modal to opener implementation
+  const triggerRef = useRef<Element | null>(document.activeElement)
+  useEffect(() => {
+    const trigger = triggerRef.current
+    return () => {
+      if (trigger instanceof HTMLElement) trigger.focus()
+    }
+  }, [])
+
   // Requirement: Escape key must close the modal (standard dialog behavior)
   // Requirement: Focus must be trapped inside the modal while open
   useEffect(() => {
@@ -83,7 +95,7 @@ export default function InstallInstructionsModal({
              Alternatives considered:
                - No scroll constraint: Rejected — long step lists push close button off-screen on phones */}
         <div className="flex-1 overflow-y-auto">
-          {steps.length > 0 && (
+          {steps.length > 0 ? (
             <ol className="mt-4 space-y-2">
               {steps.map((step, i) => (
                 <li key={step} className="flex gap-2 text-sm text-text-muted">
@@ -92,6 +104,10 @@ export default function InstallInstructionsModal({
                 </li>
               ))}
             </ol>
+          ) : (
+            <p className="mt-4 text-sm text-text-muted italic">
+              This browser doesn't support automatic installation. Try using Chrome, Edge, or Brave instead.
+            </p>
           )}
 
           {note && (
