@@ -1,22 +1,22 @@
 # Session Notes
 
-**Worked on:** Full sweep — docs audit, mobile UX (WCAG 2.5.5), code hygiene
+**Worked on:** Full `start` sweep — all 9 triggers (doc → tap → cln → perf → sec → dbg → imp)
 
 **Accomplished:**
-- Fixed 7 documentation discrepancies (CLAUDE.md, TODO.md, SESSION_NOTES.md, HISTORY.md, EXTERNAL_REFERENCES.md)
-- Added viewport-fit=cover and safe area CSS for notched device support
-- Brought all interactive touch targets to WCAG 2.5.5 minimum (44px) across 8 components
-- Made InstallInstructionsModal scrollable on small viewports
-- Made iframe chart heights responsive for mobile screens
-- Extracted `fetchWithTimeout` utility (6 deduplicated occurrences)
-- Extracted diagnostic checks from DebugBanner into `src/utils/diagnostics.ts` (12 pure functions + shared `diagnoseFailure`)
-- Removed unused `avatarInitials` from PersonalInfo interface and data
-- DebugBanner reduced from 582→355 lines, InterestForm from 507→433 lines
+- **docs**: Fixed 7 documentation discrepancies across CLAUDE.md, TODO.md, HISTORY.md, SESSION_NOTES.md, EXTERNAL_REFERENCES.md
+- **tap**: WCAG 2.5.5 touch targets (44px min) on all interactive elements, safe area handling for notched devices, modal scroll overflow, responsive iframe heights
+- **cln**: Extracted `fetchWithTimeout` and `diagnostics.ts` utilities, removed unused `avatarInitials`, reduced DebugBanner 582→355 lines and InterestForm 507→433 lines
+- **perf**: Fixed timer leak in DebugBanner, memoized errorCount, stable keys in About/TimelineItem, extracted statusIcon
+- **sec**: Added CSP + security headers to vercel.json, tightened iframe sandbox, redacted .env.example, added timing-based bot detection
+- **dbg**: Added 8 PWA lifecycle logs, embed success log, reduced submit log noise
+- **imp**: Added aria-labelledby/aria-label for screen reader landmarks, print URL display, standalone type-check script
 
-**Current state:** Build clean, lint clean, 108 tests pass. Docs, mobile, and clean triggers completed.
+**Current state:** Build clean, lint clean, 108 tests pass. All 9 triggers completed.
 
 **Key context:**
-- `src/utils/diagnostics.ts` exports `DiagnosticCheck` interface, individual check functions, and `diagnoseFailure` — shared between DebugBanner and InterestForm
-- `src/utils/fetchWithTimeout.ts` wraps fetch with automatic abort-on-timeout and cleanup
-- Safe area handling uses `env(safe-area-inset-*)` via inline styles on fixed elements and body padding in index.css
-- Touch targets use `min-h-[44px]` with `inline-flex items-center` pattern
+- `src/utils/diagnostics.ts` — shared diagnostic checks and `diagnoseFailure` between DebugBanner and InterestForm
+- `src/utils/fetchWithTimeout.ts` — fetch wrapper with automatic abort-on-timeout
+- `vercel.json` now has full security headers including CSP
+- iframe sandbox is `allow-scripts` only (no `allow-same-origin`)
+- All PWA hooks now log to the debug pill via `'PWA'` source
+- Section component generates stable IDs from titles for aria-labelledby

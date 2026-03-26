@@ -4,6 +4,31 @@ Record of completed work and changes.
 
 ## 2026-03-26
 
+### Improvements
+- Added aria-labelledby to Section component for screen reader landmark navigation
+- Added aria-label to project "View Project" links with project name
+- Added aria-label to ActivityTimeline section for heading hierarchy
+- Added print CSS to show external link URLs via ::after pseudo-element
+- Added standalone `npm run type-check` script
+
+### Performance
+- Fixed uncleaned setTimeout in DebugBanner handleCopy (memory leak)
+- Memoized errorCount filter with useMemo in DebugBanner
+- Replaced index-based keys with content-based keys in About and TimelineItem
+- Extracted statusIcon as module-level function
+
+### Security
+- Added security headers to vercel.json (CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
+- Removed allow-same-origin from iframe sandbox attributes
+- Replaced real API URL in .env.example with empty placeholder
+- Added timing-based bot detection to InterestForm
+
+### Debug Coverage
+- Added PWA install lifecycle logs (prompt-captured, prompt-shown, prompt-result, app-installed)
+- Added PWA update lifecycle logs (sw-registered, update-available, update-applied)
+- Added embed.js load success log
+- Reduced InterestForm submit log noise (removed static constants)
+
 ### Code Hygiene
 - Extracted `fetchWithTimeout` utility (`src/utils/fetchWithTimeout.ts`) — deduplicates 6 AbortController+setTimeout occurrences across InterestForm and DebugBanner
 - Extracted diagnostic check functions into `src/utils/diagnostics.ts` — 12 pure functions + shared `diagnoseFailure`, reducing DebugBanner from 582→355 lines and InterestForm from 507→433 lines

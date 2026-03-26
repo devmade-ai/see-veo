@@ -28,6 +28,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 ## Commands
 
 - `npm run dev` — Start dev server
+- `npm run type-check` — TypeScript type check only (no build)
 - `npm run build` — TypeScript check + production build (`tsc -b && vite build`)
 - `npm run lint` — Run ESLint
 - `npm run preview` — Preview production build locally
