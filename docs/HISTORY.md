@@ -4,6 +4,20 @@ Record of completed work and changes.
 
 ## 2026-03-26
 
+### Code Review Fixes
+- Fixed email validation to check trimmed length (validation.ts)
+- Added error timer cleanup on manual dismiss in InterestForm
+- Added focus restoration to InstallInstructionsModal on close (WCAG 2.4.3)
+- Added fallback message in modal for browsers with no install steps (Firefox Desktop)
+- Switched About and TimelineItem to index-based keys with prefixes
+- Added Space Grotesk as heading font (h1-h6) alongside Inter body font
+
+### Code Quality Fixes
+- Added mountedRef guard to InterestForm to prevent setState after unmount during async diagnoseFailure
+- Made UpdatePrompt.handleUpdate async to catch rejected promises from onUpdate
+- Removed needRefresh from SW polling interval dependency in usePWAUpdate (runs once from mount)
+- Added monotonic run counter to DebugBanner runDiagnostics to cancel stale concurrent runs
+
 ### Improvements
 - Added aria-labelledby to Section component for screen reader landmark navigation
 - Added aria-label to project "View Project" links with project name
