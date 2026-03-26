@@ -21,7 +21,7 @@ export function validatePayload(data: unknown): InterestPayload | null {
   const { name, email, message } = obj
 
   if (typeof name !== 'string' || name.trim().length === 0 || name.length > 100) return null
-  if (typeof email !== 'string' || email.length > 254) return null
+  if (typeof email !== 'string' || email.trim().length === 0 || email.trim().length > 254) return null
   if (typeof message !== 'string' || message.trim().length === 0 || message.length > 2000) return null
 
   if (!EMAIL_PATTERN.test(email.trim())) return null

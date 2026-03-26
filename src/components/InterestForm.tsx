@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { debugLog } from '../utils/debugLog'
 import { validatePayload } from '../utils/validation'
+import { fetchWithTimeout } from '../utils/fetchWithTimeout'
+import { diagnoseFailure } from '../utils/diagnostics'
 
 // Requirement: Allow visitors to express interest via a one-off email notification
 // Approach: Client-side form that POSTs to a serverless API endpoint which sends via SMTP
@@ -10,7 +12,7 @@ import { validatePayload } from '../utils/validation'
 //   - Direct SMTP from browser: Rejected — not possible, SMTP requires server-side
 
 // Requirement: Abort fetch after timeout so users aren't left waiting on dead networks
-// Approach: AbortController with 10s timeout per attempt
+// Approach: Uses shared fetchWithTimeout utility (src/utils/fetchWithTimeout.ts)
 // Alternatives considered:
 //   - No timeout: Rejected — users wait indefinitely on slow/dead networks
 //   - Shorter timeout (5s): Rejected — legitimate slow connections would fail unnecessarily
@@ -26,76 +28,6 @@ const FETCH_TIMEOUT_MS = 10_000
 const RETRY_DELAY_MS = 1_500
 const MAX_ATTEMPTS = 2
 const ERROR_AUTO_DISMISS_MS = 8_000
-const CORS_PROBE_TIMEOUT_MS = 3_000
-
-// Requirement: Distinguish failure modes when fetch throws TypeError on mobile:
-//   (a) API not deployed — Vercel returns 404 without CORS headers → looks like network error
-//   (b) API deployed but CORS misconfigured — function runs but browser blocks response
-//   (c) Server genuinely unreachable — network/DNS failure
-//   (d) Browser privacy features blocking cross-origin requests (Brave Shields, etc.)
-// Approach: Check health endpoint (GET /api/health with cors) to detect deployment status,
-//   then no-cors probe to distinguish "server down" from "browser blocking".
-//   When cors health fails but no-cors succeeds, the server IS up — the failure is
-//   browser-level blocking, not "API not deployed".
-// Alternatives considered:
-//   - no-cors probe only: Rejected — opaque responses can't distinguish 200 from 404;
-//     Vercel serves both and the server IS reachable, so opaque succeeds in both cases
-//   - Assume always network: Rejected — gives "could not reach server" when the API
-//     is just not deployed, which is confusing and not actionable
-//   - Assume always not-deployed when cors fails: Rejected — misdiagnoses on Brave and
-//     other privacy-focused browsers that block cross-origin fetches
-type FailureCause = 'not-deployed' | 'cors' | 'network' | 'browser-blocked'
-
-async function diagnoseFailure(apiUrl: string): Promise<FailureCause> {
-  // Step 1: Check health endpoint to verify the API is deployed.
-  // Uses cors-mode GET so we can read the status code. If it succeeds, we know
-  // the API is deployed and can proceed to check CORS on the actual endpoint.
-  const healthUrl = apiUrl.replace(/\/[^/]+$/, '/health')
-  try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), CORS_PROBE_TIMEOUT_MS)
-    const res = await fetch(healthUrl, {
-      method: 'GET',
-      mode: 'cors',
-      signal: controller.signal,
-    })
-    clearTimeout(timeoutId)
-    if (!res.ok) {
-      // Health endpoint returned an error — likely not deployed (404 from Vercel)
-      return 'not-deployed'
-    }
-  } catch {
-    // Health endpoint fetch failed — could be CORS blocking, browser privacy
-    // features, or genuinely not deployed. Try a no-cors probe to check if
-    // the server is reachable at all.
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), CORS_PROBE_TIMEOUT_MS)
-      const res = await fetch(healthUrl, {
-        method: 'GET',
-        mode: 'no-cors',
-        signal: controller.signal,
-      })
-      clearTimeout(timeoutId)
-      if (res.type === 'opaque') {
-        // Server responded (opaque = reachable) but the cors fetch was blocked.
-        // This typically means browser privacy features (Brave Shields, tracker
-        // protection) are intercepting the cross-origin request, NOT that the
-        // API is down. Cannot distinguish 200 from 404 in opaque mode, but
-        // the server being reachable makes "browser-blocked" more accurate than
-        // "not-deployed" for privacy-focused browsers.
-        return 'browser-blocked'
-      }
-    } catch {
-      // Server completely unreachable
-      return 'network'
-    }
-    return 'not-deployed'
-  }
-
-  // Step 2: Health endpoint works, so API is deployed. The form fetch failed due to CORS.
-  return 'cors'
-}
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -115,7 +47,16 @@ export default function InterestForm() {
   const [errorMessage, setErrorMessage] = useState('')
   // Honeypot field — bots fill this in, real users never see it
   const [honeypot, setHoneypot] = useState('')
+  // Requirement: Timing-based bot detection — real users take >1s to fill a form
+  // Approach: Record mount time, reject submissions faster than 1 second
+  // Alternatives considered:
+  //   - reCAPTCHA: Rejected — adds third-party dependency and privacy concern
+  //   - Honeypot only: Insufficient — sophisticated bots detect common honeypot patterns
+  const [mountTime] = useState(() => Date.now())
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Guard against setState after unmount during async diagnoseFailure
+  const mountedRef = useRef(true)
+  useEffect(() => () => { mountedRef.current = false }, [])
 
   // Auto-dismiss error messages after a delay
   useEffect(() => {
@@ -136,9 +77,11 @@ export default function InterestForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    // Honeypot check: if filled, silently "succeed" to fool bots
-    if (honeypot) {
-      debugLog('InterestForm', 'info', 'honeypot-triggered')
+    // Bot detection: honeypot field + timing check.
+    // Silently "succeed" to avoid revealing detection to bots.
+    const BOT_MIN_TIME_MS = 1_000
+    if (honeypot || Date.now() - mountTime < BOT_MIN_TIME_MS) {
+      debugLog('InterestForm', 'info', honeypot ? 'honeypot-triggered' : 'timing-bot-detected')
       setStatus('success')
       return
     }
@@ -202,14 +145,9 @@ export default function InterestForm() {
     }
 
     debugLog('InterestForm', 'info', 'submit', {
-      apiUrl,
-      timeoutMs: FETCH_TIMEOUT_MS,
-      maxAttempts: MAX_ATTEMPTS,
-      fields: {
-        name: `${requestBody.name.length} chars`,
-        email: `${requestBody.email.length} chars`,
-        message: requestBody.message.length > 0 ? `${requestBody.message.length} chars` : 'empty',
-      },
+      name: `${requestBody.name.length} chars`,
+      email: `${requestBody.email.length} chars`,
+      message: requestBody.message.length > 0 ? `${requestBody.message.length} chars` : 'empty',
     })
 
     const startTime = performance.now()
@@ -219,9 +157,6 @@ export default function InterestForm() {
     let lastError: unknown = null
 
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
-
       try {
         debugLog('InterestForm', 'info', 'request', {
           method: 'POST',
@@ -236,15 +171,13 @@ export default function InterestForm() {
         // Alternatives considered:
         //   - Rely on default: Rejected — some mobile browser versions handle
         //     implicit vs explicit CORS mode differently
-        const response = await fetch(apiUrl, {
+        const response = await fetchWithTimeout(apiUrl, {
           method: 'POST',
           mode: 'cors',
           headers: { 'Content-Type': 'application/json' },
-          signal: controller.signal,
           body: JSON.stringify(requestBody),
-        })
+        }, FETCH_TIMEOUT_MS)
 
-        clearTimeout(timeoutId)
         const elapsed = Math.round(performance.now() - startTime)
 
         // Read response body for debug logging
@@ -286,7 +219,6 @@ export default function InterestForm() {
         setFormData({ name: '', email: '', message: '' })
         return
       } catch (err) {
-        clearTimeout(timeoutId)
         lastError = err
 
         // AbortError means timeout — don't retry, report immediately
@@ -333,6 +265,10 @@ export default function InterestForm() {
         : { raw: String(lastError) },
     })
 
+    // Guard: component may have unmounted during the retry loop. diagnoseFailure
+    // is async and will call setErrorMessage after awaiting — skip if unmounted.
+    if (!mountedRef.current) return
+
     setStatus('error')
 
     // Provide a specific message depending on failure cause.
@@ -347,6 +283,7 @@ export default function InterestForm() {
     } else {
       const cause = await diagnoseFailure(apiUrl)
 
+      if (!mountedRef.current) return
       debugLog('InterestForm', 'info', 'failure-diagnosis', { cause })
 
       switch (cause) {
@@ -390,7 +327,7 @@ export default function InterestForm() {
         <button
           type="button"
           onClick={() => setStatus('idle')}
-          className="mt-4 text-sm text-primary hover:text-primary-light"
+          className="mt-4 inline-flex min-h-[44px] items-center text-sm text-primary hover:text-primary-light"
         >
           Send another message
         </button>
@@ -434,7 +371,7 @@ export default function InterestForm() {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, name: e.target.value }))
           }
-          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className="min-h-[44px] w-full rounded-md border border-border bg-surface px-3 py-2.5 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="Your name"
         />
       </div>
@@ -455,7 +392,7 @@ export default function InterestForm() {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, email: e.target.value }))
           }
-          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className="min-h-[44px] w-full rounded-md border border-border bg-surface px-3 py-2.5 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="you@example.com"
         />
       </div>
@@ -476,18 +413,21 @@ export default function InterestForm() {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, message: e.target.value }))
           }
-          className="w-full resize-y rounded-md border border-border bg-surface px-3 py-2 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className="w-full resize-y rounded-md border border-border bg-surface px-3 py-2.5 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="Tell me what you're looking for..."
         />
       </div>
 
       {status === 'error' && (
-        <div className="flex items-start justify-between gap-2 rounded-md bg-red-400/10 px-3 py-2">
+        <div className="flex items-start justify-between gap-2 rounded-md bg-red-400/10 px-3 py-2.5">
           <p role="alert" className="text-sm text-red-400">{errorMessage}</p>
           <button
             type="button"
-            onClick={() => { setStatus('idle'); setErrorMessage('') }}
-            className="shrink-0 text-red-400 hover:text-red-300"
+            onClick={() => {
+              if (errorTimerRef.current) { clearTimeout(errorTimerRef.current); errorTimerRef.current = null }
+              setStatus('idle'); setErrorMessage('')
+            }}
+            className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center text-red-400 hover:text-red-300"
             aria-label="Dismiss error"
           >
             &times;
@@ -498,7 +438,7 @@ export default function InterestForm() {
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-background transition-colors hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex min-h-[44px] items-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-background transition-colors hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-50"
       >
         {status === 'submitting' ? 'Sending...' : 'Send Message'}
       </button>

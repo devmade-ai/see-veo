@@ -23,6 +23,18 @@ export default function InstallInstructionsModal({
 }: InstallInstructionsModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
 
+  // Requirement: Restore focus to the trigger element when modal closes (WCAG 2.4.3)
+  // Approach: Capture activeElement on mount, restore on unmount
+  // Alternatives considered:
+  //   - Accept a ref prop from parent: Rejected — couples modal to opener implementation
+  const triggerRef = useRef<Element | null>(document.activeElement)
+  useEffect(() => {
+    const trigger = triggerRef.current
+    return () => {
+      if (trigger instanceof HTMLElement) trigger.focus()
+    }
+  }, [])
+
   // Requirement: Escape key must close the modal (standard dialog behavior)
   // Requirement: Focus must be trapped inside the modal while open
   useEffect(() => {
@@ -71,43 +83,53 @@ export default function InstallInstructionsModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="install-modal-title"
-        className="mx-4 w-full max-w-md rounded-xl bg-surface border border-border p-6 shadow-xl"
+        className="mx-4 flex max-h-[85vh] w-full max-w-md flex-col rounded-xl bg-surface border border-border p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="install-modal-title" className="text-lg font-semibold text-text">
+        <h2 id="install-modal-title" className="shrink-0 text-lg font-semibold text-text">
           Install on {browser}
         </h2>
 
-        {steps.length > 0 && (
-          <ol className="mt-4 space-y-2">
-            {steps.map((step, i) => (
-              <li key={step} className="flex gap-2 text-sm text-text-muted">
-                <span className="font-medium text-primary">{i + 1}.</span>
-                {step}
-              </li>
-            ))}
-          </ol>
-        )}
+        {/* Requirement: Modal content must scroll on small viewports without pushing close button off-screen
+             Approach: Scrollable content area with fixed header/button, max-h-[85vh] on dialog
+             Alternatives considered:
+               - No scroll constraint: Rejected — long step lists push close button off-screen on phones */}
+        <div className="flex-1 overflow-y-auto">
+          {steps.length > 0 ? (
+            <ol className="mt-4 space-y-2">
+              {steps.map((step, i) => (
+                <li key={step} className="flex gap-2 text-sm text-text-muted">
+                  <span className="font-medium text-primary">{i + 1}.</span>
+                  {step}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="mt-4 text-sm text-text-muted italic">
+              This browser doesn't support automatic installation. Try using Chrome, Edge, or Brave instead.
+            </p>
+          )}
 
-        {note && (
-          <p className="mt-4 text-sm text-text-muted italic">{note}</p>
-        )}
+          {note && (
+            <p className="mt-4 text-sm text-text-muted italic">{note}</p>
+          )}
 
-        <div className="mt-5 space-y-2">
-          <p className="text-xs font-medium text-text-muted uppercase tracking-wide">
-            Benefits
-          </p>
-          <ul className="space-y-1 text-sm text-text-muted">
-            <li>Works offline</li>
-            <li>Quick access from home screen</li>
-            <li>Full-screen experience</li>
-          </ul>
+          <div className="mt-5 space-y-2">
+            <p className="text-xs font-medium text-text-muted uppercase tracking-wide">
+              Benefits
+            </p>
+            <ul className="space-y-1 text-sm text-text-muted">
+              <li>Works offline</li>
+              <li>Quick access from home screen</li>
+              <li>Full-screen experience</li>
+            </ul>
+          </div>
         </div>
 
         <button
           type="button"
           onClick={onClose}
-          className="mt-6 w-full rounded-md bg-surface-light px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-border"
+          className="mt-6 inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-md bg-surface-light px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-border"
         >
           Close
         </button>

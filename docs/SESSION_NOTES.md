@@ -1,18 +1,18 @@
 # Session Notes
 
-**Worked on:** Test coverage for all CV section components, InterestForm, and PWA hooks
+**Worked on:** Second `start` sweep (rev → aud) + heading font change
 
 **Accomplished:**
-- Added 56 new tests across 3 test files (components, interest-form, pwa-hooks)
-- Component render tests cover Hero, About, Experience, Education, Skills, Projects
-- InterestForm tests cover rendering, validation (whitespace-only inputs), submission flow, honeypot bot detection, error handling (offline, timeout, missing API URL, HTTP errors)
-- PWA hook tests cover usePWAUpdate (hasUpdate state, update invocation) and usePWAInstall (canInstall, install prompt, appinstalled event, install instructions)
-- Installed `@testing-library/react` and `@testing-library/user-event`
-- Added vitest alias for `virtual:pwa-register/react` with mock file
+- **rev**: Fixed email validation trimming bug, error dismiss timer cleanup, modal focus restoration on close, empty steps fallback for Firefox Desktop, stable index-based keys
+- **aud**: Added mountedRef guard for InterestForm async diagnosis, async error handling in UpdatePrompt, fixed SW polling interval dependency, added stale run cancellation to DebugBanner diagnostics
+- **font**: Added Space Grotesk as heading font for h1-h6, Inter remains body font
 
-**Current state:** 108 tests pass, build clean, lint clean. All TODO testing items completed.
+**Current state:** Build clean, lint clean, 108 tests pass. Two sweeps completed (all 9 triggers + rev/aud round 2).
 
 **Key context:**
-- `virtual:pwa-register/react` is a Vite virtual module — vitest needs a resolve alias to a mock file (`src/test/__mocks__/virtual-pwa-register-react.ts`) since the PWA plugin isn't loaded in test mode
-- InterestForm validation tests use `fireEvent.submit` to bypass HTML5 constraint validation (required, type="email") and test `validatePayload` logic directly
-- usePWAInstall tests use dynamic imports because the hook reads module-level state (`earlyPrompt`) at import time
+- InterestForm uses `mountedRef` to guard against setState after unmount during `diagnoseFailure`
+- DebugBanner uses `diagnosticRunRef` counter to cancel stale diagnostic runs
+- UpdatePrompt.handleUpdate is now async to catch promise rejections from SW update
+- usePWAUpdate polling runs once from mount (empty deps), reads registrationRef dynamically
+- Space Grotesk loaded via Google Fonts, applied to headings via `--font-heading` CSS custom property
+- InstallInstructionsModal captures `document.activeElement` on mount and restores focus on unmount

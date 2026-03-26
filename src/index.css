@@ -19,6 +19,30 @@
   --color-border: #262626;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* Requirement: Distinct heading font for visual hierarchy
+     Approach: Space Grotesk for headings — geometric sans-serif with angular character
+       that contrasts with Inter body text at large sizes while staying harmonious
+     Alternatives considered:
+       - Sora: Rejected — rounder, softer feel doesn't match the dark minimal aesthetic
+       - Same font (Inter) for everything: Rejected — user requested heading differentiation
+       - Serif heading font: Rejected — clashes with the monochrome technical aesthetic */
+  --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Apply heading font to all heading levels */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Requirement: Safe area handling for notched devices (iPhone X+, Android cutouts)
+   Approach: Apply safe area insets to body padding so content clears notch and home indicator.
+     Fixed elements (UpdatePrompt, DebugBanner) handle their own insets via Tailwind classes.
+   Alternatives considered:
+     - Insets on html element: Rejected — body is the scrolling container, insets belong here
+     - Per-component only: Rejected — base-level padding prevents content touching unsafe edges */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 /* Print-friendly styles */
@@ -35,6 +59,19 @@
   a {
     color: black !important;
     text-decoration: underline !important;
+  }
+
+  /* Requirement: Show link URLs in printed CV so readers can visit them
+     Approach: CSS ::after pseudo-element with attr(href) for external links only
+     Alternatives considered:
+       - Show all URLs: Rejected — internal anchors (#main-content) and mailto: are noise
+       - JavaScript-based: Rejected — CSS-only is simpler and works without JS */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    font-weight: normal;
+    text-decoration: none;
+    word-break: break-all;
   }
 
   section {

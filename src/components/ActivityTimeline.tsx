@@ -15,8 +15,14 @@ export default function ActivityTimeline() {
   // Requirement: Container height determined by iframe content via postMessage
   // (same pattern as ActivityCharts — see ChartEmbed for full decision context)
 
+  // Requirement: Heading hierarchy must not skip levels (h2 → h3, not h2 → h3 without h2)
+  // Approach: Use aria-label on the section landmark instead of a visible h2,
+  //   since this section visually follows the "Activity" h2 from ActivityCharts
+  // Alternatives considered:
+  //   - Wrap in <Section>: Rejected — adds a visible duplicate "Activity" heading
+  //   - Use h2 instead of h3: Rejected — would be visually inconsistent with chart sub-headings
   return (
-    <section className="mb-16 no-print">
+    <section className="mb-16 no-print" aria-label="Commit Activity">
       <div className="overflow-hidden rounded-lg border border-border bg-surface">
         <h3 className="mb-2 px-4 pt-3 text-sm font-medium text-text-muted">
           Commit Activity
@@ -24,9 +30,9 @@ export default function ActivityTimeline() {
         <iframe
           src={`${EMBED_BASE}?embed=activity-timeline&theme=dark&bg=transparent&colors=${CHART_COLORS}`}
           title="Commit Activity"
-          className="h-96 w-full border-none sm:h-[28rem]"
+          className="h-72 w-full border-none sm:h-96 md:h-[28rem]"
           loading="lazy"
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts"
         />
       </div>
     </section>

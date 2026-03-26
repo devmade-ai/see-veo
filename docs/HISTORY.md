@@ -4,6 +4,62 @@ Record of completed work and changes.
 
 ## 2026-03-26
 
+### Code Review Fixes
+- Fixed email validation to check trimmed length (validation.ts)
+- Added error timer cleanup on manual dismiss in InterestForm
+- Added focus restoration to InstallInstructionsModal on close (WCAG 2.4.3)
+- Added fallback message in modal for browsers with no install steps (Firefox Desktop)
+- Switched About and TimelineItem to index-based keys with prefixes
+- Added Space Grotesk as heading font (h1-h6) alongside Inter body font
+
+### Code Quality Fixes
+- Added mountedRef guard to InterestForm to prevent setState after unmount during async diagnoseFailure
+- Made UpdatePrompt.handleUpdate async to catch rejected promises from onUpdate
+- Removed needRefresh from SW polling interval dependency in usePWAUpdate (runs once from mount)
+- Added monotonic run counter to DebugBanner runDiagnostics to cancel stale concurrent runs
+
+### Improvements
+- Added aria-labelledby to Section component for screen reader landmark navigation
+- Added aria-label to project "View Project" links with project name
+- Added aria-label to ActivityTimeline section for heading hierarchy
+- Added print CSS to show external link URLs via ::after pseudo-element
+- Added standalone `npm run type-check` script
+
+### Performance
+- Fixed uncleaned setTimeout in DebugBanner handleCopy (memory leak)
+- Memoized errorCount filter with useMemo in DebugBanner
+- Replaced index-based keys with content-based keys in About and TimelineItem
+- Extracted statusIcon as module-level function
+
+### Security
+- Added security headers to vercel.json (CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
+- Removed allow-same-origin from iframe sandbox attributes
+- Replaced real API URL in .env.example with empty placeholder
+- Added timing-based bot detection to InterestForm
+
+### Debug Coverage
+- Added PWA install lifecycle logs (prompt-captured, prompt-shown, prompt-result, app-installed)
+- Added PWA update lifecycle logs (sw-registered, update-available, update-applied)
+- Added embed.js load success log
+- Reduced InterestForm submit log noise (removed static constants)
+
+### Code Hygiene
+- Extracted `fetchWithTimeout` utility (`src/utils/fetchWithTimeout.ts`) — deduplicates 6 AbortController+setTimeout occurrences across InterestForm and DebugBanner
+- Extracted diagnostic check functions into `src/utils/diagnostics.ts` — 12 pure functions + shared `diagnoseFailure`, reducing DebugBanner from 582→355 lines and InterestForm from 507→433 lines
+- Removed unused `avatarInitials` field from `PersonalInfo` interface, cvData, and tests
+- Corrected test count in HISTORY.md (was 135 from grep overcounting, actual is 108)
+
+### Documentation Accuracy
+- Fixed 7 documentation discrepancies: missing ProjectImage in CLAUDE.md, stale vite-plugin-pwa version, stale test counts, TODO/Key Decisions contradiction, outdated AI Notes, stale EXTERNAL_REFERENCES date
+
+### Mobile UX (WCAG 2.5.5 Compliance)
+- Added `viewport-fit=cover` to index.html for safe area inset support on notched devices
+- Added body safe area padding in index.css
+- Increased all button/input touch targets to minimum 44px across Hero, UpdatePrompt, InterestForm, InstallInstructionsModal, DebugBanner, Projects
+- Added safe area clearance to fixed elements (UpdatePrompt, DebugBanner, skip-to-content link)
+- Made InstallInstructionsModal scrollable with max-h-[85vh] for small viewports
+- Made iframe heights responsive (smaller on mobile, scaling up via sm/md breakpoints)
+
 ### Testing
 - Added component render tests for Hero, About, Experience, Education, Skills, Projects (27 tests)
 - Added InterestForm interaction tests: rendering, validation, submission, honeypot, error handling (17 tests)

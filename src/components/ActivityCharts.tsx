@@ -29,9 +29,9 @@ function ChartEmbed({ embedId, title }: ChartEmbedProps) {
       <iframe
         src={`${EMBED_BASE}?embed=${embedId}&theme=dark&bg=transparent&accent=${CHART_ACCENT}&muted=${CHART_MUTED}`}
         title={title}
-        className="mt-auto h-80 w-full border-none sm:h-96"
+        className="mt-auto h-64 w-full border-none sm:h-80 md:h-96"
         loading="lazy"
-        sandbox="allow-scripts allow-same-origin"
+        sandbox="allow-scripts"
       />
     </div>
   )

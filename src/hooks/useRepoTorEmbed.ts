@@ -30,6 +30,9 @@ export function useRepoTorEmbed() {
     const script = document.createElement('script')
     script.src = EMBED_SCRIPT_URL
     script.async = true
+    script.onload = () => {
+      debugLog('App', 'success', 'embed-script-loaded', { url: EMBED_SCRIPT_URL })
+    }
     script.onerror = () => {
       debugLog('App', 'warn', 'embed-script-failed', {
         url: EMBED_SCRIPT_URL,

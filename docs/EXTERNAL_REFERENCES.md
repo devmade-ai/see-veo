@@ -86,4 +86,4 @@ All embed constants (base URL, script URL, chart colors) are centralized in
 
 ---
 
-*Last updated: 2026-03-02 — Migrated embed URLs from GitHub Pages to Vercel, centralized constants*
+*Last updated: 2026-03-26 — Verified against `src/constants/embed.ts`; content unchanged*
