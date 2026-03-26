@@ -447,7 +447,159 @@ useEffect(() => {
 }, [value]);
 ```
 
+**Alternative — mounted ref guard:**
+```typescript
+const mountedRef = useRef(true);
+useEffect(() => () => { mountedRef.current = false; }, []);
+
+// In any async/timeout callback:
+if (!mountedRef.current) return;
+```
+
 **General rule:** Every `setTimeout`, `setInterval`, `addEventListener`, or `subscribe` call inside a `useEffect` needs a corresponding cleanup in the return function. If callbacks create *new* async operations, those need cleanup too.
+
+### HTTPS Proxy Support for Node.js Scripts
+
+Zero-dependency HTTP CONNECT tunnel for Node.js scripts that need to reach external APIs through an HTTPS proxy. Solves the problem that Node.js's built-in `fetch()` (undici) and `https.get()` **do not** respect `HTTP_PROXY`/`HTTPS_PROXY` environment variables.
+
+#### The Problem
+
+In proxy-only environments (CI containers, Claude Code remote sessions, corporate networks), outbound traffic must route through an HTTP proxy. But:
+
+- **`fetch()` (Node 18+ built-in)**: Uses undici internally. Does NOT auto-detect `HTTP_PROXY`/`HTTPS_PROXY` env vars. Requests fail with DNS errors.
+- **`https.get()`**: Also does NOT respect proxy env vars. Same DNS failure.
+- **`curl`**: Works — it reads `HTTP_PROXY`/`HTTPS_PROXY` automatically. But shelling out to curl from Node is ugly.
+- **`global-agent` / `proxy-agent` packages**: Work, but add external dependencies for a simple tunnel.
+
+#### The Solution
+
+Detect the proxy from environment variables, establish an HTTP CONNECT tunnel, then pipe the HTTPS request through the tunnel socket. Pure `http`/`https` stdlib — no dependencies.
+
+```javascript
+import http from 'http';
+import https from 'https';
+
+// --- Proxy detection ---
+// Check both lowercase and uppercase conventions.
+// HTTPS_PROXY is used for HTTPS requests; HTTP_PROXY for HTTP requests.
+// Most environments set both to the same value.
+const PROXY_URL = process.env.https_proxy || process.env.HTTPS_PROXY || null;
+
+function getProxyConnectOptions(targetHost) {
+  const proxy = new URL(PROXY_URL);
+  const options = {
+    host: proxy.hostname,
+    port: proxy.port,
+    method: 'CONNECT',
+    path: `${targetHost}:443`,
+    headers: { 'Host': `${targetHost}:443` },
+    timeout: 15000,
+  };
+  // Proxy authentication (username:password in proxy URL)
+  if (proxy.username) {
+    const auth = Buffer.from(
+      decodeURIComponent(proxy.username) + ':' + decodeURIComponent(proxy.password)
+    ).toString('base64');
+    options.headers['Proxy-Authorization'] = `Basic ${auth}`;
+  }
+  return options;
+}
+
+// --- HTTPS GET with automatic proxy support ---
+// When PROXY_URL is set: HTTP CONNECT tunnel → HTTPS over tunnel
+// When PROXY_URL is null: Direct HTTPS request
+function httpsGet(requestUrl, headers = {}) {
+  const parsed = new URL(requestUrl);
+  if (PROXY_URL) {
+    return httpsGetViaProxy(parsed, headers);
+  }
+  return httpsGetDirect(parsed, headers);
+}
+
+function httpsGetDirect(parsed, headers) {
+  return new Promise((resolve, reject) => {
+    const req = https.get(parsed.href, { headers, timeout: 15000 }, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(JSON.parse(data));
+        } else {
+          reject(new Error(`HTTP ${res.statusCode}: ${data.substring(0, 200)}`));
+        }
+      });
+    });
+    req.on('error', reject);
+    req.on('timeout', () => { req.destroy(); reject(new Error('Request timeout')); });
+  });
+}
+
+function httpsGetViaProxy(parsed, headers) {
+  return new Promise((resolve, reject) => {
+    const connectOptions = getProxyConnectOptions(parsed.hostname);
+    const proxyReq = http.request(connectOptions);
+
+    proxyReq.on('connect', (res, socket) => {
+      if (res.statusCode !== 200) {
+        socket.destroy();
+        reject(new Error(`Proxy CONNECT failed: ${res.statusCode}`));
+        return;
+      }
+      // TLS handshake through the tunnel
+      const tlsReq = https.get({
+        host: parsed.hostname,
+        path: parsed.pathname + parsed.search,
+        headers,
+        socket,              // Reuse the CONNECT tunnel socket
+        servername: parsed.hostname, // Required for SNI
+        timeout: 15000,
+      }, (tlsRes) => {
+        let data = '';
+        tlsRes.on('data', (chunk) => { data += chunk; });
+        tlsRes.on('end', () => {
+          if (tlsRes.statusCode >= 200 && tlsRes.statusCode < 300) {
+            resolve(JSON.parse(data));
+          } else {
+            reject(new Error(`HTTP ${tlsRes.statusCode}: ${data.substring(0, 200)}`));
+          }
+        });
+      });
+      tlsReq.on('error', reject);
+      tlsReq.on('timeout', () => { tlsReq.destroy(); reject(new Error('Request timeout')); });
+    });
+
+    proxyReq.on('error', reject);
+    proxyReq.on('timeout', () => { proxyReq.destroy(); reject(new Error('Proxy connect timeout')); });
+    proxyReq.end();
+  });
+}
+```
+
+**Usage:**
+
+```javascript
+// Works identically whether proxy is set or not
+const data = await httpsGet('https://api.example.com/status', {
+  'User-Agent': 'MyApp/1.0',
+});
+```
+
+**For curl in shell scripts:**
+
+```bash
+# curl respects HTTP_PROXY/HTTPS_PROXY automatically — no code changes needed.
+# If the env var is named differently (e.g., GLOBAL_AGENT_HTTP_PROXY), pass it explicitly:
+curl -x "$GLOBAL_AGENT_HTTP_PROXY" https://api.example.com/status
+```
+
+#### Key Lessons
+
+1. **Node's `fetch()` and `https.get()` ignore proxy env vars** — unlike `curl`, Python `requests`, or Go's `http.Client`, Node does not auto-detect `HTTP_PROXY`. This is a long-standing design choice, not a bug.
+2. **HTTP CONNECT is the standard** — it's how all HTTPS proxying works. The proxy sees only the target hostname, not the request content (TLS encrypts everything after the tunnel opens).
+3. **`socket` + `servername` are both required** — `socket` reuses the tunnel; `servername` enables SNI so the target server presents the correct TLS certificate.
+4. **Auth uses Basic scheme** — proxy credentials are sent as `Proxy-Authorization: Basic base64(user:pass)` in the CONNECT request. URL-decode the username/password first (they may be percent-encoded in the URL).
+5. **No external dependencies needed** — `global-agent`, `proxy-agent`, `https-proxy-agent` packages solve this too, but for scripts that just need GET requests, the stdlib solution above is simpler and has zero supply chain risk.
+6. **`curl` just works** — it reads `HTTP_PROXY`/`HTTPS_PROXY` automatically. Use it for quick tests: `curl -x "$HTTPS_PROXY" https://example.com`.
 
 ---
 
@@ -498,6 +650,7 @@ COMPONENT_STRUCTURE=flat (src/components/)
 - Clean up completed or obsolete docs/files and remove references to them
 - **ASK before assuming.** When a user reports a bug, ask clarifying questions (which mode? what did you type? what do you see?) BEFORE writing code. Don't guess the cause and build a fix on an assumption — you'll waste time fixing the wrong thing. One clarifying question saves multiple wrong commits.
 - **Always read files before editing.** Use the Read tool on every file before attempting to Edit it. Editing without reading first will fail.
+- **Check build tools before building.** Run `npm install` or verify `node_modules/.bin/vite` exists before attempting `npm run build`. The `sharp` package may not be installed (used by prebuild icon generation), so use `./node_modules/.bin/vite build` directly to skip the prebuild step if needed.
 - **Communication style:** Direct, concise responses. No filler phrases or conversational padding. State facts and actions. Ask specific questions with concrete options when clarification is needed.
 - **Claude Code mobile/web — accessing sibling repos:**
   - Use `GITHUB_ALL_REPO_TOKEN` with the GitHub API (`api.github.com/repos/devmade-ai/{repo}/contents/{path}`) to read files from other devmade-ai repos
