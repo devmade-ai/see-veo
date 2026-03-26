@@ -39,12 +39,16 @@ export default function Hero({
         <p className="mb-4 text-xl text-primary">{personal.title}</p>
         <p className="text-lg text-text-muted">{personal.tagline}</p>
 
-        <div className="mt-6 flex justify-center gap-3 no-print">
+        {/* Requirement: Touch targets must meet WCAG 2.5.5 minimum of 44×44px
+             Approach: min-h-[44px] with inline-flex centering on all action buttons
+             Alternatives considered:
+               - Increase padding only: Rejected — min-height is more reliable across font sizes */}
+        <div className="mt-6 flex flex-wrap justify-center gap-3 no-print">
           {canInstall && onInstall && (
             <button
               type="button"
               onClick={onInstall}
-              className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-primary-light"
+              className="inline-flex min-h-[44px] items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-background transition-colors hover:bg-primary-light"
             >
               Install as an App
             </button>
@@ -53,7 +57,7 @@ export default function Hero({
             <button
               type="button"
               onClick={onShowInstructions}
-              className="rounded-md bg-surface-light px-3 py-1.5 text-sm font-medium text-text transition-colors hover:bg-border"
+              className="inline-flex min-h-[44px] items-center rounded-md bg-surface-light px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-border"
             >
               How to Install
             </button>
@@ -61,7 +65,7 @@ export default function Hero({
           <button
             type="button"
             onClick={() => window.print()}
-            className="rounded-md bg-surface-light px-3 py-1.5 text-sm font-medium text-text transition-colors hover:bg-border"
+            className="inline-flex min-h-[44px] items-center rounded-md bg-surface-light px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-border"
           >
             Download as PDF
           </button>

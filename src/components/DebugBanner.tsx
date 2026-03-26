@@ -377,6 +377,10 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
 
   // Collapsed pill
   if (!expanded) {
+    // Requirement: WCAG 2.5.5 touch target (44px min) + safe area clearance on notched devices
+    // Approach: min-h/min-w 44px on pill, bottom/right use max() for safe area fallback
+    // Alternatives considered:
+    //   - Fixed 4rem offset: Rejected — overlaps home indicator on iPhone
     return (
       <button
         type="button"
@@ -386,7 +390,8 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
             void runDiagnostics()
           }
         }}
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-mono shadow-lg transition-all hover:bg-surface-light no-print"
+        className="fixed z-50 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-full border border-border bg-surface px-3 py-2 text-xs font-mono shadow-lg transition-all hover:bg-surface-light no-print"
+        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))', right: 'max(1rem, env(safe-area-inset-right))' }}
       >
         <span className="text-primary">DBG</span>
         <span className="text-text-muted">{entries.length}</span>
@@ -401,7 +406,10 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
 
   // Expanded panel
   return (
-    <div className="fixed bottom-0 right-0 z-50 m-2 flex max-h-[60vh] w-[calc(100vw-1rem)] max-w-lg flex-col rounded-xl border border-border bg-surface shadow-2xl no-print sm:bottom-4 sm:right-4 sm:m-0">
+    <div
+      className="fixed bottom-0 right-0 z-50 m-2 flex max-h-[60vh] w-[calc(100vw-1rem)] max-w-lg flex-col rounded-xl border border-border bg-surface shadow-2xl no-print sm:m-0"
+      style={{ bottom: 'max(0.5rem, env(safe-area-inset-bottom))', right: 'max(0.5rem, env(safe-area-inset-right))' }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-3 py-2">
         <div className="flex items-center gap-1">
@@ -467,7 +475,7 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
           <button
             type="button"
             onClick={() => setExpanded(false)}
-            className="rounded px-1.5 py-1 text-text-muted hover:text-text transition-colors"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded text-text-muted hover:text-text transition-colors"
             aria-label="Collapse debug panel"
           >
             &times;

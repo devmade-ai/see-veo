@@ -36,7 +36,8 @@ function App() {
            - No skip link: Rejected — violates WCAG 2.1 SC 2.4.1 (Bypass Blocks) */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-background focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-background focus:outline-none"
+        style={{ top: 'max(1rem, env(safe-area-inset-top))' }}
       >
         Skip to content
       </a>

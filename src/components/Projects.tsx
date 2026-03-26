@@ -70,7 +70,7 @@ export default function Projects({ items }: ProjectsProps) {
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 inline-block text-sm transition-opacity hover:opacity-80"
+                    className="mt-3 inline-flex min-h-[44px] items-center text-sm transition-opacity hover:opacity-80"
                     style={{ color: accent }}
                   >
                     View Project &rarr;

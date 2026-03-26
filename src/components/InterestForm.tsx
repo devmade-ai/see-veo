@@ -390,7 +390,7 @@ export default function InterestForm() {
         <button
           type="button"
           onClick={() => setStatus('idle')}
-          className="mt-4 text-sm text-primary hover:text-primary-light"
+          className="mt-4 inline-flex min-h-[44px] items-center text-sm text-primary hover:text-primary-light"
         >
           Send another message
         </button>
@@ -434,7 +434,7 @@ export default function InterestForm() {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, name: e.target.value }))
           }
-          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className="min-h-[44px] w-full rounded-md border border-border bg-surface px-3 py-2.5 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="Your name"
         />
       </div>
@@ -455,7 +455,7 @@ export default function InterestForm() {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, email: e.target.value }))
           }
-          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className="min-h-[44px] w-full rounded-md border border-border bg-surface px-3 py-2.5 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="you@example.com"
         />
       </div>
@@ -476,18 +476,18 @@ export default function InterestForm() {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, message: e.target.value }))
           }
-          className="w-full resize-y rounded-md border border-border bg-surface px-3 py-2 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className="w-full resize-y rounded-md border border-border bg-surface px-3 py-2.5 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="Tell me what you're looking for..."
         />
       </div>
 
       {status === 'error' && (
-        <div className="flex items-start justify-between gap-2 rounded-md bg-red-400/10 px-3 py-2">
+        <div className="flex items-start justify-between gap-2 rounded-md bg-red-400/10 px-3 py-2.5">
           <p role="alert" className="text-sm text-red-400">{errorMessage}</p>
           <button
             type="button"
             onClick={() => { setStatus('idle'); setErrorMessage('') }}
-            className="shrink-0 text-red-400 hover:text-red-300"
+            className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center text-red-400 hover:text-red-300"
             aria-label="Dismiss error"
           >
             &times;
@@ -498,7 +498,7 @@ export default function InterestForm() {
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-background transition-colors hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex min-h-[44px] items-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-background transition-colors hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-50"
       >
         {status === 'submitting' ? 'Sending...' : 'Send Message'}
       </button>

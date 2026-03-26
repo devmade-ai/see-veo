@@ -24,7 +24,7 @@ export default function ActivityTimeline() {
         <iframe
           src={`${EMBED_BASE}?embed=activity-timeline&theme=dark&bg=transparent&colors=${CHART_COLORS}`}
           title="Commit Activity"
-          className="h-96 w-full border-none sm:h-[28rem]"
+          className="h-72 w-full border-none sm:h-96 md:h-[28rem]"
           loading="lazy"
           sandbox="allow-scripts allow-same-origin"
         />

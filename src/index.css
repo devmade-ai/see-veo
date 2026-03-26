@@ -21,6 +21,17 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Requirement: Safe area handling for notched devices (iPhone X+, Android cutouts)
+   Approach: Apply safe area insets to body padding so content clears notch and home indicator.
+     Fixed elements (UpdatePrompt, DebugBanner) handle their own insets via Tailwind classes.
+   Alternatives considered:
+     - Insets on html element: Rejected — body is the scrolling container, insets belong here
+     - Per-component only: Rejected — base-level padding prevents content touching unsafe edges */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
 /* Print-friendly styles */
 @media print {
   body {
