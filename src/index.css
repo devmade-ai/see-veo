@@ -48,6 +48,19 @@ body {
     text-decoration: underline !important;
   }
 
+  /* Requirement: Show link URLs in printed CV so readers can visit them
+     Approach: CSS ::after pseudo-element with attr(href) for external links only
+     Alternatives considered:
+       - Show all URLs: Rejected — internal anchors (#main-content) and mailto: are noise
+       - JavaScript-based: Rejected — CSS-only is simpler and works without JS */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    font-weight: normal;
+    text-decoration: none;
+    word-break: break-all;
+  }
+
   section {
     break-inside: avoid;
     page-break-inside: avoid;
