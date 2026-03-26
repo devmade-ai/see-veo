@@ -47,6 +47,12 @@ export default function InterestForm() {
   const [errorMessage, setErrorMessage] = useState('')
   // Honeypot field — bots fill this in, real users never see it
   const [honeypot, setHoneypot] = useState('')
+  // Requirement: Timing-based bot detection — real users take >1s to fill a form
+  // Approach: Record mount time, reject submissions faster than 1 second
+  // Alternatives considered:
+  //   - reCAPTCHA: Rejected — adds third-party dependency and privacy concern
+  //   - Honeypot only: Insufficient — sophisticated bots detect common honeypot patterns
+  const [mountTime] = useState(() => Date.now())
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Auto-dismiss error messages after a delay
@@ -68,9 +74,11 @@ export default function InterestForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    // Honeypot check: if filled, silently "succeed" to fool bots
-    if (honeypot) {
-      debugLog('InterestForm', 'info', 'honeypot-triggered')
+    // Bot detection: honeypot field + timing check.
+    // Silently "succeed" to avoid revealing detection to bots.
+    const BOT_MIN_TIME_MS = 1_000
+    if (honeypot || Date.now() - mountTime < BOT_MIN_TIME_MS) {
+      debugLog('InterestForm', 'info', honeypot ? 'honeypot-triggered' : 'timing-bot-detected')
       setStatus('success')
       return
     }

@@ -19,6 +19,10 @@ beforeEach(() => {
   vi.stubEnv('VITE_INTEREST_API_URL', 'https://api.example.com/interest')
   // Default: browser is online
   vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true)
+  // Bypass timing-based bot detection: component records Date.now() at mount,
+  // then checks elapsed time on submit. Mock returns mount=0, submit=10s later.
+  let callCount = 0
+  vi.spyOn(Date, 'now').mockImplementation(() => (callCount++ === 0 ? 0 : 10_000))
 })
 
 afterEach(() => {

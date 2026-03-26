@@ -26,7 +26,7 @@ export default function ActivityTimeline() {
           title="Commit Activity"
           className="h-72 w-full border-none sm:h-96 md:h-[28rem]"
           loading="lazy"
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts"
         />
       </div>
     </section>
