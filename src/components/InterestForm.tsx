@@ -142,14 +142,9 @@ export default function InterestForm() {
     }
 
     debugLog('InterestForm', 'info', 'submit', {
-      apiUrl,
-      timeoutMs: FETCH_TIMEOUT_MS,
-      maxAttempts: MAX_ATTEMPTS,
-      fields: {
-        name: `${requestBody.name.length} chars`,
-        email: `${requestBody.email.length} chars`,
-        message: requestBody.message.length > 0 ? `${requestBody.message.length} chars` : 'empty',
-      },
+      name: `${requestBody.name.length} chars`,
+      email: `${requestBody.email.length} chars`,
+      message: requestBody.message.length > 0 ? `${requestBody.message.length} chars` : 'empty',
     })
 
     const startTime = performance.now()

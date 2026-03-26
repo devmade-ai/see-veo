@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { detectBrowser, isStandalone, CHROMIUM_BROWSERS, BROWSER_DISPLAY_NAMES } from '../utils/pwa'
+import { debugLog } from '../utils/debugLog'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>
@@ -34,6 +35,11 @@ const supportsAutoInstall = CHROMIUM_BROWSERS.includes(browser)
 // Consume once at module level so the value is available for both the ref
 // initializer and the useState initializer without reading ref.current during render.
 const earlyPrompt = consumeEarlyPrompt()
+if (earlyPrompt) {
+  debugLog('PWA', 'info', 'early-prompt-captured', {
+    detail: 'beforeinstallprompt event recovered from index.html inline script',
+  })
+}
 
 function consumeEarlyPrompt(): BeforeInstallPromptEvent | null {
   const win = window as unknown as { __pwaInstallPrompt?: BeforeInstallPromptEvent }
@@ -62,12 +68,18 @@ export function usePWAInstall() {
       e.preventDefault()
       deferredPrompt.current = e as BeforeInstallPromptEvent
       setCanInstall(true)
+      debugLog('PWA', 'info', 'prompt-captured', {
+        detail: 'beforeinstallprompt event captured after mount',
+      })
     }
 
     const handleInstalled = () => {
       setIsInstalled(true)
       setCanInstall(false)
       deferredPrompt.current = null
+      debugLog('PWA', 'success', 'app-installed', {
+        detail: 'appinstalled event fired — app was added to home screen',
+      })
     }
 
     window.addEventListener('beforeinstallprompt', handlePrompt)
@@ -81,10 +93,12 @@ export function usePWAInstall() {
 
   const install = useCallback(async () => {
     if (!deferredPrompt.current) return false
+    debugLog('PWA', 'info', 'prompt-shown', { detail: 'Showing install prompt to user' })
     void deferredPrompt.current.prompt()
     const { outcome } = await deferredPrompt.current.userChoice
     deferredPrompt.current = null
     setCanInstall(false)
+    debugLog('PWA', outcome === 'accepted' ? 'success' : 'info', 'prompt-result', { outcome })
     return outcome === 'accepted'
   }, [])
 
