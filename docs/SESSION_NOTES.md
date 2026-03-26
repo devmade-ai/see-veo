@@ -1,18 +1,18 @@
 # Session Notes
 
-**Worked on:** Contrast audit, font loading, lint fixes, PWA manifest hardening
+**Worked on:** Test coverage for all CV section components, InterestForm, and PWA hooks
 
 **Accomplished:**
-- Audited all components for WCAG AA contrast compliance; bumped `--color-text-muted` and 5 project accent colors
-- Added Inter font via Google Fonts (`index.html` preconnect + stylesheet link)
-- Fixed `usePWAInstall.ts` — moved early prompt consumption to module-level to avoid setState in useEffect
-- Fixed `DebugBanner.tsx` — added `canInstall` to `useCallback` dependency array
-- Added `id: '/'` and `prefer_related_applications: false` to PWA manifest in `vite.config.ts`
-- ESLint now passes with 0 errors / 0 warnings
+- Added 56 new tests across 3 test files (components, interest-form, pwa-hooks)
+- Component render tests cover Hero, About, Experience, Education, Skills, Projects
+- InterestForm tests cover rendering, validation (whitespace-only inputs), submission flow, honeypot bot detection, error handling (offline, timeout, missing API URL, HTTP errors)
+- PWA hook tests cover usePWAUpdate (hasUpdate state, update invocation) and usePWAInstall (canInstall, install prompt, appinstalled event, install instructions)
+- Installed `@testing-library/react` and `@testing-library/user-event`
+- Added vitest alias for `virtual:pwa-register/react` with mock file
 
-**Current state:** All changes build, 52 tests pass, lint clean. Ready for merge.
+**Current state:** 108 tests pass, build clean, lint clean. All TODO testing items completed.
 
 **Key context:**
-- `text-muted` and `secondary` are now both `#a3a3a3` — kept as separate tokens (different semantic roles, may diverge)
-- Early `beforeinstallprompt` event is consumed at module level (`earlyPrompt` variable) — shared by ref and initial state
-- Inter font loaded from Google Fonts with weights 400/500/600/700; cached offline via Workbox
+- `virtual:pwa-register/react` is a Vite virtual module — vitest needs a resolve alias to a mock file (`src/test/__mocks__/virtual-pwa-register-react.ts`) since the PWA plugin isn't loaded in test mode
+- InterestForm validation tests use `fireEvent.submit` to bypass HTML5 constraint validation (required, type="email") and test `validatePayload` logic directly
+- usePWAInstall tests use dynamic imports because the hook reads module-level state (`earlyPrompt`) at import time

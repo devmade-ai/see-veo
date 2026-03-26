@@ -2,6 +2,16 @@
 
 Record of completed work and changes.
 
+## 2026-03-26
+
+### Testing
+- Added component render tests for Hero, About, Experience, Education, Skills, Projects (27 tests)
+- Added InterestForm interaction tests: rendering, validation, submission, honeypot, error handling (17 tests)
+- Added PWA hook tests for usePWAInstall and usePWAUpdate (12 tests)
+- Installed `@testing-library/react` and `@testing-library/user-event` as dev dependencies
+- Added `virtual:pwa-register/react` vitest alias with mock file for testing PWA hooks
+- Test suite total: 108 tests across 6 files, all passing
+
 ## 2026-03-25
 
 ### Accessibility
