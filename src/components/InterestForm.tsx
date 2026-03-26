@@ -54,6 +54,9 @@ export default function InterestForm() {
   //   - Honeypot only: Insufficient — sophisticated bots detect common honeypot patterns
   const [mountTime] = useState(() => Date.now())
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Guard against setState after unmount during async diagnoseFailure
+  const mountedRef = useRef(true)
+  useEffect(() => () => { mountedRef.current = false }, [])
 
   // Auto-dismiss error messages after a delay
   useEffect(() => {
@@ -262,6 +265,10 @@ export default function InterestForm() {
         : { raw: String(lastError) },
     })
 
+    // Guard: component may have unmounted during the retry loop. diagnoseFailure
+    // is async and will call setErrorMessage after awaiting — skip if unmounted.
+    if (!mountedRef.current) return
+
     setStatus('error')
 
     // Provide a specific message depending on failure cause.
@@ -276,6 +283,7 @@ export default function InterestForm() {
     } else {
       const cause = await diagnoseFailure(apiUrl)
 
+      if (!mountedRef.current) return
       debugLog('InterestForm', 'info', 'failure-diagnosis', { cause })
 
       switch (cause) {

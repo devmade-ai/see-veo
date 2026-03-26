@@ -34,13 +34,19 @@ export function usePWAUpdate() {
     }
   }, [needRefresh])
 
+  // Requirement: Poll for SW updates every hour regardless of current update state
+  // Approach: Empty dependency array — start polling once on mount, clean up on unmount.
+  //   registrationRef.current may be null on first render (set in onRegisteredSW callback),
+  //   so the interval reads the ref dynamically instead of capturing a stale value.
+  // Alternatives considered:
+  //   - Depend on [needRefresh]: Rejected — recreates interval on every state change,
+  //     and polling should continue even after an update is applied
   useEffect(() => {
-    const registration = registrationRef.current
-    if (!registration) return
-
-    const interval = setInterval(() => { void registration.update() }, 60 * 60 * 1000)
+    const interval = setInterval(() => {
+      if (registrationRef.current) void registrationRef.current.update()
+    }, 60 * 60 * 1000)
     return () => clearInterval(interval)
-  }, [needRefresh])
+  }, [])
 
   const update = useCallback(() => {
     debugLog('PWA', 'info', 'update-applied', { detail: 'User triggered service worker update' })

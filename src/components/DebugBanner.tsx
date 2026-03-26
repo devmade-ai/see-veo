@@ -77,6 +77,9 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
     return subscribeDebugLog(setEntries)
   }, [])
 
+  // Monotonic counter to cancel stale diagnostic runs when a new run starts
+  const diagnosticRunRef = useRef(0)
+
   // Requirement: Immutable diagnostic state updates during async probe sequence
   // Approach: Helper that replaces the last entry in a new array copy, avoiding
   //   mutable index-based mutation on the same reference between async steps
@@ -87,7 +90,13 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
 
   // Orchestrates diagnostic checks extracted to src/utils/diagnostics.ts.
   // Each check is a pure function; this callback manages sequencing and state updates.
+  // Uses a monotonic run counter so that if a new run starts while the previous one
+  // is still in-flight (e.g. user closes and reopens panel), the stale run's state
+  // updates are silently dropped.
   const runDiagnostics = useCallback(async () => {
+    const runId = ++diagnosticRunRef.current
+    const isStale = () => diagnosticRunRef.current !== runId
+
     let checks: DiagnosticCheck[] = []
 
     // Sync checks
@@ -100,12 +109,14 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
       checks = [...checks, { label: 'API Deployed', status: 'running', detail: 'Checking health endpoint...' }]
       setDiagnostics(checks)
       const deployResult = await checkApiDeployed(apiUrl)
+      if (isStale()) return
       checks = replaceLast(checks, deployResult.check)
 
       // 4b. Reachability check
       checks = [...checks, { label: 'API Reachable', status: 'running', detail: 'Checking...' }]
       setDiagnostics(checks)
       const reachResult = await checkApiReachable(apiUrl)
+      if (isStale()) return
       checks = replaceLast(checks, reachResult.check)
 
       // 4a→4b refinement
@@ -116,12 +127,16 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
       if (deployResult.deployed) {
         checks = [...checks, { label: 'CORS Headers', status: 'running', detail: 'Checking...' }]
         setDiagnostics(checks)
-        checks = replaceLast(checks, await checkCorsHeaders(apiUrl, reachResult.reachable))
+        const corsResult = await checkCorsHeaders(apiUrl, reachResult.reachable)
+        if (isStale()) return
+        checks = replaceLast(checks, corsResult)
       }
     }
 
     // Async environment checks
-    checks = [...checks, await checkServiceWorker()]
+    const swCheck = await checkServiceWorker()
+    if (isStale()) return
+    checks = [...checks, swCheck]
 
     // Sync environment checks
     checks = [...checks, checkInstallState(), checkInstallPrompt(canInstall ?? false), checkBrowserInfo(), checkUserAgent()]

@@ -15,11 +15,16 @@ export default function UpdatePrompt({ onUpdate }: UpdatePromptProps) {
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState(false)
 
-  const handleUpdate = () => {
+  // Requirement: Handle both sync and async errors from onUpdate
+  // Approach: Wrap in async handler with try/catch around awaited call
+  // Alternatives considered:
+  //   - Sync-only try/catch: Rejected — onUpdate wraps an async SW update,
+  //     unhandled promise rejections would be swallowed silently
+  const handleUpdate = async () => {
     setUpdating(true)
     setError(false)
     try {
-      onUpdate()
+      await onUpdate()
     } catch {
       setError(true)
       setUpdating(false)
@@ -43,7 +48,7 @@ export default function UpdatePrompt({ onUpdate }: UpdatePromptProps) {
       </p>
       <button
         type="button"
-        onClick={handleUpdate}
+        onClick={() => void handleUpdate()}
         disabled={updating && !error}
         className="inline-flex min-h-[44px] shrink-0 items-center rounded-md bg-background px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-background/90 disabled:cursor-not-allowed disabled:opacity-50"
       >
