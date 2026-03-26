@@ -12,7 +12,6 @@ describe('cvData', () => {
     expect(cvData.personal.title).toBeTruthy()
     expect(cvData.personal.tagline).toBeTruthy()
     expect(cvData.personal.location).toBeTruthy()
-    expect(cvData.personal.avatarInitials).toBeTruthy()
   })
 
   it('has at least one experience entry', () => {

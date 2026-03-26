@@ -16,7 +16,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - `src/components/` — One component per CV section (Hero, About, Experience, Education, Skills, Projects) plus feature components (ActivityCharts, ActivityTimeline, InterestForm, DebugBanner, UpdatePrompt, InstallInstructionsModal, ProjectImage) and reusable helpers (Section, TimelineItem, SkillBadge).
 - `src/hooks/` — Custom React hooks. `useRepoTorEmbed` loads repo-tor's `embed.js` helper script to auto-size chart iframes; `usePWAInstall` and `usePWAUpdate` for install/update prompts.
 - `src/constants/embed.ts` — Centralized repo-tor embed configuration (base URL, script URL, chart colors).
-- `src/utils/` — Shared utilities: `debugLog.ts` (pub/sub event store for mobile debugging), `pwa.ts` (browser detection, standalone check), `validation.ts` (email pattern, form payload validation).
+- `src/utils/` — Shared utilities: `debugLog.ts` (pub/sub event store for mobile debugging), `pwa.ts` (browser detection, standalone check), `validation.ts` (email pattern, form payload validation), `fetchWithTimeout.ts` (fetch wrapper with automatic abort-on-timeout), `diagnostics.ts` (diagnostic check functions and failure diagnosis shared by DebugBanner and InterestForm).
 - `src/index.css` — Tailwind import, custom `@theme` color tokens (dark palette), and print styles. Single source of truth for theme colors — `vite.config.ts` parses this file to feed PWA manifest and HTML meta tags.
 - `src/App.tsx` — Composes all sections into a single-page layout. No routing.
 - `vite.config.ts` — Vite config with Tailwind plugin, PWA plugin, `themeColorInjector` plugin (injects theme colors into HTML), and Workbox runtime caching rules.

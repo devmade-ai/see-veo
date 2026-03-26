@@ -17,19 +17,27 @@ import {
   type DebugSeverity,
   type DebugSource,
 } from '../utils/debugLog'
-import { detectBrowser, isStandalone, CHROMIUM_BROWSERS } from '../utils/pwa'
+import {
+  type DiagnosticCheck,
+  checkProtocol,
+  checkNetwork,
+  checkApiUrl,
+  checkApiDeployed,
+  checkApiReachable,
+  refineDeployedCheck,
+  checkCorsHeaders,
+  checkServiceWorker,
+  checkInstallState,
+  checkInstallPrompt,
+  checkBrowserInfo,
+  checkUserAgent,
+} from '../utils/diagnostics'
 
 type Tab = 'diagnostics' | 'log'
 
 interface DebugBannerProps {
   /** Whether the native install prompt was captured */
   canInstall?: boolean
-}
-
-interface DiagnosticCheck {
-  label: string
-  status: 'pass' | 'fail' | 'warn' | 'running'
-  detail: string
 }
 
 const severityColors: Record<DebugSeverity, string> = {
@@ -60,291 +68,56 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
     return subscribeDebugLog(setEntries)
   }, [])
 
-  // Run diagnostics on mount and when re-run is triggered
   // Requirement: Immutable diagnostic state updates during async probe sequence
   // Approach: Helper that replaces the last entry in a new array copy, avoiding
   //   mutable index-based mutation on the same reference between async steps
-  // Alternatives considered:
-  //   - Direct index mutation (checks[i] = ...): Rejected — fragile when async
-  //     steps interleave; spread-after-mutate can miss intermediate changes
   const replaceLast = (arr: DiagnosticCheck[], entry: DiagnosticCheck): DiagnosticCheck[] => [
     ...arr.slice(0, -1),
     entry,
   ]
 
+  // Orchestrates diagnostic checks extracted to src/utils/diagnostics.ts.
+  // Each check is a pure function; this callback manages sequencing and state updates.
   const runDiagnostics = useCallback(async () => {
     let checks: DiagnosticCheck[] = []
 
-    // 1. Protocol check
-    const isHttps = window.location.protocol === 'https:'
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    checks = [...checks, {
-      label: 'HTTPS',
-      status: isHttps || isLocalhost ? 'pass' : 'fail',
-      detail: isHttps ? 'Secure connection' : isLocalhost ? 'Localhost (OK for dev)' : `Insecure: ${window.location.protocol}`,
-    }]
+    // Sync checks
+    checks = [...checks, checkProtocol(), checkNetwork(), checkApiUrl(import.meta.env.VITE_INTEREST_API_URL as string | undefined)]
 
-    // 2. Online status
-    checks = [...checks, {
-      label: 'Network',
-      status: navigator.onLine ? 'pass' : 'fail',
-      detail: navigator.onLine ? 'Online' : 'Offline — requests will fail',
-    }]
-
-    // 3. API URL configured
+    // API probes (only if URL is configured)
     const apiUrl = import.meta.env.VITE_INTEREST_API_URL as string | undefined
-    checks = [...checks, {
-      label: 'API URL',
-      status: apiUrl ? 'pass' : 'fail',
-      detail: apiUrl ?? 'VITE_INTEREST_API_URL not set',
-    }]
-
-    // 4. API deployment, reachability, and CORS (only if URL is configured)
-    // Requirement: Diagnose the three layers that can cause "Failed to fetch":
-    //   (a) API not deployed — function returns 404, no CORS headers
-    //   (b) API deployed but CORS misconfigured — function runs but browser blocks
-    //   (c) Network failure — server genuinely unreachable
-    //   (d) Browser privacy features blocking cross-origin requests (Brave Shields, etc.)
-    // Approach: Three-phase probe with post-check refinement:
-    //   1. Health endpoint (cors) — reads status code to verify deployment
-    //   2. Send-interest endpoint (no-cors) — confirms network path to actual endpoint
-    //   3. OPTIONS with cors — verifies CORS headers are set correctly
-    //   After steps 1+2: if health failed but server is reachable, amend the
-    //   "API Deployed" result to warn about browser blocking instead of claiming
-    //   the API is down.
-    // Alternatives considered:
-    //   - Health endpoint with no-cors: Rejected — opaque responses can't distinguish
-    //     200 from 404, making the deployment check meaningless
-    //   - Single OPTIONS request: Rejected — 404-without-CORS and CORS-misconfigured
-    //     both throw identical TypeError on mobile Chrome, impossible to distinguish
     if (apiUrl) {
-      // 4a. Health endpoint — verifies the API is actually deployed on Vercel.
-      // Uses cors-mode GET to /api/health so we can read the status code.
-      // If the fetch succeeds (res.ok), the API is confirmed deployed.
-      // If it throws (CORS blocked, browser privacy features, or truly not deployed),
-      // the catch reports a preliminary 'fail' that step 4a→4b refinement may amend.
-      const healthUrl = apiUrl.replace(/\/[^/]+$/, '/health')
-      checks = [...checks, {
-        label: 'API Deployed',
-        status: 'running',
-        detail: 'Checking health endpoint...',
-      }]
+      // 4a. Deployment check
+      checks = [...checks, { label: 'API Deployed', status: 'running', detail: 'Checking health endpoint...' }]
+      setDiagnostics(checks)
+      const deployResult = await checkApiDeployed(apiUrl)
+      checks = replaceLast(checks, deployResult.check)
+
+      // 4b. Reachability check
+      checks = [...checks, { label: 'API Reachable', status: 'running', detail: 'Checking...' }]
+      setDiagnostics(checks)
+      const reachResult = await checkApiReachable(apiUrl)
+      checks = replaceLast(checks, reachResult.check)
+
+      // 4a→4b refinement
+      checks = refineDeployedCheck(checks, deployResult.deployed, reachResult.reachable)
       setDiagnostics(checks)
 
-      let apiDeployed = false
-      try {
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 5000)
-        const res = await fetch(healthUrl, {
-          method: 'GET',
-          mode: 'cors',
-          signal: controller.signal,
-        })
-        clearTimeout(timeoutId)
-        apiDeployed = res.ok
-        checks = replaceLast(checks, {
-          label: 'API Deployed',
-          status: apiDeployed ? 'pass' : 'warn',
-          detail: apiDeployed ? 'Health endpoint OK' : `HTTP ${res.status} ${res.statusText}`,
-        })
-      } catch (err) {
-        checks = replaceLast(checks, {
-          label: 'API Deployed',
-          status: 'fail',
-          detail: 'API not deployed — the messaging service is offline',
-        })
-        // Log the actual error for debugging
-        debugLog('App', 'warn', 'health-check-failed', {
-          url: healthUrl,
-          error: err instanceof Error ? err.message : String(err),
-        })
-      }
-
-      // 4b. Network reachability via no-cors probe to the actual endpoint
-      checks = [...checks, {
-        label: 'API Reachable',
-        status: 'running',
-        detail: 'Checking...',
-      }]
-      setDiagnostics(checks)
-
-      // Requirement: Probe reachability without triggering side effects on the API
-      // Approach: HEAD request with no-cors — confirms network path without sending
-      //   a request body that the server would process as a real submission
-      // Alternatives considered:
-      //   - POST with body '{}': Rejected — sends a real (malformed) request to the API
-      //   - GET: Works but semantically HEAD is more appropriate for reachability probes
-      let serverReachable = false
-      try {
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 5000)
-        const res = await fetch(apiUrl, {
-          method: 'HEAD',
-          mode: 'no-cors',
-          signal: controller.signal,
-        })
-        clearTimeout(timeoutId)
-        // An opaque response means the server responded (reachable)
-        serverReachable = res.type === 'opaque'
-        checks = replaceLast(checks, {
-          label: 'API Reachable',
-          status: serverReachable ? 'pass' : 'warn',
-          detail: serverReachable ? 'Server responded' : `Unexpected response type: ${res.type}`,
-        })
-      } catch (err) {
-        checks = replaceLast(checks, {
-          label: 'API Reachable',
-          status: 'fail',
-          detail: err instanceof Error ? err.message : 'Connection failed',
-        })
-      }
-
-      // 4a→4b refinement: If the cors-mode health fetch threw (apiDeployed=false)
-      // but the no-cors reachability probe passed (serverReachable=true), the
-      // server IS up — the health failure is most likely the browser blocking the
-      // cross-origin response (e.g., Brave Shields, tracker protection, strict
-      // CORS on the health endpoint). Update the "API Deployed" label to reflect
-      // this so the user doesn't see "API not deployed" for a running server.
-      // Requirement: Accurate diagnostic messages on privacy-focused mobile browsers
-      // Approach: Post-check refinement — keep cors health check for status-code
-      //   accuracy, then amend the message when the reachability probe contradicts it
-      // Alternatives considered:
-      //   - Switch health check to no-cors: Rejected — opaque responses can't
-      //     distinguish 200 from 404, making the check meaningless
-      //   - Remove health check: Rejected — still useful when it succeeds (non-blocking browsers)
-      if (!apiDeployed && serverReachable) {
-        checks = checks.map((c) =>
-          c.label === 'API Deployed'
-            ? {
-                ...c,
-                status: 'warn' as const,
-                detail: 'Server is up but health check was blocked — likely browser privacy settings or CORS',
-              }
-            : c,
-        )
+      // 4c. CORS headers (only if deployed)
+      if (deployResult.deployed) {
+        checks = [...checks, { label: 'CORS Headers', status: 'running', detail: 'Checking...' }]
         setDiagnostics(checks)
-      }
-
-      // 4c. CORS headers check via explicit cors OPTIONS request.
-      // Only meaningful if the API is deployed — skip if health check failed to
-      // avoid a confusing "CORS fail" when the real issue is "not deployed".
-      if (apiDeployed) {
-        checks = [...checks, {
-          label: 'CORS Headers',
-          status: 'running',
-          detail: 'Checking...',
-        }]
-        setDiagnostics(checks)
-
-        try {
-          const controller = new AbortController()
-          const timeoutId = setTimeout(() => controller.abort(), 5000)
-          const res = await fetch(apiUrl, {
-            method: 'OPTIONS',
-            mode: 'cors',
-            signal: controller.signal,
-          })
-          clearTimeout(timeoutId)
-          checks = replaceLast(checks, {
-            label: 'CORS Headers',
-            status: res.ok || res.status === 204 || res.status === 405 ? 'pass' : 'warn',
-            detail: `HTTP ${res.status} ${res.statusText}`,
-          })
-        } catch (err) {
-          checks = replaceLast(checks, {
-            label: 'CORS Headers',
-            status: 'fail',
-            detail: serverReachable
-              ? 'Server is reachable but CORS is blocking — check ALLOWED_ORIGINS on the API'
-              : err instanceof Error ? err.message : 'Connection failed',
-          })
-        }
+        checks = replaceLast(checks, await checkCorsHeaders(apiUrl, reachResult.reachable))
       }
     }
 
-    // 5. Service worker
-    if ('serviceWorker' in navigator) {
-      try {
-        const reg = await navigator.serviceWorker.getRegistration()
-        if (reg) {
-          const swState = reg.active ? 'active' : reg.waiting ? 'waiting' : reg.installing ? 'installing' : 'unknown'
-          checks = [...checks, {
-            label: 'Service Worker',
-            status: reg.active ? 'pass' : 'warn',
-            detail: `Registered (${swState})`,
-          }]
-        } else {
-          checks = [...checks, {
-            label: 'Service Worker',
-            status: 'warn',
-            detail: 'Not registered',
-          }]
-        }
-      } catch {
-        checks = [...checks, {
-          label: 'Service Worker',
-          status: 'fail',
-          detail: 'Error checking registration',
-        }]
-      }
-    } else {
-      checks = [...checks, {
-        label: 'Service Worker',
-        status: 'warn',
-        detail: 'Not supported in this browser',
-      }]
-    }
+    // Async environment checks
+    checks = [...checks, await checkServiceWorker()]
 
-    // 6. Standalone / installed
-    const standalone = isStandalone()
-    checks = [...checks, {
-      label: 'Install State',
-      status: standalone ? 'pass' : 'warn',
-      detail: standalone ? 'Running as installed app' : 'Running in browser',
-    }]
-
-    // 7. Install prompt — whether beforeinstallprompt was captured
-    // Requirement: Surface install prompt state in diagnostics so missing "Install as App"
-    //   button can be diagnosed without devtools
-    // Approach: Accept canInstall as a prop from App (sourced from usePWAInstall hook)
-    // Alternatives considered:
-    //   - Read window.__pwaInstallPrompt directly: Rejected — it's deleted after the hook
-    //     consumes it, so it would always be null after mount
-    const browser = detectBrowser()
-    const expectsPrompt = CHROMIUM_BROWSERS.includes(browser)
-    // Requirement: Accurate Install Prompt diagnostic on Brave Mobile and similar browsers
-    // Approach: Explain the most common reasons the prompt hasn't fired instead of
-    //   suggesting a timing bug that the early-capture script already addresses
-    // Alternatives considered:
-    //   - Keep old "fired before React mounted" message: Rejected — misleading since
-    //     index.html inline script captures early events; real causes are browser
-    //     engagement heuristics, prior dismissal, or privacy shields (Brave)
-    checks = [...checks, {
-      label: 'Install Prompt',
-      status: canInstall ? 'pass' : expectsPrompt ? 'warn' : 'pass',
-      detail: canInstall
-        ? 'Ready — install button visible'
-        : expectsPrompt
-          ? 'Not available — visit a few times or check browser privacy settings'
-          : 'N/A — this browser uses manual install',
-    }]
-
-    // 8. Detected browser — useful since Brave reports as Chrome in the UA string
-    checks = [...checks, {
-      label: 'Detected Browser',
-      status: 'pass',
-      detail: browser.charAt(0).toUpperCase() + browser.slice(1),
-    }]
-
-    // 9. User agent
-    checks = [...checks, {
-      label: 'User Agent',
-      status: 'pass',
-      detail: navigator.userAgent,
-    }]
+    // Sync environment checks
+    checks = [...checks, checkInstallState(), checkInstallPrompt(canInstall ?? false), checkBrowserInfo(), checkUserAgent()]
 
     setDiagnostics(checks)
-
     debugLog('App', 'info', 'diagnostics-ran', {
       results: checks.map((c) => ({ label: c.label, status: c.status, detail: c.detail })),
     })

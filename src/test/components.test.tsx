@@ -20,7 +20,6 @@ const mockPersonal: PersonalInfo = {
   title: 'Software Engineer',
   tagline: 'Building great things',
   location: 'Cape Town, South Africa',
-  avatarInitials: 'TU',
 }
 
 const mockExperience: ExperienceItem[] = [

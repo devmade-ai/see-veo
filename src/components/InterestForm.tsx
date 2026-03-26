@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { debugLog } from '../utils/debugLog'
 import { validatePayload } from '../utils/validation'
+import { fetchWithTimeout } from '../utils/fetchWithTimeout'
+import { diagnoseFailure } from '../utils/diagnostics'
 
 // Requirement: Allow visitors to express interest via a one-off email notification
 // Approach: Client-side form that POSTs to a serverless API endpoint which sends via SMTP
@@ -10,7 +12,7 @@ import { validatePayload } from '../utils/validation'
 //   - Direct SMTP from browser: Rejected — not possible, SMTP requires server-side
 
 // Requirement: Abort fetch after timeout so users aren't left waiting on dead networks
-// Approach: AbortController with 10s timeout per attempt
+// Approach: Uses shared fetchWithTimeout utility (src/utils/fetchWithTimeout.ts)
 // Alternatives considered:
 //   - No timeout: Rejected — users wait indefinitely on slow/dead networks
 //   - Shorter timeout (5s): Rejected — legitimate slow connections would fail unnecessarily
@@ -26,76 +28,6 @@ const FETCH_TIMEOUT_MS = 10_000
 const RETRY_DELAY_MS = 1_500
 const MAX_ATTEMPTS = 2
 const ERROR_AUTO_DISMISS_MS = 8_000
-const CORS_PROBE_TIMEOUT_MS = 3_000
-
-// Requirement: Distinguish failure modes when fetch throws TypeError on mobile:
-//   (a) API not deployed — Vercel returns 404 without CORS headers → looks like network error
-//   (b) API deployed but CORS misconfigured — function runs but browser blocks response
-//   (c) Server genuinely unreachable — network/DNS failure
-//   (d) Browser privacy features blocking cross-origin requests (Brave Shields, etc.)
-// Approach: Check health endpoint (GET /api/health with cors) to detect deployment status,
-//   then no-cors probe to distinguish "server down" from "browser blocking".
-//   When cors health fails but no-cors succeeds, the server IS up — the failure is
-//   browser-level blocking, not "API not deployed".
-// Alternatives considered:
-//   - no-cors probe only: Rejected — opaque responses can't distinguish 200 from 404;
-//     Vercel serves both and the server IS reachable, so opaque succeeds in both cases
-//   - Assume always network: Rejected — gives "could not reach server" when the API
-//     is just not deployed, which is confusing and not actionable
-//   - Assume always not-deployed when cors fails: Rejected — misdiagnoses on Brave and
-//     other privacy-focused browsers that block cross-origin fetches
-type FailureCause = 'not-deployed' | 'cors' | 'network' | 'browser-blocked'
-
-async function diagnoseFailure(apiUrl: string): Promise<FailureCause> {
-  // Step 1: Check health endpoint to verify the API is deployed.
-  // Uses cors-mode GET so we can read the status code. If it succeeds, we know
-  // the API is deployed and can proceed to check CORS on the actual endpoint.
-  const healthUrl = apiUrl.replace(/\/[^/]+$/, '/health')
-  try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), CORS_PROBE_TIMEOUT_MS)
-    const res = await fetch(healthUrl, {
-      method: 'GET',
-      mode: 'cors',
-      signal: controller.signal,
-    })
-    clearTimeout(timeoutId)
-    if (!res.ok) {
-      // Health endpoint returned an error — likely not deployed (404 from Vercel)
-      return 'not-deployed'
-    }
-  } catch {
-    // Health endpoint fetch failed — could be CORS blocking, browser privacy
-    // features, or genuinely not deployed. Try a no-cors probe to check if
-    // the server is reachable at all.
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), CORS_PROBE_TIMEOUT_MS)
-      const res = await fetch(healthUrl, {
-        method: 'GET',
-        mode: 'no-cors',
-        signal: controller.signal,
-      })
-      clearTimeout(timeoutId)
-      if (res.type === 'opaque') {
-        // Server responded (opaque = reachable) but the cors fetch was blocked.
-        // This typically means browser privacy features (Brave Shields, tracker
-        // protection) are intercepting the cross-origin request, NOT that the
-        // API is down. Cannot distinguish 200 from 404 in opaque mode, but
-        // the server being reachable makes "browser-blocked" more accurate than
-        // "not-deployed" for privacy-focused browsers.
-        return 'browser-blocked'
-      }
-    } catch {
-      // Server completely unreachable
-      return 'network'
-    }
-    return 'not-deployed'
-  }
-
-  // Step 2: Health endpoint works, so API is deployed. The form fetch failed due to CORS.
-  return 'cors'
-}
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -219,9 +151,6 @@ export default function InterestForm() {
     let lastError: unknown = null
 
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
-
       try {
         debugLog('InterestForm', 'info', 'request', {
           method: 'POST',
@@ -236,15 +165,13 @@ export default function InterestForm() {
         // Alternatives considered:
         //   - Rely on default: Rejected — some mobile browser versions handle
         //     implicit vs explicit CORS mode differently
-        const response = await fetch(apiUrl, {
+        const response = await fetchWithTimeout(apiUrl, {
           method: 'POST',
           mode: 'cors',
           headers: { 'Content-Type': 'application/json' },
-          signal: controller.signal,
           body: JSON.stringify(requestBody),
-        })
+        }, FETCH_TIMEOUT_MS)
 
-        clearTimeout(timeoutId)
         const elapsed = Math.round(performance.now() - startTime)
 
         // Read response body for debug logging
@@ -286,7 +213,6 @@ export default function InterestForm() {
         setFormData({ name: '', email: '', message: '' })
         return
       } catch (err) {
-        clearTimeout(timeoutId)
         lastError = err
 
         // AbortError means timeout — don't retry, report immediately

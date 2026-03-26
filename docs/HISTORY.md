@@ -4,6 +4,12 @@ Record of completed work and changes.
 
 ## 2026-03-26
 
+### Code Hygiene
+- Extracted `fetchWithTimeout` utility (`src/utils/fetchWithTimeout.ts`) — deduplicates 6 AbortController+setTimeout occurrences across InterestForm and DebugBanner
+- Extracted diagnostic check functions into `src/utils/diagnostics.ts` — 12 pure functions + shared `diagnoseFailure`, reducing DebugBanner from 582→355 lines and InterestForm from 507→433 lines
+- Removed unused `avatarInitials` field from `PersonalInfo` interface, cvData, and tests
+- Corrected test count in HISTORY.md (was 135 from grep overcounting, actual is 108)
+
 ### Documentation Accuracy
 - Fixed 7 documentation discrepancies: missing ProjectImage in CLAUDE.md, stale vite-plugin-pwa version, stale test counts, TODO/Key Decisions contradiction, outdated AI Notes, stale EXTERNAL_REFERENCES date
 
@@ -21,7 +27,7 @@ Record of completed work and changes.
 - Added PWA hook tests for usePWAInstall and usePWAUpdate (12 tests)
 - Installed `@testing-library/react` and `@testing-library/user-event` as dev dependencies
 - Added `virtual:pwa-register/react` vitest alias with mock file for testing PWA hooks
-- Test suite total: 135 tests across 6 files, all passing
+- Test suite total: 108 tests across 6 files, all passing
 
 ## 2026-03-25
 

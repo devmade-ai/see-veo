@@ -13,7 +13,6 @@ export interface PersonalInfo {
   title: string
   tagline: string
   location: string
-  avatarInitials: string
 }
 
 export interface ExperienceItem {
@@ -64,7 +63,6 @@ export const cvData: CVData = {
     tagline:
       'Jack of all trades, master of none, often better than a master of one',
     location: 'City of Cape Town, Western Cape, South Africa',
-    avatarInitials: 'JT',
   },
   about: [
     'Instead of sending a traditional CV that never changes, this was created as a living online profile that grows over time. It works more like a personal space on the web than a document, allowing updates, new projects, and improvements to appear instantly without starting over.',
