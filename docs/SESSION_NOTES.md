@@ -10,7 +10,7 @@
 - Installed `@testing-library/react` and `@testing-library/user-event`
 - Added vitest alias for `virtual:pwa-register/react` with mock file
 
-**Current state:** 108 tests pass, build clean, lint clean. All TODO testing items completed.
+**Current state:** 135 tests across 6 files, build clean, lint clean. All TODO testing items completed.
 
 **Key context:**
 - `virtual:pwa-register/react` is a Vite virtual module — vitest needs a resolve alias to a mock file (`src/test/__mocks__/virtual-pwa-register-react.ts`) since the PWA plugin isn't loaded in test mode

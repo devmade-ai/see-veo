@@ -13,7 +13,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 ## Project Structure
 
 - `src/data/cv-data.ts` — All CV content and TypeScript interfaces. Edit this single file to update the resume.
-- `src/components/` — One component per CV section (Hero, About, Experience, Education, Skills, Projects) plus feature components (ActivityCharts, ActivityTimeline, InterestForm, DebugBanner, UpdatePrompt, InstallInstructionsModal) and reusable helpers (Section, TimelineItem, SkillBadge).
+- `src/components/` — One component per CV section (Hero, About, Experience, Education, Skills, Projects) plus feature components (ActivityCharts, ActivityTimeline, InterestForm, DebugBanner, UpdatePrompt, InstallInstructionsModal, ProjectImage) and reusable helpers (Section, TimelineItem, SkillBadge).
 - `src/hooks/` — Custom React hooks. `useRepoTorEmbed` loads repo-tor's `embed.js` helper script to auto-size chart iframes; `usePWAInstall` and `usePWAUpdate` for install/update prompts.
 - `src/constants/embed.ts` — Centralized repo-tor embed configuration (base URL, script URL, chart colors).
 - `src/utils/` — Shared utilities: `debugLog.ts` (pub/sub event store for mobile debugging), `pwa.ts` (browser detection, standalone check), `validation.ts` (email pattern, form payload validation).
@@ -325,7 +325,7 @@ Reference patterns for features that should be implemented across all projects. 
 
 ### PWA System
 
-Four parts, built on `vite-plugin-pwa` (^0.21.1) with React. Adapt patterns for other frameworks.
+Four parts, built on `vite-plugin-pwa` (^1.2.0) with React. Adapt patterns for other frameworks.
 
 #### Vite Config (`vite.config.ts`)
 
@@ -650,7 +650,7 @@ COMPONENT_STRUCTURE=flat (src/components/)
 - Clean up completed or obsolete docs/files and remove references to them
 - **ASK before assuming.** When a user reports a bug, ask clarifying questions (which mode? what did you type? what do you see?) BEFORE writing code. Don't guess the cause and build a fix on an assumption — you'll waste time fixing the wrong thing. One clarifying question saves multiple wrong commits.
 - **Always read files before editing.** Use the Read tool on every file before attempting to Edit it. Editing without reading first will fail.
-- **Check build tools before building.** Run `npm install` or verify `node_modules/.bin/vite` exists before attempting `npm run build`. The `sharp` package may not be installed (used by prebuild icon generation), so use `./node_modules/.bin/vite build` directly to skip the prebuild step if needed.
+- **Check build tools before building.** Run `npm install` or verify `node_modules/.bin/vite` exists before attempting `npm run build`. The `sharp` package is a devDependency used by `scripts/generate-icons.mjs` (run manually, not part of the build pipeline).
 - **Communication style:** Direct, concise responses. No filler phrases or conversational padding. State facts and actions. Ask specific questions with concrete options when clarification is needed.
 - **Claude Code mobile/web — accessing sibling repos:**
   - Use `GITHUB_ALL_REPO_TOKEN` with the GitHub API (`api.github.com/repos/devmade-ai/{repo}/contents/{path}`) to read files from other devmade-ai repos
