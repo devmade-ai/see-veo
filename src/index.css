@@ -19,6 +19,19 @@
   --color-border: #262626;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* Requirement: Distinct heading font for visual hierarchy
+     Approach: Space Grotesk for headings — geometric sans-serif with angular character
+       that contrasts with Inter body text at large sizes while staying harmonious
+     Alternatives considered:
+       - Sora: Rejected — rounder, softer feel doesn't match the dark minimal aesthetic
+       - Same font (Inter) for everything: Rejected — user requested heading differentiation
+       - Serif heading font: Rejected — clashes with the monochrome technical aesthetic */
+  --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Apply heading font to all heading levels */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
 }
 
 /* Requirement: Safe area handling for notched devices (iPhone X+, Android cutouts)
