@@ -4,6 +4,17 @@ Record of completed work and changes.
 
 ## 2026-03-26
 
+### Documentation Accuracy
+- Fixed 7 documentation discrepancies: missing ProjectImage in CLAUDE.md, stale vite-plugin-pwa version, stale test counts, TODO/Key Decisions contradiction, outdated AI Notes, stale EXTERNAL_REFERENCES date
+
+### Mobile UX (WCAG 2.5.5 Compliance)
+- Added `viewport-fit=cover` to index.html for safe area inset support on notched devices
+- Added body safe area padding in index.css
+- Increased all button/input touch targets to minimum 44px across Hero, UpdatePrompt, InterestForm, InstallInstructionsModal, DebugBanner, Projects
+- Added safe area clearance to fixed elements (UpdatePrompt, DebugBanner, skip-to-content link)
+- Made InstallInstructionsModal scrollable with max-h-[85vh] for small viewports
+- Made iframe heights responsive (smaller on mobile, scaling up via sm/md breakpoints)
+
 ### Testing
 - Added component render tests for Hero, About, Experience, Education, Skills, Projects (27 tests)
 - Added InterestForm interaction tests: rendering, validation, submission, honeypot, error handling (17 tests)
