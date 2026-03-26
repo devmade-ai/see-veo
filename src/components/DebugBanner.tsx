@@ -7,7 +7,7 @@
 //   - Separate page/route: Rejected — app has no routing, adds complexity
 //   - Browser devtools only: Rejected — not accessible on mobile PWA
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
   subscribeDebugLog,
   clearDebugLog,
@@ -55,6 +55,15 @@ const sourceColors: Record<DebugSource, string> = {
 
 // Requirement: Floating debug panel for PWA / email diagnostics
 // Note: UpdatePrompt moved to a top banner, so no vertical offset is needed here.
+
+function statusIcon(status: DiagnosticCheck['status']) {
+  switch (status) {
+    case 'pass': return <span className="text-accent">&#10003;</span>
+    case 'fail': return <span className="text-red-400">&#10007;</span>
+    case 'warn': return <span className="text-amber-400">&#9888;</span>
+    case 'running': return <span className="text-text-muted animate-pulse">&#8230;</span>
+  }
+}
 
 export default function DebugBanner({ canInstall }: DebugBannerProps) {
   const [expanded, setExpanded] = useState(false)
@@ -123,30 +132,30 @@ export default function DebugBanner({ canInstall }: DebugBannerProps) {
     })
   }, [canInstall])
 
-  // Trigger diagnostics on first expand via the click handler below
-  // (moved out of useEffect to avoid calling setState inside an effect)
+  // Cleanup copy-state reset timer on unmount or rapid re-copies
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+    }
+  }, [])
 
   const handleCopy = async () => {
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
     const text = formatDebugReport(diagnostics)
     try {
       await navigator.clipboard.writeText(text)
       setCopyState('copied')
-      setTimeout(() => setCopyState('idle'), 2000)
+      copyTimerRef.current = setTimeout(() => setCopyState('idle'), 2000)
     } catch {
       setCopyState('failed')
     }
   }
 
-  const statusIcon = (status: DiagnosticCheck['status']) => {
-    switch (status) {
-      case 'pass': return <span className="text-accent">&#10003;</span>
-      case 'fail': return <span className="text-red-400">&#10007;</span>
-      case 'warn': return <span className="text-amber-400">&#9888;</span>
-      case 'running': return <span className="text-text-muted animate-pulse">&#8230;</span>
-    }
-  }
-
-  const errorCount = entries.filter((e) => e.severity === 'error').length
+  const errorCount = useMemo(
+    () => entries.filter((e) => e.severity === 'error').length,
+    [entries],
+  )
 
   // Collapsed pill
   if (!expanded) {
