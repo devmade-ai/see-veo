@@ -31,6 +31,8 @@ function ChartEmbed({ embedId, title }: ChartEmbedProps) {
         title={title}
         className="mt-auto h-64 w-full border-none sm:h-80 md:h-96"
         loading="lazy"
+        // allow-same-origin: required — iframe fetches ./data.json from its own origin.
+        // Without it, the sandbox assigns an opaque origin and the fetch fails silently.
         sandbox="allow-scripts allow-same-origin"
       />
     </div>

@@ -18,6 +18,8 @@ Log of AI mistakes during development sessions. Exists so patterns get spotted a
 
 **What happened:** Commit `c2c08fd` added `allow-same-origin` to iframe sandboxes to fix chart data loading. Later in the same session, commit `2fbb40f` (a security hardening pass) removed it again, reasoning that it "prevents embedded content from accessing parent cookies/localStorage." This broke charts for the second time in one session.
 
-**What should have happened:** The original fix commit (`c2c08fd`, March 6) had a clear commit message explaining exactly why `allow-same-origin` is required — the iframe fetches `./data.json` from its own origin, and without it the fetch fails silently. The security sweep should have read the git history for the lines it was changing. The explanation was right there.
+**What should have happened:** Two failures compounded:
+1. The original fix (`c2c08fd`) didn't add an inline comment explaining why `allow-same-origin` is required, despite the project's decision-comment rules. The commit message explained it, but the code didn't.
+2. The security sweep (`2fbb40f`) didn't check git history before removing it. `git log -p -- ActivityCharts.tsx` would have shown the fix and its rationale immediately.
 
-**Lesson:** Before removing a permission or reverting a behavior, read the git history for *why* it was added. `git log -p -- <file>` takes seconds. The answer was already documented — it was ignored, not missing.
+**Lesson:** When fixing something non-obvious, comment it in the code — not just the commit message. Commit messages explain history; inline comments protect against future changes. And before removing a permission, read the git history for why it was added.

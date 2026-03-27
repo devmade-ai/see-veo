@@ -32,6 +32,8 @@ export default function ActivityTimeline() {
           title="Commit Activity"
           className="h-72 w-full border-none sm:h-96 md:h-[28rem]"
           loading="lazy"
+          // allow-same-origin: required — iframe fetches ./data.json from its own origin.
+          // Without it, the sandbox assigns an opaque origin and the fetch fails silently.
           sandbox="allow-scripts allow-same-origin"
         />
       </div>
