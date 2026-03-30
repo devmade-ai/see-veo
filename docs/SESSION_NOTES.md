@@ -1,13 +1,14 @@
 # Session Notes
 
-**Worked on:** Fix chart data loading — iframe sandbox too restrictive
+**Worked on:** Remove SVG fade animation and set tagline to static sky blue
 
 **Accomplished:**
-- Fixed `sandbox="allow-scripts"` → `sandbox="allow-scripts allow-same-origin"` on all chart iframes (ActivityCharts, ActivityTimeline)
-- Charts were rendering empty because sandboxed iframes without `allow-same-origin` cannot make fetch/XHR requests to load data
+- Removed `animate-pulse-3` from the glasses icon in Hero
+- Removed `animate-text-glow` from the tagline, replaced with static `text-sky-400`
+- Cleaned up unused `--animate-pulse-3`, `--animate-text-glow` custom properties and `text-glow` keyframes from `index.css`
 
-**Current state:** Build clean, 108 tests pass. Pushed to `claude/fix-chart-data-loading-aIxRY`.
+**Current state:** Build clean, 108 tests pass. Pushed to `claude/remove-svg-fade-tagline-Ae5l7`.
 
 **Key context:**
-- The embed script (`embed.js`) loaded fine — the issue was only about data fetching within the iframe
-- `allow-same-origin` lets the iframe content make requests to its own origin (repo-tor.vercel.app) to fetch chart data
+- The tagline color `text-sky-400` maps to `#38bdf8` — the same sky blue that was previously used as the animation peak color
+- No animations remain on the Hero icon or tagline
