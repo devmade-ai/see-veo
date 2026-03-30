@@ -37,7 +37,7 @@ export default function Hero({
           {personal.name}
         </h1>
         <p className="mb-4 text-xl text-primary">{personal.title}</p>
-        <p className="text-lg text-sky-400">{personal.tagline}</p>
+        <p className="animate-text-glow text-lg text-sky-400">{personal.tagline}</p>
 
         {/* Requirement: Touch targets must meet WCAG 2.5.5 minimum of 44×44px
              Approach: min-h-[44px] with inline-flex centering on all action buttons

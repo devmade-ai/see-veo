@@ -28,6 +28,18 @@
        - Serif heading font: Rejected — clashes with the monochrome technical aesthetic */
   --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 
+  /* Requirement: Tagline glow animation that lands on sky blue
+     Approach: Custom keyframes that fade from muted gray to sky blue,
+       ending on sky blue so the tagline rests in its final color.
+     Alternatives considered:
+       - Static sky blue (no animation): Rejected — user wants the glow effect kept
+       - Original glow (lands on muted): Rejected — user wants it to land on sky blue */
+  --animate-text-glow: text-glow 2s ease-in-out 4 forwards;
+}
+
+@keyframes text-glow {
+  0%, 100% { color: #38bdf8; }
+  50% { color: var(--color-text-muted); }
 }
 
 /* Apply heading font to all heading levels */
