@@ -28,29 +28,18 @@
        - Serif heading font: Rejected — clashes with the monochrome technical aesthetic */
   --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 
-  /* Requirement: Subtle entrance animation for the glasses icon
-     Approach: Custom pulse animation that runs 3 times then stops,
-       using Tailwind v4 CSS-first config. Based on the animate-pulse
-       keyframes but with finite iteration count.
+  /* Requirement: Tagline glow animation that lands on sky blue
+     Approach: Custom keyframes that fade from muted gray to sky blue,
+       ending on sky blue so the tagline rests in its final color.
      Alternatives considered:
-       - Built-in animate-pulse: Rejected — loops infinitely, distracting
-       - JS-based class toggling: Rejected — unnecessary complexity
-       - animate-ping: Rejected — too aggressive for an icon */
-  --animate-pulse-3: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) 2;
-
-  /* Requirement: Subtle colour animation for the tagline text
-     Approach: Custom keyframes that fade from muted to bright text 3 times,
-       drawing the eye without the opacity flicker of pulse.
-     Alternatives considered:
-       - animate-pulse-3 (opacity): Rejected — opacity pulse looks odd on text
-       - Single fade-in: Rejected — repeating glow is more eye-catching
-       - Color change to accent: Rejected — too strong for a monochrome theme */
-  --animate-text-glow: text-glow 2s ease-in-out 4;
+       - Static sky blue (no animation): Rejected — user wants the glow effect kept
+       - Original glow (lands on muted): Rejected — user wants it to land on sky blue */
+  --animate-text-glow: text-glow 2s ease-in-out 4 forwards;
 }
 
 @keyframes text-glow {
-  0%, 100% { color: var(--color-text-muted); }
-  50% { color: #38bdf8; }
+  0%, 100% { color: #38bdf8; }
+  50% { color: var(--color-text-muted); }
 }
 
 /* Apply heading font to all heading levels */
