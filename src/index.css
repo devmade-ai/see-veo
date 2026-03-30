@@ -53,6 +53,17 @@ h1, h2, h3, h4, h5, h6 {
    Alternatives considered:
      - Insets on html element: Rejected — body is the scrolling container, insets belong here
      - Per-component only: Rejected — base-level padding prevents content touching unsafe edges */
+/* Requirement: Dark background on html element to prevent white bleed in mobile landscape
+   Approach: Set html background to match the theme background color so safe area inset
+     padding regions (notch side) don't expose the default white browser background.
+   Alternatives considered:
+     - Set on body only: Rejected — body has padding for safe areas, so the html background
+       still shows through in the padding region
+     - Set on both html and body: html alone is sufficient since body inherits or is covered */
+html {
+  background-color: var(--color-background);
+}
+
 body {
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
