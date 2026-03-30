@@ -27,6 +27,16 @@
        - Same font (Inter) for everything: Rejected — user requested heading differentiation
        - Serif heading font: Rejected — clashes with the monochrome technical aesthetic */
   --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+  /* Requirement: Subtle entrance animation for the tagline
+     Approach: Custom pulse animation that runs 3 times then stops,
+       using Tailwind v4 CSS-first config. Based on the animate-pulse
+       keyframes but with finite iteration count.
+     Alternatives considered:
+       - Built-in animate-pulse: Rejected — loops infinitely, distracting
+       - JS-based class toggling: Rejected — unnecessary complexity
+       - animate-ping: Rejected — too aggressive for text */
+  --animate-pulse-3: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) 3;
 }
 
 /* Apply heading font to all heading levels */
