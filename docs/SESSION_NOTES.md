@@ -1,14 +1,14 @@
 # Session Notes
 
-**Worked on:** Remove SVG fade animation and set tagline to static sky blue
+**Worked on:** Fix white background strip on mobile landscape
 
 **Accomplished:**
-- Removed `animate-pulse-3` from the glasses icon in Hero
-- Removed `animate-text-glow` from the tagline, replaced with static `text-sky-400`
-- Cleaned up unused `--animate-pulse-3`, `--animate-text-glow` custom properties and `text-glow` keyframes from `index.css`
+- Added `background-color: var(--color-background)` to `html` element in `src/index.css`
+- This prevents the default white html background from showing through the safe area inset padding on body in landscape orientation
 
-**Current state:** Build clean, 108 tests pass. Pushed to `claude/remove-svg-fade-tagline-Ae5l7`.
+**Current state:** Build clean. Pushed to `claude/fix-mobile-landscape-bg-bi4b9`.
 
 **Key context:**
-- The tagline color `text-sky-400` maps to `#38bdf8` — the same sky blue that was previously used as the animation peak color
-- No animations remain on the Hero icon or tagline
+- The `body` element has `padding-left/right: env(safe-area-inset-left/right)` for notched devices
+- Without a dark background on `html`, that padding region exposed white on the notch side in landscape
+- The fix uses `var(--color-background)` (#0a0a0a) to match the app's dark theme
