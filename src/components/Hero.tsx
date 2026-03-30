@@ -31,13 +31,13 @@ export default function Hero({
         <img
           src={`${import.meta.env.BASE_URL}mask-icon.svg`}
           alt={personal.name}
-          className="mx-auto mb-6 h-24 w-24 rounded-full bg-surface-light object-cover p-2"
+          className="animate-pulse-3 mx-auto mb-6 h-24 w-24 rounded-full bg-surface-light object-cover p-2"
         />
         <h1 className="mb-2 text-4xl font-bold tracking-tight text-text sm:text-5xl">
           {personal.name}
         </h1>
         <p className="mb-4 text-xl text-primary">{personal.title}</p>
-        <p className="animate-pulse-3 text-lg text-text-muted">{personal.tagline}</p>
+        <p className="animate-text-glow text-lg text-text-muted">{personal.tagline}</p>
 
         {/* Requirement: Touch targets must meet WCAG 2.5.5 minimum of 44×44px
              Approach: min-h-[44px] with inline-flex centering on all action buttons
