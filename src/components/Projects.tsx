@@ -21,7 +21,7 @@ const DEFAULT_ACCENT = '#a3a3a3'
 
 export default function Projects({ items }: ProjectsProps) {
   return (
-    <Section title="Projects">
+    <Section title="Top Projects">
       <div className="grid gap-6 sm:grid-cols-2">
         {items.map((project) => {
           const accent = project.accent ?? DEFAULT_ACCENT
