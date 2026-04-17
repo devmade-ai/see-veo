@@ -252,51 +252,6 @@ export const cvData: CVData = {
       accent: '#C9A57B',
     },
     {
-      id: 'proj-model-pear',
-      name: 'model-pear',
-      description:
-        'A dual-mode pricing and deal structuring tool for South African B2B software companies. Calculate the right price to hit profit margins while ensuring clients see return on investment, and compare six deal models with 47 variants to find the best structure for both parties.',
-      tech: ['TypeScript', 'SvelteKit', 'Tailwind CSS', 'Vitest', 'Playwright'],
-      link: 'https://model-pear-web.vercel.app/',
-      accent: '#7dd3fc',
-    },
-    {
-      id: 'proj-sancio',
-      name: 'Sancio',
-      description:
-        'A digital agreement-building tool where contracts are assembled piece by piece from individual text modules. Each module can be independently authored, negotiated between parties, and signed — allowing agreements to take shape progressively rather than all at once.',
-      tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'React Router', 'Supabase', 'PWA'],
-      link: 'https://sun-sea-o.vercel.app/',
-      accent: '#94a3b8',
-    },
-    {
-      id: 'proj-four-ems',
-      name: 'Four Ems',
-      description:
-        'A form builder that lets you create multi-page forms with conditional logic, collect responses, and embed forms into other websites. Works as an installable app with cloud-stored data.',
-      tech: [
-        'React',
-        'TypeScript',
-        'Vite',
-        'Tailwind CSS',
-        'Zustand',
-        'Supabase',
-        'dnd-kit',
-        'PWA',
-      ],
-      link: 'https://four-ems.vercel.app/',
-      accent: '#60a5fa',
-    },
-    {
-      id: 'proj-budgy-ting',
-      name: 'budgy-ting',
-      description:
-        'A privacy-focused budgeting app that runs entirely on your device. Import bank statements, automatically detect recurring spending patterns, and forecast your cashflow with statistical models — no account or server required.',
-      tech: ['Vue 3', 'TypeScript', 'Vite', 'Tailwind CSS', 'Dexie.js', 'ApexCharts', 'Hugging Face', 'PWA'],
-      link: 'https://budgy-ting.vercel.app/',
-      accent: '#10b981',
-    },
-    {
       id: 'proj-fuelhunt',
       name: 'FuelHunt',
       description:
@@ -311,15 +266,6 @@ export const cvData: CVData = {
       ],
       link: 'https://few-lap.vercel.app',
       accent: '#0D9488',
-    },
-    {
-      id: 'proj-repo-tor',
-      name: 'repo-tor',
-      description:
-        'A dashboard that visualises Git commit history across multiple repositories, turning development activity into easy-to-read charts and summaries. Offers six interactive views covering timelines, contributor breakdowns, code health, and project discovery.',
-      tech: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Chart.js', 'PWA'],
-      link: 'https://repo-tor.vercel.app/',
-      accent: '#60a5fa',
     },
   ],
   contact: {
