@@ -72,6 +72,23 @@ export const cvData: CVData = {
   ],
   experience: [
     {
+      id: 'exp-independent',
+      company: 'Independent',
+      role: 'Solutions Consultant & Engineer',
+      period: 'Jan 2024 - Present',
+      location: 'Cape Town, Western Cape, South Africa',
+      description:
+        'Delivered a range of independent engagements spanning audio analytics, web applications, crypto infrastructure, BPO and contact-centre operations, and machine learning, combining hands-on engineering with sales and advisory work.',
+      highlights: [
+        'Built audio analytics tooling to capture, process, and interpret conversational data',
+        'Designed and developed web applications across multiple stacks using JavaScript, TypeScript, Node.js, and PHP',
+        'Integrated Fireblocks and adjacent crypto infrastructure for secure digital asset workflows',
+        'Supported BPO and contact-centre operations with automation, integrations, and custom tooling',
+        'Applied advanced AI and machine-learning techniques, including deep research workflows, to accelerate delivery',
+        'Led sales, consulting, and contract negotiation across engagements, from scoping to signed agreement',
+      ],
+    },
+    {
       id: 'exp-iamapp-presales',
       company: 'I Am App (Pty) Ltd',
       role: 'Pre-Sales Software Engineer',
@@ -183,6 +200,9 @@ export const cvData: CVData = {
         'Technical Documentation',
         'Product Demonstrations',
         'Process Optimisation',
+        'Sales',
+        'Consulting',
+        'Contract Negotiation',
       ],
     },
     {
@@ -197,8 +217,18 @@ export const cvData: CVData = {
         'React',
         'Node.js',
         'Next.js',
+        'PHP',
         'Tailwind CSS',
         'Git / CI/CD',
+      ],
+    },
+    {
+      id: 'skill-ai',
+      category: 'AI & Automation',
+      skills: [
+        'AI (Advanced Usage)',
+        'Deep Research',
+        'Automation',
       ],
     },
     {
