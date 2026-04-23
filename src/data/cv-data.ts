@@ -80,7 +80,7 @@ export const cvData: CVData = {
       description:
         'Delivered a range of independent engagements spanning audio analytics, web applications, crypto infrastructure, BPO and contact-centre operations, and machine learning, combining hands-on engineering with sales and advisory work.',
       highlights: [
-        'Built audio analytics tooling to capture, process, and interpret conversational data',
+        'Scoped, sold, and co-built audio analytics',
         'Designed and developed web applications across multiple stacks using JavaScript, TypeScript, Node.js, and PHP',
         'Integrated Fireblocks and adjacent crypto infrastructure for secure digital asset workflows',
         'Supported BPO and contact-centre operations with automation, integrations, and custom tooling',
