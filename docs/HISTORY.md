@@ -2,6 +2,11 @@
 
 Record of completed work and changes.
 
+## 2026-04-29
+
+### Analytics
+- Added Google Analytics (gtag.js) tag `G-61SDQXZSFT` to `index.html` for site usage tracking. Loader script is async to avoid blocking render; init runs synchronously so the initial page view is captured.
+
 ## 2026-03-26
 
 ### Code Review Fixes
