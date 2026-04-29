@@ -42,6 +42,7 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 - PWA `scope` and `start_url` use `/` — Vercel serves at root, no base-path prefix needed.
 - Print styles in `src/index.css` override to white background. Elements with class `no-print` are hidden when printing.
 - Interest notification form (`InterestForm` component, rendered inline after Education) — POSTs to an **external** API endpoint (separate project, not part of this repo) configured via `VITE_INTEREST_API_URL` env variable. Hidden when printing. Degrades gracefully when API is not configured or offline. Client-side validation via shared `validatePayload` utility before network requests.
+- Google Analytics (gtag.js) embedded directly in `index.html` with measurement ID `G-61SDQXZSFT`. Standard async snippet — no `react-ga` wrapper, no client-side routing means page-view tracking happens automatically on initial load.
 
 ---
 

@@ -19,6 +19,21 @@
     <meta name="apple-mobile-web-app-title" content="JT Resume" />
     <meta name="description" content="Personal CV and resume of Jaco Theron, Solutions / Software / Sales Engineer & Analyst" />
     <title>Jaco Theron - Solutions Engineer</title>
+    <!-- Requirement: Add Google Analytics (gtag.js) for site usage tracking
+         Approach: Standard gtag.js snippet placed in <head> as recommended by Google,
+                   with the loader script async to avoid blocking page render
+         Alternatives considered:
+           - react-ga / react-ga4 wrapper: Rejected — adds a dependency and an extra render-time
+             init step; the standard snippet works for a single-page app with no client-side routing
+           - Lazy-load after first interaction: Rejected — would miss initial page-view tracking,
+             which is the primary signal we want to capture -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-61SDQXZSFT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-61SDQXZSFT');
+    </script>
   </head>
   <body>
     <div id="root"></div>
