@@ -2,32 +2,36 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
-    <link rel="mask-icon" href="/mask-icon.svg" color="%THEME_PRIMARY%" />
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/icons/favicon-16.png" sizes="16x16" type="image/png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <!-- Requirement: viewport-fit=cover for safe area inset support on notched devices (iOS)
          Approach: Enables env(safe-area-inset-*) CSS values for notch/home indicator clearance
          Alternatives considered:
            - No viewport-fit: Rejected — content overlaps notch on iOS when status bar is translucent -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-    <meta name="theme-color" content="%THEME_BACKGROUND%" />
+    <!-- Requirement: Browser UI chrome matches the CV's ink motif; fonts are self-hosted
+         Approach: theme-color is the ink token (%THEME_COLOR%, injected from src/index.css so
+                   CSS stays the single source of truth); Spectral/Space Mono/Silkscreen load via
+                   @font-face in src/index.css — no Google Fonts network dependency (offline-first PWA)
+         Alternatives considered:
+           - Google Fonts <link>: Rejected — external request breaks offline PWA and adds latency
+           - Hardcode theme-color: Rejected — would drift from the CSS palette on future changes -->
+    <meta name="theme-color" content="%THEME_COLOR%" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="JT Resume" />
-    <meta name="description" content="Personal CV and resume of Jaco Theron, Solutions / Software / Sales Engineer & Analyst" />
-    <title>Jaco Theron - Solutions Engineer</title>
+    <meta name="apple-mobile-web-app-title" content="JT · CV" />
+    <meta
+      name="description"
+      content="Jaco Theron's CV as a playable, ink-on-paper pixel-runner document — Solutions / Software / Sales Engineer & Analyst."
+    />
+    <title>Jaco Theron — Living CV</title>
     <!-- Google tag (gtag.js) -->
-    <!-- Requirement: Add Google Analytics (gtag.js) for site usage tracking
-         Approach: Standard gtag.js snippet placed in <head> as recommended by Google,
-                   with the loader script async to avoid blocking page render
-         Alternatives considered:
-           - react-ga / react-ga4 wrapper: Rejected — adds a dependency and an extra render-time
-             init step; the standard snippet works for a single-page app with no client-side routing
-           - Lazy-load after first interaction: Rejected — would miss initial page-view tracking,
-             which is the primary signal we want to capture -->
+    <!-- Requirement: Google Analytics (gtag.js) for site usage tracking
+         Approach: Standard async gtag.js snippet in <head>; page-view fires on load
+                   (single-page app, no client-side routing) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-61SDQXZSFT"></script>
     <script>
       window.dataLayer = window.dataLayer || [];

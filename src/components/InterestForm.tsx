@@ -4,25 +4,21 @@ import { validatePayload } from '../utils/validation'
 import { fetchWithTimeout } from '../utils/fetchWithTimeout'
 import { diagnoseFailure } from '../utils/diagnostics'
 
-// Requirement: Allow visitors to express interest via a one-off email notification
-// Approach: Client-side form that POSTs to a serverless API endpoint which sends via SMTP
+// Requirement: Let visitors reach out via a real notification (not just a mailto).
+// Approach: Client-side form that POSTs to a personal serverless SMTP relay
+//   (VITE_INTEREST_API_URL). Restyled to the "The Applicant" paper/ink theme and
+//   embedded in the Contact "level", but the submission logic (validation, bot traps,
+//   timeout + single retry, failure diagnosis) is unchanged from the previous app.
 // Alternatives considered:
-//   - Third-party form services (Formspree, Web3Forms): Rejected — user has own SMTP server
-//   - mailto: link: Rejected — requires visitor to have email client, not a true notification
-//   - Direct SMTP from browser: Rejected — not possible, SMTP requires server-side
+//   - Third-party form services (Formspree/Web3Forms): Rejected — user runs own SMTP
+//   - Plain mailto: link: Kept as a secondary affordance in CvContact, but a form is a
+//     true notification that doesn't depend on the visitor having a mail client
 
 // Requirement: Abort fetch after timeout so users aren't left waiting on dead networks
 // Approach: Uses shared fetchWithTimeout utility (src/utils/fetchWithTimeout.ts)
-// Alternatives considered:
-//   - No timeout: Rejected — users wait indefinitely on slow/dead networks
-//   - Shorter timeout (5s): Rejected — legitimate slow connections would fail unnecessarily
 
 // Requirement: Retry on mobile network failures (TypeError: Failed to fetch)
 // Approach: Single retry after 1.5s delay for network-level TypeErrors only
-// Alternatives considered:
-//   - No retry: Rejected — mobile networks are flaky, transient failures are common
-//   - Multiple retries (3+): Rejected — compounds wait time, persistent failures won't self-resolve
-//   - Immediate retry: Rejected — no back-off risks hitting same transient issue
 
 const FETCH_TIMEOUT_MS = 10_000
 const RETRY_DELAY_MS = 1_500
@@ -37,6 +33,13 @@ interface InterestFormData {
   message: string
 }
 
+// Shared field styling — squared paper inputs with an ink hairline and an amber
+// focus ring, matching the document aesthetic of the surrounding CV.
+const FIELD_CLASS =
+  'w-full border border-[rgba(43,33,24,0.2)] bg-surface px-3.5 py-2.5 font-serif text-[0.95rem] text-text placeholder:text-text-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-accent/40'
+const LABEL_CLASS =
+  'mb-1.5 block font-mono text-[11px] uppercase tracking-[0.14em] text-text-muted'
+
 export default function InterestForm() {
   const [formData, setFormData] = useState<InterestFormData>({
     name: '',
@@ -47,11 +50,7 @@ export default function InterestForm() {
   const [errorMessage, setErrorMessage] = useState('')
   // Honeypot field — bots fill this in, real users never see it
   const [honeypot, setHoneypot] = useState('')
-  // Requirement: Timing-based bot detection — real users take >1s to fill a form
-  // Approach: Record mount time, reject submissions faster than 1 second
-  // Alternatives considered:
-  //   - reCAPTCHA: Rejected — adds third-party dependency and privacy concern
-  //   - Honeypot only: Insufficient — sophisticated bots detect common honeypot patterns
+  // Timing-based bot detection — real users take >1s to fill a form
   const [mountTime] = useState(() => Date.now())
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   // Guard against setState after unmount during async diagnoseFailure
@@ -86,9 +85,7 @@ export default function InterestForm() {
       return
     }
 
-    // Client-side validation using the shared validatePayload utility.
-    // Catches invalid input before making a network request, providing
-    // faster feedback and reducing unnecessary API calls.
+    // Client-side validation before making a network request.
     const validated = validatePayload(formData)
     if (!validated) {
       debugLog('InterestForm', 'warn', 'validation-failed', {
@@ -106,9 +103,7 @@ export default function InterestForm() {
     const apiUrl = import.meta.env.VITE_INTEREST_API_URL as string | undefined
 
     if (!apiUrl) {
-      debugLog('InterestForm', 'error', 'api-url-missing', {
-        envVar: 'VITE_INTEREST_API_URL',
-      })
+      debugLog('InterestForm', 'error', 'api-url-missing', { envVar: 'VITE_INTEREST_API_URL' })
       setStatus('error')
       setErrorMessage(
         'This feature is not available yet. Please reach out via email instead.'
@@ -118,9 +113,7 @@ export default function InterestForm() {
 
     // Pre-check: avoid doomed requests when the device is clearly offline
     if (!navigator.onLine) {
-      debugLog('InterestForm', 'warn', 'offline', {
-        onLine: navigator.onLine,
-      })
+      debugLog('InterestForm', 'warn', 'offline', { onLine: navigator.onLine })
       setStatus('error')
       setErrorMessage(
         'You appear to be offline. Please check your connection and try again.'
@@ -131,12 +124,7 @@ export default function InterestForm() {
     setStatus('submitting')
     setErrorMessage('')
 
-    // Requirement: Send _honeypot field to the API for server-side spam rejection
-    // Approach: Always include _honeypot in the request body (empty string for real users).
-    //   Client-side check above short-circuits bots that fill it, but sending the field
-    //   means bots bypassing frontend JS still get caught by the server (400 response).
-    // Alternatives considered:
-    //   - Client-side check only: Rejected — bots can bypass JS, server needs the field
+    // Send _honeypot to the API so bots bypassing frontend JS still get caught server-side.
     const requestBody = {
       name: formData.name.trim(),
       email: formData.email.trim(),
@@ -166,11 +154,7 @@ export default function InterestForm() {
           maxAttempts: MAX_ATTEMPTS,
         })
 
-        // Requirement: Explicit mode: 'cors' for mobile browser compatibility
-        // Approach: Set mode explicitly even though 'cors' is the default
-        // Alternatives considered:
-        //   - Rely on default: Rejected — some mobile browser versions handle
-        //     implicit vs explicit CORS mode differently
+        // Explicit mode: 'cors' for mobile browser compatibility.
         const response = await fetchWithTimeout(apiUrl, {
           method: 'POST',
           mode: 'cors',
@@ -180,7 +164,6 @@ export default function InterestForm() {
 
         const elapsed = Math.round(performance.now() - startTime)
 
-        // Read response body for debug logging
         let responseBody: unknown = null
         try {
           responseBody = await response.clone().json()
@@ -248,7 +231,6 @@ export default function InterestForm() {
             : { raw: String(err) },
         })
 
-        // Wait before retrying (only if there are attempts left)
         if (attempt < MAX_ATTEMPTS) {
           await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS))
         }
@@ -265,18 +247,12 @@ export default function InterestForm() {
         : { raw: String(lastError) },
     })
 
-    // Guard: component may have unmounted during the retry loop. diagnoseFailure
-    // is async and will call setErrorMessage after awaiting — skip if unmounted.
+    // Guard: component may have unmounted during the retry loop.
     if (!mountedRef.current) return
 
     setStatus('error')
 
-    // Provide a specific message depending on failure cause.
-    // On mobile Chrome, CORS preflight failures, 404s without CORS headers, and genuine
-    // network errors all throw the same "TypeError: Failed to fetch", so we probe the
-    // health endpoint to diagnose the actual cause.
     if (!navigator.onLine) {
-      // Device went offline during attempts
       setErrorMessage(
         'Your connection dropped while sending. Please check your network and try again.'
       )
@@ -294,9 +270,6 @@ export default function InterestForm() {
           )
           break
         case 'browser-blocked':
-          // Requirement: Actionable message for privacy-focused browser users
-          // Approach: Suggest disabling shields/tracker blocking for this site,
-          //   with a fallback to email. Non-technical language per UX rules.
           setErrorMessage(
             'Your browser\'s privacy settings may be blocking this form. '
             + 'Try disabling ad/tracker blocking for this site, or reach out directly via email instead.'
@@ -319,15 +292,18 @@ export default function InterestForm() {
 
   if (status === 'success') {
     return (
-      <div role="status" className="mb-16 rounded-lg border border-accent/30 bg-accent/10 p-6 text-center no-print">
-        <p className="text-lg font-medium text-accent">Message sent!</p>
-        <p className="mt-2 text-sm text-text-muted">
-          Thanks for reaching out. I'll get back to you soon.
+      <div
+        role="status"
+        className="border border-success/40 bg-success/10 p-6 text-center"
+      >
+        <p className="font-serif text-[1.15rem] font-semibold text-success">Message sent!</p>
+        <p className="mt-2 text-[0.9rem] text-text-muted">
+          Thanks for reaching out &mdash; I&rsquo;ll get back to you soon.
         </p>
         <button
           type="button"
           onClick={() => setStatus('idle')}
-          className="mt-4 inline-flex min-h-[44px] items-center text-sm text-primary hover:text-primary-light"
+          className="mt-4 inline-flex min-h-[44px] items-center font-mono text-[11px] uppercase tracking-[0.08em] text-link hover:text-accent"
         >
           Send another message
         </button>
@@ -336,11 +312,7 @@ export default function InterestForm() {
   }
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="mb-16 space-y-4 no-print">
-      <p className="text-sm text-text-muted">
-        Interested in working together? Drop me a message.
-      </p>
-
+    <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
       {/* Honeypot field — hidden from real users, catches automated spam */}
       <div className="absolute -left-[9999px]" aria-hidden="true">
         <label htmlFor="website">Website</label>
@@ -356,10 +328,7 @@ export default function InterestForm() {
       </div>
 
       <div>
-        <label
-          htmlFor="interest-name"
-          className="mb-1 block text-sm font-medium text-text-muted"
-        >
+        <label htmlFor="interest-name" className={LABEL_CLASS}>
           Name
         </label>
         <input
@@ -368,19 +337,14 @@ export default function InterestForm() {
           required
           maxLength={100}
           value={formData.name}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, name: e.target.value }))
-          }
-          className="min-h-[44px] w-full rounded-md border border-border bg-surface px-3 py-2.5 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+          className={FIELD_CLASS}
           placeholder="Your name"
         />
       </div>
 
       <div>
-        <label
-          htmlFor="interest-email"
-          className="mb-1 block text-sm font-medium text-text-muted"
-        >
+        <label htmlFor="interest-email" className={LABEL_CLASS}>
           Email
         </label>
         <input
@@ -389,19 +353,14 @@ export default function InterestForm() {
           required
           maxLength={254}
           value={formData.email}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, email: e.target.value }))
-          }
-          className="min-h-[44px] w-full rounded-md border border-border bg-surface px-3 py-2.5 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+          className={FIELD_CLASS}
           placeholder="you@example.com"
         />
       </div>
 
       <div>
-        <label
-          htmlFor="interest-message"
-          className="mb-1 block text-sm font-medium text-text-muted"
-        >
+        <label htmlFor="interest-message" className={LABEL_CLASS}>
           Message
         </label>
         <textarea
@@ -410,24 +369,22 @@ export default function InterestForm() {
           rows={3}
           maxLength={2000}
           value={formData.message}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, message: e.target.value }))
-          }
-          className="w-full resize-y rounded-md border border-border bg-surface px-3 py-2.5 text-text placeholder:text-text-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
+          className={`${FIELD_CLASS} resize-y`}
           placeholder="Tell me what you're looking for..."
         />
       </div>
 
       {status === 'error' && (
-        <div className="flex items-start justify-between gap-2 rounded-md bg-red-400/10 px-3 py-2.5">
-          <p role="alert" className="text-sm text-red-400">{errorMessage}</p>
+        <div className="flex items-start justify-between gap-2 border border-error/30 bg-error/10 px-3.5 py-2.5">
+          <p role="alert" className="text-[0.9rem] text-error">{errorMessage}</p>
           <button
             type="button"
             onClick={() => {
               if (errorTimerRef.current) { clearTimeout(errorTimerRef.current); errorTimerRef.current = null }
               setStatus('idle'); setErrorMessage('')
             }}
-            className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center text-red-400 hover:text-red-300"
+            className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center text-error hover:text-error/70"
             aria-label="Dismiss error"
           >
             &times;
@@ -438,9 +395,9 @@ export default function InterestForm() {
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="inline-flex min-h-[44px] items-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-background transition-colors hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex min-h-[48px] cursor-pointer items-center border border-primary bg-primary px-[22px] font-mono text-[12px] tracking-[0.08em] text-primary-ink shadow-[4px_4px_0_rgba(43,33,24,0.25)] transition-transform hover:bg-primary-light active:translate-x-0.5 active:translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {status === 'submitting' ? 'Sending...' : 'Send Message'}
+        {status === 'submitting' ? 'SENDING…' : '→ SEND A MESSAGE'}
       </button>
     </form>
   )

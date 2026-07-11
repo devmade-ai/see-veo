@@ -1,6 +1,8 @@
 # see-veo
 
-React + TypeScript + Vite PWA that displays a personal CV/resume.
+React + TypeScript + Vite PWA that presents a personal CV/resume as a playable,
+ink-on-paper "pixel-runner" document (a Chrome-dino-style character walks between
+section flags). Design from the Claude Design handoff "The Applicant".
 
 ## Tech Stack
 
@@ -12,13 +14,14 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 
 ## Project Structure
 
-- `src/data/cv-data.ts` — All CV content and TypeScript interfaces. Edit this single file to update the resume.
-- `src/components/` — One component per CV section (Hero, About, Experience, Education, Skills, Projects) plus feature components (ActivityCharts, ActivityTimeline, InterestForm, DebugBanner, UpdatePrompt, InstallInstructionsModal, ProjectImage) and reusable helpers (Section, TimelineItem, SkillBadge).
-- `src/hooks/` — Custom React hooks. `useRepoTorEmbed` loads repo-tor's `embed.js` helper script to auto-size chart iframes; `usePWAInstall` and `usePWAUpdate` for install/update prompts.
-- `src/constants/embed.ts` — Centralized repo-tor embed configuration (base URL, script URL, chart colors).
-- `src/utils/` — Shared utilities: `debugLog.ts` (pub/sub event store for mobile debugging), `pwa.ts` (browser detection, standalone check), `validation.ts` (email pattern, form payload validation), `fetchWithTimeout.ts` (fetch wrapper with automatic abort-on-timeout), `diagnostics.ts` (diagnostic check functions and failure diagnosis shared by DebugBanner and InterestForm).
-- `src/index.css` — Tailwind import, custom `@theme` color tokens (dark palette), and print styles. Single source of truth for theme colors — `vite.config.ts` parses this file to feed PWA manifest and HTML meta tags.
-- `src/App.tsx` — Composes all sections into a single-page layout. No routing.
+- `src/data/cv-data.ts` — All CV content + TypeScript interfaces **and** the game's `sections` config (flag labels + coin values). Edit this single file to update the resume.
+- `src/game/pixelRunnerEngine.ts` — Framework-agnostic canvas engine: the pixel runner (sprites + physics), the numeric HUD (score/hi/distance written per frame), and Web Audio blips. Driven imperatively by `LivingCv`; no-ops without a 2D context (jsdom).
+- `src/components/` — `LivingCv` (orchestrator: nav state, engine wiring, keyboard), `CvHeader` (title + HUD + SFX/PDF), `CvGameStrip` (canvas + clickable section flags), one component per CV section (`CvProfile`, `CvExperience`, `CvSkills`, `CvProjects`, `CvEducation`, `CvContact`), `CvSectionHeading` (shared), `CvPrintDoc` (print-only clean CV), plus the kept-and-restyled `InterestForm`, `InstallInstructionsModal`, `UpdatePrompt`.
+- `src/hooks/` — `usePWAInstall` and `usePWAUpdate` for install/update prompts.
+- `src/utils/` — Shared utilities: `debugLog.ts` (pub/sub event store; now headless — backs the contact form's diagnosability), `pwa.ts` (browser detection, standalone check), `validation.ts` (email pattern, form payload validation), `fetchWithTimeout.ts` (fetch wrapper with abort-on-timeout), `diagnostics.ts` (`diagnoseFailure` — contact-form failure diagnosis).
+- `src/fonts.css` + `src/fonts/` — Self-hosted `@font-face` for Spectral (serif) / Space Mono (mono) / Silkscreen (pixel). Exposed as `font-serif` / `font-mono` / `font-pixel`.
+- `src/index.css` — Tailwind import, `@import "./fonts.css"`, custom `@theme` color tokens (**warm-paper palette**), keyframes (doc-in / coin-pop / flag-wave / caret), base + print styles. Single source of truth for theme colors — `vite.config.ts` parses this file to feed the PWA manifest and HTML `theme-color`.
+- `src/App.tsx` — Composes `LivingCv` + the PWA update toast + install modal. No routing.
 - `vite.config.ts` — Vite config with Tailwind plugin, PWA plugin, `themeColorInjector` plugin (injects theme colors into HTML), and Workbox runtime caching rules.
 - `vercel.json` — Vercel deployment config with SPA rewrites.
 - `vitest.config.ts` — Vitest config with jsdom environment, React plugin, and setup file (`src/test/setup.ts`).
@@ -37,12 +40,13 @@ React + TypeScript + Vite PWA that displays a personal CV/resume.
 
 ## Key Decisions
 
-- Dark minimal theme (no light/dark toggle). Near-monochrome neutral grays defined via Tailwind v4 `@theme` tokens. Project cards use per-project accent colors (stored in `cv-data.ts`) for visual identity.
-- Single-page app with no client-side routing.
-- PWA `scope` and `start_url` use `/` — Vercel serves at root, no base-path prefix needed.
-- Print styles in `src/index.css` override to white background. Elements with class `no-print` are hidden when printing.
-- Interest notification form (`InterestForm` component, rendered inline after Education) — POSTs to an **external** API endpoint (separate project, not part of this repo) configured via `VITE_INTEREST_API_URL` env variable. Hidden when printing. Degrades gracefully when API is not configured or offline. Client-side validation via shared `validatePayload` utility before network requests.
-- Google Analytics (gtag.js) embedded directly in `index.html` with measurement ID `G-61SDQXZSFT`. Standard async snippet — no `react-ga` wrapper, no client-side routing means page-view tracking happens automatically on initial load.
+- **Warm-paper "The Applicant" theme** (single theme, no toggle): paper `#F4ECD8`, ink `#2B2118`, one amber accent `#E0972B`, defined via Tailwind v4 `@theme` tokens. The existing token NAMES were kept and only revalued, so kept components (form/modal/toast) re-theme automatically.
+- **Playable single screen** (`LivingCv`), no client-side routing: six discrete "levels" (Profile/Work/Skills/Projects/Study/Contact), each a flag the pixel runner walks to. React owns navigation/visited state (source of truth); the canvas engine renders + scores. `←`/`→` walk, `Space` jump, click a flag. Coin score persists a high score to `localStorage` (`jt-cv-hi`). Motion-safe via `prefers-reduced-motion` (`motion-safe:` variants + engine teleport).
+- PWA `scope` and `start_url` use `/` — Vercel serves at root, no base-path prefix. `theme-color` = ink, manifest `background_color` = paper, `orientation: portrait`. Icons self-hosted in `public/icons/` (ink runner + amber flag motif from the handoff).
+- Print styles in `src/index.css` swap the game shell (`print:hidden`) for `CvPrintDoc` (a clean printed CV). `.no-print` also hides fixed chrome.
+- Contact: the `InterestForm` (kept from the previous app, restyled) lives in the **Contact level**, alongside mailto + LinkedIn/GitHub links and the PWA install affordance. POSTs to an **external** SMTP relay via `VITE_INTEREST_API_URL`; degrades gracefully when unset/offline; validates via `validatePayload` first.
+- Google Analytics (gtag.js) embedded in `index.html` with measurement ID `G-61SDQXZSFT`. Standard async snippet; page-view fires on load (no routing).
+- **Removed in the redesign**: repo-tor activity charts (`ActivityCharts`/`ActivityTimeline`/`useRepoTorEmbed`/`constants/embed.ts`) and the on-screen debug banner (`DebugBanner`). See git history to recover.
 
 ---
 
@@ -283,19 +287,13 @@ These footers are required on every commit. No exceptions.
 
 ## External Dependencies
 
-### repo-tor Embed Charts
+### repo-tor Embed Charts — REMOVED (2026-07-11)
 
-The `ActivityCharts` component embeds charts from [devmade-ai/repo-tor](https://github.com/devmade-ai/repo-tor) via iframes. Full embed documentation lives in that repo's `docs/` folder. To fetch these docs in a session:
-
-```bash
-# Implementation details (architecture, URL params, color system)
-WebFetch: https://raw.githubusercontent.com/devmade-ai/repo-tor/main/docs/EMBED_IMPLEMENTATION.md
-
-# Quick reference (all embed IDs, chart types, color customization)
-WebFetch: https://raw.githubusercontent.com/devmade-ai/repo-tor/main/docs/EMBED_REFERENCE.md
-```
-
-A local summary with all embed IDs, URL params, and available palettes is at `docs/EXTERNAL_REFERENCES.md`.
+The repo-tor iframe chart embeds (`ActivityCharts`, `ActivityTimeline`, `useRepoTorEmbed`,
+`src/constants/embed.ts`) were removed in the pixel-runner redesign — the new design has no
+charts section. If re-introducing them, the embed docs live in
+[devmade-ai/repo-tor](https://github.com/devmade-ai/repo-tor) `docs/` (`EMBED_IMPLEMENTATION.md`,
+`EMBED_REFERENCE.md`); see `docs/EXTERNAL_REFERENCES.md` and git history prior to 2026-07-11.
 
 ### Deployed Projects (Projects Section)
 
@@ -396,15 +394,15 @@ Detects browser, captures `beforeinstallprompt` (consuming the early-captured ev
 4. **`registerType: 'prompt'`** gives users control. `autoUpdate` silently refreshes mid-work.
 5. **Clean up all timers** — every `setTimeout`/`setInterval` in `useEffect` needs cleanup. Nested timeouts need the array pattern or mounted ref guard.
 
-### App Icons from SVG Source
+### App Icons
 
-Single SVG source file, Sharp converts to all needed PNG sizes at 400 DPI for crisp edges. One command regenerates everything.
+The current icons in `public/icons/` are **pre-built assets** shipped with the "The Applicant"
+handoff (ink pixel-runner + amber flag on paper): `favicon.svg`, `favicon-16/32.png`,
+`apple-touch-icon.png` (180), `icon-192/512.png` (any), `icon-maskable-192/512.png`. The old
+`scripts/generate-icons.mjs` (Sharp-based generator) was **removed** in the redesign — if you
+need to regenerate at other sizes, re-add a generator or export from the source drawing.
 
-**Dependencies:** `sharp` (devDependency)
-
-**Run:** `node scripts/generate-icons.mjs`
-
-**SVG design rules for maskable icons:**
+**SVG design rules for maskable icons (reference pattern):**
 - Canvas must be square (e.g. `viewBox="0 0 1024 1024"`)
 - Add `shape-rendering="geometricPrecision"` to the root `<svg>` element
 - Background fills entire canvas (no transparency)
@@ -652,7 +650,7 @@ COMPONENT_STRUCTURE=flat (src/components/)
 - Clean up completed or obsolete docs/files and remove references to them
 - **ASK before assuming.** When a user reports a bug, ask clarifying questions (which mode? what did you type? what do you see?) BEFORE writing code. Don't guess the cause and build a fix on an assumption — you'll waste time fixing the wrong thing. One clarifying question saves multiple wrong commits.
 - **Always read files before editing.** Use the Read tool on every file before attempting to Edit it. Editing without reading first will fail.
-- **Check build tools before building.** Run `npm install` or verify `node_modules/.bin/vite` exists before attempting `npm run build`. The `sharp` package is a devDependency used by `scripts/generate-icons.mjs` (run manually, not part of the build pipeline).
+- **Check build tools before building.** Run `npm install` or verify `node_modules/.bin/vite` exists before attempting `npm run build`. (`sharp` / `png-to-ico` remain devDependencies but are now unused — the icon generator script was removed; safe to prune if desired.)
 - **Communication style:** Direct, concise responses. No filler phrases or conversational padding. State facts and actions. Ask specific questions with concrete options when clarification is needed.
 - **Claude Code mobile/web — accessing sibling repos:**
   - Use `GITHUB_ALL_REPO_TOKEN` with the GitHub API (`api.github.com/repos/devmade-ai/{repo}/contents/{path}`) to read files from other devmade-ai repos
@@ -674,7 +672,7 @@ Single-word commands that invoke focused analysis passes. Each trigger has a sho
 | 5 | `clean` | `cln` | Hygiene — duplication, refactor candidates, dead code |
 | 6 | `performance` | `perf` | Re-renders, expensive ops, bundle size, DB/API, memory |
 | 7 | `security` | `sec` | Injection, auth gaps, data exposure, insecure defaults, CVEs |
-| 8 | `debug` | `dbg` | Debug pill coverage — missing logs, noise |
+| 8 | `debug` | `dbg` | Debug logging coverage — `debugLog` calls in the form/PWA hooks (the on-screen debug pill was removed) |
 | 9 | `improve` | `imp` | Open-ended — architecture, DX, anything else |
 | 10 | `start` | `go` | Sequential sweep of all 9 above, one at a time |
 

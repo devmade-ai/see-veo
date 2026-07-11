@@ -1,14 +1,14 @@
-// Requirement: Shared PWA utility functions used by usePWAInstall and DebugBanner
-// Approach: Extract duplicated detectBrowser and isStandalone into a single module
+// Requirement: Shared PWA utility functions used by usePWAInstall
+// Approach: Extract detectBrowser and isStandalone into a single module
 // Alternatives considered:
-//   - Keep in usePWAInstall hook: Rejected — DebugBanner duplicated isStandalone,
-//     and tests duplicated detectBrowser, causing drift risk
+//   - Keep in usePWAInstall hook: Rejected — tests duplicated detectBrowser,
+//     causing drift risk
 
 /** All browser identifiers returned by detectBrowser */
 export type Browser = 'brave' | 'edge' | 'opera' | 'samsung' | 'vivaldi' | 'arc' | 'chrome' | 'safari' | 'firefox' | 'unknown'
 
 // Requirement: Single source of truth for which browsers support beforeinstallprompt
-// Approach: Export a typed constant array so usePWAInstall and DebugBanner both
+// Approach: Export a typed constant array so usePWAInstall and its tests both
 //   reference the same list instead of maintaining duplicate arrays
 // Alternatives considered:
 //   - Duplicate the list in each consumer: Rejected — already caused a maintenance

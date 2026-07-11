@@ -1,14 +1,39 @@
 # Session Notes
 
-**Worked on:** Fix white background strip on mobile landscape
+**Worked on:** Complete app replacement — implemented the "The Applicant" pixel-runner
+Living CV from the Claude Design handoff (`jaco-theron-cv-design-system`).
 
 **Accomplished:**
-- Added `background-color: var(--color-background)` to `html` element in `src/index.css`
-- This prevents the default white html background from showing through the safe area inset padding on body in landscape orientation
+- Rebuilt the entire front end as a full-screen, playable ink-on-paper CV: a canvas pixel
+  runner walks between six section flags (Profile/Work/Skills/Projects/Study/Contact) with a
+  coin score + high score + distance HUD, sound blips, and a CRT/paper texture.
+- New theme: revalued the existing Tailwind `@theme` token names to the warm-paper palette
+  (paper `#F4ECD8`, ink `#2B2118`, amber `#E0972B`) so kept components re-theme automatically.
+  Self-hosted Spectral / Space Mono / Silkscreen (18 woff2) → `font-serif`/`mono`/`pixel`.
+- Game engine extracted to `src/game/pixelRunnerEngine.ts` (canvas + HUD + Web Audio),
+  driven imperatively by `LivingCv` which owns navigation state (React source of truth).
+- **Dropped** (not in design): repo-tor activity charts + on-screen debug banner.
+- **Kept & adapted** (restyled to paper): contact form (SMTP relay), PWA install button +
+  instructions modal, PWA update toast, PDF print, sound toggle, Google Analytics.
+- New icon set + manifest (`Jaco Theron — Living CV`, theme-color = ink, bg = paper,
+  portrait). `vite.config.ts` now injects `%THEME_COLOR%` = ink from CSS.
+- Content updated to the handoff's curated copy (see Key context re: trimmed entries).
+- Slimmed `diagnostics.ts` to just `diagnoseFailure` (the 12 check fns were DebugBanner-only).
+- Tests rewritten: 97 pass (data, sections, LivingCv nav, header, game strip, form, PWA).
 
-**Current state:** Build clean. Pushed to `claude/fix-mobile-landscape-bg-bi4b9`.
+**Current state:** type-check, lint, 97 tests, and `npm run build` all pass. Verified in
+real Chromium (Playwright) at mobile + desktop + print — renders faithfully; navigation,
+scoring, coin collection, and the print doc all work. Ready to commit/push to
+`claude/modest-newton-uixfn8`.
 
 **Key context:**
-- The `body` element has `padding-left/right: env(safe-area-inset-left/right)` for notched devices
-- Without a dark background on `html`, that padding region exposed white on the notch side in landscape
-- The fix uses `var(--color-background)` (#0a0a0a) to match the app's dark theme
+- **Token-name reuse is the theming trick**: kept components (InterestForm, UpdatePrompt,
+  InstallInstructionsModal) read `--color-primary/surface/text/...`; revaluing those to
+  ink/paper re-themed them with minimal edits.
+- **Content was trimmed to match the design**: the handoff curated 4 experience entries
+  (dropped **PBT Group**) and 4 education entries (dropped **TorqueIT**), and shortened
+  highlights. If the owner wants those restored, re-add to `cv-data.ts` — the layouts scale.
+- Engine no-ops without a 2D canvas context (jsdom) — this is how tests exercise the React
+  nav layer. `HTMLCanvasElement.getContext` is stubbed to null in `src/test/setup.ts`.
+- `debugLog` is now headless (no visual reader) but kept — it backs the contact form's
+  mobile diagnosability. See TODO.

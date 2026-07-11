@@ -83,10 +83,10 @@ export default function InstallInstructionsModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="install-modal-title"
-        className="mx-4 flex max-h-[85vh] w-full max-w-md flex-col rounded-xl bg-surface border border-border p-6 shadow-xl"
+        className="mx-4 flex max-h-[85vh] w-full max-w-md flex-col border-2 border-primary bg-surface p-6 shadow-[8px_8px_0_rgba(43,33,24,0.2)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="install-modal-title" className="shrink-0 text-lg font-semibold text-text">
+        <h2 id="install-modal-title" className="shrink-0 font-serif text-lg font-bold text-heading">
           Install on {browser}
         </h2>
 
@@ -129,7 +129,7 @@ export default function InstallInstructionsModal({
         <button
           type="button"
           onClick={onClose}
-          className="mt-6 inline-flex min-h-[44px] w-full shrink-0 items-center justify-center rounded-md bg-surface-light px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-border"
+          className="mt-6 inline-flex min-h-[44px] w-full shrink-0 cursor-pointer items-center justify-center border border-primary bg-primary px-4 py-2 font-mono text-[12px] uppercase tracking-[0.06em] text-primary-ink transition-colors hover:bg-primary-light"
         >
           Close
         </button>

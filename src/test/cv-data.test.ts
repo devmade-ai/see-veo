@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { cvData } from '../data/cv-data'
+import { cvData, sections } from '../data/cv-data'
 
-// Requirement: Validate CV data structure to catch missing/empty fields early
-// Approach: Unit tests that assert required fields are present and IDs are unique
+// Requirement: Validate CV data + game section config to catch missing/empty fields early
+// Approach: Unit tests asserting required fields are present, IDs are unique, and the
+//   section metadata that drives navigation + scoring is well-formed
 // Alternatives considered:
 //   - Runtime validation in components: Rejected — tests catch issues at build time
 
@@ -10,20 +11,29 @@ describe('cvData', () => {
   it('has personal info with all required fields', () => {
     expect(cvData.personal.name).toBeTruthy()
     expect(cvData.personal.title).toBeTruthy()
-    expect(cvData.personal.tagline).toBeTruthy()
     expect(cvData.personal.location).toBeTruthy()
+    expect(cvData.personal.quote).toBeTruthy()
+    expect(cvData.personal.email).toContain('@')
   })
 
-  it('has at least one experience entry', () => {
+  it('has social links with url + label', () => {
+    expect(cvData.personal.linkedin.url).toContain('linkedin.com')
+    expect(cvData.personal.linkedin.label).toBeTruthy()
+    expect(cvData.personal.github.url).toContain('github.com')
+    expect(cvData.personal.github.label).toBeTruthy()
+  })
+
+  it('has a profile intro and four stats', () => {
+    expect(cvData.profileIntro).toBeTruthy()
+    expect(cvData.stats.length).toBe(4)
+    for (const stat of cvData.stats) {
+      expect(stat.label).toBeTruthy()
+      expect(stat.value).toBeTruthy()
+    }
+  })
+
+  it('has at least one experience entry with all required fields', () => {
     expect(cvData.experience.length).toBeGreaterThan(0)
-  })
-
-  it('has unique IDs across experience entries', () => {
-    const ids = cvData.experience.map((e) => e.id)
-    expect(new Set(ids).size).toBe(ids.length)
-  })
-
-  it('has all required fields in experience entries', () => {
     for (const item of cvData.experience) {
       expect(item.id).toBeTruthy()
       expect(item.company).toBeTruthy()
@@ -31,39 +41,23 @@ describe('cvData', () => {
       expect(item.period).toBeTruthy()
       expect(item.description).toBeTruthy()
       expect(Array.isArray(item.highlights)).toBe(true)
+      expect(item.highlights.length).toBeGreaterThan(0)
     }
   })
 
-  it('has unique IDs across education entries', () => {
-    const ids = cvData.education.map((e) => e.id)
-    expect(new Set(ids).size).toBe(ids.length)
-  })
-
-  it('has unique IDs across skill categories', () => {
-    const ids = cvData.skills.map((s) => s.id)
-    expect(new Set(ids).size).toBe(ids.length)
-  })
-
-  it('has unique IDs across project entries', () => {
-    const ids = cvData.projects.map((p) => p.id)
-    expect(new Set(ids).size).toBe(ids.length)
-  })
-
-  it('has at least one project entry', () => {
+  it('has project entries with a stack line and url', () => {
     expect(cvData.projects.length).toBeGreaterThan(0)
-  })
-
-  it('has all required fields in project entries', () => {
     for (const item of cvData.projects) {
       expect(item.id).toBeTruthy()
       expect(item.name).toBeTruthy()
       expect(item.description).toBeTruthy()
-      expect(Array.isArray(item.tech)).toBe(true)
-      expect(item.tech.length).toBeGreaterThan(0)
+      expect(item.stack).toBeTruthy()
+      expect(item.url).toMatch(/^https?:\/\//)
     }
   })
 
-  it('has all required fields in education entries', () => {
+  it('has education entries with all required fields', () => {
+    expect(cvData.education.length).toBeGreaterThan(0)
     for (const item of cvData.education) {
       expect(item.id).toBeTruthy()
       expect(item.institution).toBeTruthy()
@@ -72,7 +66,7 @@ describe('cvData', () => {
     }
   })
 
-  it('has at least one skill category with skills', () => {
+  it('has skill categories each with skills', () => {
     expect(cvData.skills.length).toBeGreaterThan(0)
     for (const cat of cvData.skills) {
       expect(cat.id).toBeTruthy()
@@ -81,8 +75,40 @@ describe('cvData', () => {
     }
   })
 
-  it('has contact info with social links', () => {
-    expect(cvData.contact.linkedin).toContain('linkedin.com')
-    expect(cvData.contact.github).toContain('github.com')
+  it('has unique IDs within every collection', () => {
+    const collections = [
+      cvData.experience.map((e) => e.id),
+      cvData.education.map((e) => e.id),
+      cvData.skills.map((s) => s.id),
+      cvData.projects.map((p) => p.id),
+    ]
+    for (const ids of collections) {
+      expect(new Set(ids).size).toBe(ids.length)
+    }
+  })
+})
+
+describe('sections (game config)', () => {
+  it('lists the six navigable levels starting with profile', () => {
+    expect(sections.map((s) => s.id)).toEqual([
+      'profile',
+      'experience',
+      'skills',
+      'projects',
+      'education',
+      'contact',
+    ])
+  })
+
+  it('has a flag label and a positive coin value for every section', () => {
+    for (const section of sections) {
+      expect(section.flagLabel).toBeTruthy()
+      expect(section.coinValue).toBeGreaterThan(0)
+    }
+  })
+
+  it('has unique section IDs', () => {
+    const ids = sections.map((s) => s.id)
+    expect(new Set(ids).size).toBe(ids.length)
   })
 })

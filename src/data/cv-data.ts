@@ -1,36 +1,40 @@
-export interface CVData {
-  personal: PersonalInfo
-  about: string[]
-  experience: ExperienceItem[]
-  education: EducationItem[]
-  skills: SkillCategory[]
-  projects: ProjectItem[]
-  contact: ContactInfo
+// Requirement: Single source of truth for all CV content + the game's section config.
+// Approach: Content mirrors the "The Applicant" handoff design verbatim; section
+//   metadata (flag label + coin value) drives both the pixel-runner navigation and
+//   the score HUD. Edit this one file to update the resume.
+// Alternatives considered:
+//   - Split content and game config into two files: Rejected — they are read together
+//     by the orchestrator and stay in sync more easily side by side.
+
+export type SectionId =
+  | 'profile'
+  | 'experience'
+  | 'skills'
+  | 'projects'
+  | 'education'
+  | 'contact'
+
+/** One navigable "level" — a flag on the ground and a coin worth `coinValue`. */
+export interface SectionMeta {
+  id: SectionId
+  /** Short label printed under the flag on the game strip. */
+  flagLabel: string
+  /** Points awarded the first time the visitor reaches this section. */
+  coinValue: number
 }
 
-export interface PersonalInfo {
-  name: string
-  title: string
-  tagline: string
-  location: string
+export interface Stat {
+  label: string
+  value: string
 }
 
 export interface ExperienceItem {
   id: string
-  company: string
   role: string
+  company: string
   period: string
-  location?: string
   description: string
   highlights: string[]
-}
-
-export interface EducationItem {
-  id: string
-  institution: string
-  degree: string
-  period: string
-  description: string
 }
 
 export interface SkillCategory {
@@ -42,149 +46,133 @@ export interface SkillCategory {
 export interface ProjectItem {
   id: string
   name: string
+  /** Short "React · TypeScript · PWA" style stack line. */
+  stack: string
+  url: string
   description: string
-  tech: string[]
-  link?: string
-  screenshot?: string
-  /** Brand color for visual identity on the card (hex) */
-  accent?: string
 }
 
-export interface ContactInfo {
-  linkedin: string
-  github: string
-  website?: string
+export interface EducationItem {
+  id: string
+  degree: string
+  institution: string
+  period: string
 }
+
+export interface SocialLink {
+  url: string
+  label: string
+}
+
+export interface PersonalInfo {
+  name: string
+  title: string
+  location: string
+  quote: string
+  email: string
+  linkedin: SocialLink
+  github: SocialLink
+}
+
+export interface CVData {
+  personal: PersonalInfo
+  /** One-paragraph positioning statement shown on the profile "level". */
+  profileIntro: string
+  stats: Stat[]
+  experience: ExperienceItem[]
+  skills: SkillCategory[]
+  projects: ProjectItem[]
+  education: EducationItem[]
+}
+
+// Order here defines walk order (← / →) and left-to-right flag placement.
+export const sections: SectionMeta[] = [
+  { id: 'profile', flagLabel: 'Profile', coinValue: 50 },
+  { id: 'experience', flagLabel: 'Work', coinValue: 150 },
+  { id: 'skills', flagLabel: 'Skills', coinValue: 100 },
+  { id: 'projects', flagLabel: 'Projects', coinValue: 150 },
+  { id: 'education', flagLabel: 'Study', coinValue: 100 },
+  { id: 'contact', flagLabel: 'Contact', coinValue: 100 },
+]
 
 export const cvData: CVData = {
   personal: {
     name: 'Jaco Theron',
     title: 'Solutions / Software / Sales Engineer & Analyst',
-    tagline:
-      'Jack of all trades, master of none, often better than a master of one',
-    location: 'City of Cape Town, Western Cape, South Africa',
+    location: 'Cape Town, South Africa',
+    quote:
+      'Jack of all trades, master of none, often better than a master of one.',
+    email: 'hello@devmade.ai',
+    linkedin: {
+      url: 'https://www.linkedin.com/in/jacotheron87',
+      label: 'linkedin.com/in/jacotheron87',
+    },
+    github: {
+      url: 'https://github.com/devmade-ai',
+      label: 'github.com/devmade-ai',
+    },
   },
-  about: [
-    'Instead of sending a traditional CV that never changes, this was created as a living online profile that grows over time. It works more like a personal space on the web than a document, allowing updates, new projects, and improvements to appear instantly without starting over.',
-    'The site was carefully built to feel fast, simple, and easy to use on any device, even allowing visitors to install it like an app. Behind the scenes, messages sent through the contact form travel through a custom system designed and hosted personally, giving full control over how communication works and how future features can be added.',
-    'Everything runs automatically once changes are made. New updates publish themselves online, keeping the site current without manual uploads or maintenance. Even the activity charts update live, pulling information from a separate tool built to track ongoing work and progress.',
-    'Each project shown on the site is not just a description but something real that can be opened, explored, and experienced, reflecting an approach focused on building and sharing working ideas rather than static summaries.',
+  profileIntro:
+    'A builder-first engineer who moves fluidly between the technical and the commercial — scoping and selling solutions, then designing and shipping them. Nine years across insurance, banking, startups and independent consulting, translating messy business problems into working software.',
+  stats: [
+    { label: 'Experience', value: '9+ yrs' },
+    { label: 'Shipped', value: '4 apps' },
+    { label: 'Domains', value: '37+' },
+    { label: 'Languages', value: 'EN · NL' },
   ],
   experience: [
     {
       id: 'exp-independent',
-      company: 'Independent',
       role: 'Solutions Consultant & Engineer',
-      period: 'Jan 2024 - Present',
-      location: 'Cape Town, Western Cape, South Africa',
+      company: 'Independent',
+      period: 'Jan 2024 — Present',
       description:
         'Delivered a range of independent engagements spanning audio analytics, web applications, crypto infrastructure, BPO and contact-centre operations, and machine learning, combining hands-on engineering with sales and advisory work.',
       highlights: [
         'Scoped, sold, and co-built audio analytics',
-        'Designed and developed web applications across multiple stacks using JavaScript, TypeScript, Node.js, and PHP',
-        'Integrated Fireblocks and adjacent crypto infrastructure for secure digital asset workflows',
-        'Supported BPO and contact-centre operations with automation, integrations, and custom tooling',
-        'Applied advanced AI and machine-learning techniques, including deep research workflows, to accelerate delivery',
-        'Led sales, consulting, and contract negotiation across engagements, from scoping to signed agreement',
+        'Developed web applications across multiple stacks (JavaScript, TypeScript, Node.js, PHP)',
+        'Integrated Fireblocks and adjacent crypto infrastructure for secure digital-asset workflows',
+        'Led sales, consulting and contract negotiation from scoping to signed agreement',
       ],
     },
     {
       id: 'exp-iamapp-presales',
-      company: 'I Am App (Pty) Ltd',
       role: 'Pre-Sales Software Engineer',
-      period: 'Aug 2022 - Dec 2023',
-      location: 'Cape Town, Western Cape, South Africa',
+      company: 'I Am App (Pty) Ltd',
+      period: 'Aug 2022 — Dec 2023',
       description:
-        'Provided technical expertise and support to sales teams during the pre-sales phase, translating business challenges into platform solutions for C-level executives.',
+        'Provided technical expertise to sales teams during the pre-sales phase, translating business challenges into platform solutions for C-level executives.',
       highlights: [
-        'Conducted live product demonstrations showcasing features, functionality, and value proposition to potential customers',
-        'Designed customized software solutions by analysing customer requirements and recommending appropriate product configurations',
-        'Developed and delivered proof of concept projects to demonstrate feasibility and value in customer environments',
-        'Delivered technical presentations to both technical and non-technical audiences',
+        'Ran live product demonstrations showing features and value to prospects',
+        'Designed customised software solutions from customer requirements',
+        'Delivered proof-of-concept projects to demonstrate feasibility',
       ],
     },
     {
       id: 'exp-iamapp-consultant',
-      company: 'I Am App (Pty) Ltd',
       role: 'Technical Consultant',
-      period: 'Jun 2020 - Jul 2022',
-      location: 'Cape Town, Western Cape, South Africa',
+      company: 'I Am App (Pty) Ltd',
+      period: 'Jun 2020 — Jul 2022',
       description:
-        'Part of a global team at Deutsche Bank developing a large-scale smart contract and deal capturing system handling complex deals across countries and legal frameworks.',
+        'Part of a global team at Deutsche Bank developing a large-scale smart-contract and deal-capture system handling complex deals across countries and legal frameworks.',
       highlights: [
-        'Devised a solution to manage an increasingly complex set of rules for user access and editing permissions',
-        'Resolved pre-existing issues, streamlined code into reusable components, and carried out refactoring',
-        'Designed application structure, user interfaces, and workflows using BPMN process modelling',
-        'Built integrations with external systems and databases for seamless data exchange',
-        'Implemented business rules and expressions to control and automate decision-making processes',
+        'Devised a solution to manage complex user access and editing permissions',
+        'Refactored code into reusable components',
+        'Built integrations with external systems and databases',
       ],
     },
     {
       id: 'exp-santam',
-      company: 'Santam Insurance',
       role: 'Analyst Developer',
-      period: 'Oct 2016 - Apr 2019',
-      location: 'Cape Town, Western Cape, South Africa',
+      company: 'Santam Insurance',
+      period: 'Oct 2016 — Apr 2019',
       description:
-        'Progressed from reporting and requirements gathering to full-stack development, eventually becoming lead developer on a standalone Spring Boot REST API for the financial system.',
+        'Progressed from reporting and requirements gathering to full-stack development, becoming lead developer on a standalone Spring Boot REST API for the financial system.',
       highlights: [
-        'Designed data transfer objects, underlying databases and tables, and debugged existing code',
-        'Conducted extensive integration testing using SoapUI',
-        'Led development of a standalone Spring Boot REST API for the financial system — a first-of-its-kind project for the organisation',
-        'Became the primary knowledge holder in the team, supporting senior developers across the codebase',
+        'Led a standalone Spring Boot REST API — a first-of-its-kind project for the org',
+        'Ran extensive integration testing with SoapUI',
+        'Became the primary knowledge holder in the team',
       ],
-    },
-    {
-      id: 'exp-pbt',
-      company: 'PBT Group',
-      role: 'Master Data Management Consultant',
-      period: 'Jan 2014 - Oct 2016',
-      description:
-        'Focused on data collection, analysis, quality assurance, and business intelligence across multiple client engagements.',
-      highlights: [
-        'Gathered and acquired data from various internal and external sources to support analysis and decision-making',
-        'Applied statistical methods and data visualisation techniques to explore and interpret data patterns and trends',
-        'Established and monitored key performance indicators (KPIs) to assess business performance',
-        'Implemented data quality assurance measures and conducted data audits',
-        'Identified opportunities to automate data-related processes and optimise workflows',
-      ],
-    },
-  ],
-  education: [
-    {
-      id: 'edu-stellenbosch',
-      institution: 'Stellenbosch University',
-      degree: 'Bachelor of Commerce (B.Comm), Management Sciences and Quantitative Methods',
-      period: '2011 - 2013',
-      description: '',
-    },
-    {
-      id: 'edu-fti',
-      institution: 'Faculty Training Institute (FTI)',
-      degree: 'Diploma in Business Analysis for IT',
-      period: '2015',
-      description: '',
-    },
-    {
-      id: 'edu-bytes',
-      institution: 'Bytes People Solutions',
-      degree: 'Certificate, Advanced Java',
-      period: '2017',
-      description: '',
-    },
-    {
-      id: 'edu-torqueit',
-      institution: 'TorqueIT',
-      degree: 'Java Certificate, Java Development Fundamentals',
-      period: '2014',
-      description: '',
-    },
-    {
-      id: 'edu-ibm',
-      institution: 'IBM',
-      degree: 'IBM Infosphere Certificate, Master Data Management',
-      period: '2014',
-      description: '',
     },
   ],
   skills: [
@@ -225,11 +213,7 @@ export const cvData: CVData = {
     {
       id: 'skill-ai',
       category: 'AI & Automation',
-      skills: [
-        'AI (Advanced Usage)',
-        'Deep Research',
-        'Automation',
-      ],
+      skills: ['AI (Advanced Usage)', 'Deep Research', 'Automation'],
     },
     {
       id: 'skill-data',
@@ -257,49 +241,60 @@ export const cvData: CVData = {
     {
       id: 'proj-graphiki',
       name: 'Graphiki',
+      stack: 'React · TypeScript · PWA',
+      url: 'https://graphiki.vercel.app/',
       description:
-        'A visual knowledge workspace for building and exploring networks of connected ideas, people, companies, and concepts. Runs entirely in the browser as an offline-first app — no server or account required, all data stays on your device.',
-      tech: ['React', 'TypeScript', 'Vite', 'Cytoscape.js', 'Dexie.js', 'Hugging Face', 'PWA'],
-      link: 'https://graphiki.vercel.app/',
-      accent: '#818cf8',
+        'A visual knowledge workspace for building and exploring networks of connected ideas — runs entirely in the browser, offline-first.',
     },
     {
       id: 'proj-canvagrid',
       name: 'CanvaGrid',
+      stack: 'React · Tailwind · pdf-lib',
+      url: 'https://canva-grid.vercel.app/',
       description:
-        'A browser-based visual design tool for creating social media posts, presentations, and print materials. Upload images, add text overlays, choose from ready-made layouts and themes, and export designs in 28 formats across platforms like Instagram, Facebook, LinkedIn, and print sizes.',
-      tech: ['React', 'Vite', 'Tailwind CSS', 'html-to-image', 'pdf-lib', 'PWA'],
-      link: 'https://canva-grid.vercel.app/',
-      accent: '#8B5CF6',
+        'A browser-based visual design tool for social posts, presentations and print — with ready-made layouts and export in 28 formats.',
     },
     {
       id: 'proj-synctone',
       name: 'SyncTone',
+      stack: 'React Native · Expo · Supabase',
+      url: 'https://synctone.vercel.app',
       description:
-        'An anonymous messaging app where you tag the tone of your messages — happy, sarcastic, sincere — to show how they were intended. Tone tags are revealed when the recipient opens the chat. No accounts or personal information required.',
-      tech: ['React Native', 'Expo', 'TypeScript', 'Supabase', 'NativeWind', 'Zustand'],
-      link: 'https://synctone.vercel.app',
-      accent: '#C9A57B',
+        'An anonymous messaging app where you tag the tone of each message — happy, sarcastic, sincere — revealed when the recipient opens the chat.',
     },
     {
       id: 'proj-fuelhunt',
       name: 'FuelHunt',
+      stack: 'React Native · Mapbox · PostGIS',
+      url: 'https://few-lap.vercel.app',
       description:
-        'A fuel station finder for South Africa that helps locate the cheapest fuel nearby. Search by location, filter by fuel type, and get directions to your chosen station via a full-screen map.',
-      tech: [
-        'React Native',
-        'Expo',
-        'TypeScript',
-        'Supabase',
-        'Mapbox',
-        'PostGIS',
-      ],
-      link: 'https://few-lap.vercel.app',
-      accent: '#0D9488',
+        'A fuel-station finder for South Africa that locates the cheapest fuel nearby, filters by type, and gives directions via a full-screen map.',
     },
   ],
-  contact: {
-    linkedin: 'https://www.linkedin.com/in/jacotheron87',
-    github: 'https://github.com/devmade-ai',
-  },
+  education: [
+    {
+      id: 'edu-stellenbosch',
+      degree: 'B.Comm, Management Sciences & Quantitative Methods',
+      institution: 'Stellenbosch University',
+      period: '2011 — 2013',
+    },
+    {
+      id: 'edu-fti',
+      degree: 'Diploma in Business Analysis for IT',
+      institution: 'Faculty Training Institute (FTI)',
+      period: '2015',
+    },
+    {
+      id: 'edu-bytes',
+      degree: 'Certificate, Advanced Java',
+      institution: 'Bytes People Solutions',
+      period: '2017',
+    },
+    {
+      id: 'edu-ibm',
+      degree: 'IBM InfoSphere Certificate, Master Data Management',
+      institution: 'IBM',
+      period: '2014',
+    },
+  ],
 }
