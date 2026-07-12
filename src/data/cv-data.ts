@@ -130,9 +130,11 @@ export const cvData: CVData = {
         'Delivered a range of independent engagements spanning audio analytics, web applications, crypto infrastructure, BPO and contact-centre operations, and machine learning, combining hands-on engineering with sales and advisory work.',
       highlights: [
         'Scoped, sold, and co-built audio analytics',
-        'Developed web applications across multiple stacks (JavaScript, TypeScript, Node.js, PHP)',
-        'Integrated Fireblocks and adjacent crypto infrastructure for secure digital-asset workflows',
-        'Led sales, consulting and contract negotiation from scoping to signed agreement',
+        'Designed and developed web applications across multiple stacks using JavaScript, TypeScript, Node.js, and PHP',
+        'Integrated Fireblocks and adjacent crypto infrastructure for secure digital asset workflows',
+        'Supported BPO and contact-centre operations with automation, integrations, and custom tooling',
+        'Applied advanced AI and machine-learning techniques, including deep research workflows, to accelerate delivery',
+        'Led sales, consulting, and contract negotiation across engagements, from scoping to signed agreement',
       ],
     },
     {
@@ -141,11 +143,12 @@ export const cvData: CVData = {
       company: 'I Am App (Pty) Ltd',
       period: 'Aug 2022 — Dec 2023',
       description:
-        'Provided technical expertise to sales teams during the pre-sales phase, translating business challenges into platform solutions for C-level executives.',
+        'Provided technical expertise and support to sales teams during the pre-sales phase, translating business challenges into platform solutions for C-level executives.',
       highlights: [
-        'Ran live product demonstrations showing features and value to prospects',
-        'Designed customised software solutions from customer requirements',
-        'Delivered proof-of-concept projects to demonstrate feasibility',
+        'Conducted live product demonstrations showcasing features, functionality, and value proposition to potential customers',
+        'Designed customized software solutions by analysing customer requirements and recommending appropriate product configurations',
+        'Developed and delivered proof of concept projects to demonstrate feasibility and value in customer environments',
+        'Delivered technical presentations to both technical and non-technical audiences',
       ],
     },
     {
@@ -154,11 +157,13 @@ export const cvData: CVData = {
       company: 'I Am App (Pty) Ltd',
       period: 'Jun 2020 — Jul 2022',
       description:
-        'Part of a global team at Deutsche Bank developing a large-scale smart-contract and deal-capture system handling complex deals across countries and legal frameworks.',
+        'Part of a global team at Deutsche Bank developing a large-scale smart contract and deal capturing system handling complex deals across countries and legal frameworks.',
       highlights: [
-        'Devised a solution to manage complex user access and editing permissions',
-        'Refactored code into reusable components',
-        'Built integrations with external systems and databases',
+        'Devised a solution to manage an increasingly complex set of rules for user access and editing permissions',
+        'Resolved pre-existing issues, streamlined code into reusable components, and carried out refactoring',
+        'Designed application structure, user interfaces, and workflows using BPMN process modelling',
+        'Built integrations with external systems and databases for seamless data exchange',
+        'Implemented business rules and expressions to control and automate decision-making processes',
       ],
     },
     {
@@ -167,11 +172,27 @@ export const cvData: CVData = {
       company: 'Santam Insurance',
       period: 'Oct 2016 — Apr 2019',
       description:
-        'Progressed from reporting and requirements gathering to full-stack development, becoming lead developer on a standalone Spring Boot REST API for the financial system.',
+        'Progressed from reporting and requirements gathering to full-stack development, eventually becoming lead developer on a standalone Spring Boot REST API for the financial system.',
       highlights: [
-        'Led a standalone Spring Boot REST API — a first-of-its-kind project for the org',
-        'Ran extensive integration testing with SoapUI',
-        'Became the primary knowledge holder in the team',
+        'Designed data transfer objects, underlying databases and tables, and debugged existing code',
+        'Conducted extensive integration testing using SoapUI',
+        'Led development of a standalone Spring Boot REST API for the financial system — a first-of-its-kind project for the organisation',
+        'Became the primary knowledge holder in the team, supporting senior developers across the codebase',
+      ],
+    },
+    {
+      id: 'exp-pbt',
+      role: 'Master Data Management Consultant',
+      company: 'PBT Group',
+      period: 'Jan 2014 — Oct 2016',
+      description:
+        'Focused on data collection, analysis, quality assurance, and business intelligence across multiple client engagements.',
+      highlights: [
+        'Gathered and acquired data from various internal and external sources to support analysis and decision-making',
+        'Applied statistical methods and data visualisation techniques to explore and interpret data patterns and trends',
+        'Established and monitored key performance indicators (KPIs) to assess business performance',
+        'Implemented data quality assurance measures and conducted data audits',
+        'Identified opportunities to automate data-related processes and optimise workflows',
       ],
     },
   ],
@@ -289,6 +310,12 @@ export const cvData: CVData = {
       degree: 'Certificate, Advanced Java',
       institution: 'Bytes People Solutions',
       period: '2017',
+    },
+    {
+      id: 'edu-torqueit',
+      degree: 'Java Certificate, Java Development Fundamentals',
+      institution: 'TorqueIT',
+      period: '2014',
     },
     {
       id: 'edu-ibm',

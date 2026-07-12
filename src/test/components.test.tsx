@@ -90,7 +90,8 @@ describe('CvEducation', () => {
     for (const edu of cvData.education) {
       expect(screen.getByText(edu.degree)).toBeInTheDocument()
       expect(screen.getByText(edu.institution)).toBeInTheDocument()
-      expect(screen.getByText(edu.period)).toBeInTheDocument()
+      // Periods can repeat (e.g. two 2014 credentials), so assert at least one match.
+      expect(screen.getAllByText(edu.period).length).toBeGreaterThan(0)
     }
   })
 })

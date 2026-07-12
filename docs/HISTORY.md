@@ -33,9 +33,10 @@ Config/build tooling retained.
   `SkillBadge`, `ProjectImage`); `scripts/generate-icons.mjs` (stale icon generator); old
   `public/` icons. Slimmed `diagnostics.ts` to just `diagnoseFailure` (the 12 check functions
   were DebugBanner-only).
-- **Content**: updated to the handoff's curated copy — 4 experience entries (dropped PBT
-  Group), 4 education entries (dropped TorqueIT), tightened highlights, added profile intro +
-  stats. `cv-data.ts` now also carries the `sections` game config (flag labels + coin values).
+- **Content**: rebuilt against the handoff's curated copy, then restored to the owner's full
+  CV on request — **5 experience** entries (PBT Group back) with complete descriptions +
+  highlights, and **5 education** entries (TorqueIT back); added profile intro + stats.
+  `cv-data.ts` now also carries the `sections` game config (flag labels + coin values).
 - **Tests**: rewrote `cv-data`, `components`, and `interest-form` tests for the new shape;
   added `living-cv` integration test; stubbed canvas/matchMedia in `setup.ts`. 97 tests pass.
 

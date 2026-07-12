@@ -30,9 +30,11 @@ scoring, coin collection, and the print doc all work. Ready to commit/push to
 - **Token-name reuse is the theming trick**: kept components (InterestForm, UpdatePrompt,
   InstallInstructionsModal) read `--color-primary/surface/text/...`; revaluing those to
   ink/paper re-themed them with minimal edits.
-- **Content was trimmed to match the design**: the handoff curated 4 experience entries
-  (dropped **PBT Group**) and 4 education entries (dropped **TorqueIT**), and shortened
-  highlights. If the owner wants those restored, re-add to `cv-data.ts` — the layouts scale.
+- **Content**: the handoff had curated the CV down, but the owner asked to restore it — so
+  `cv-data.ts` now carries the full **5 experience** entries (PBT Group back) with complete
+  descriptions + highlights, and **5 education** entries (TorqueIT back). The new layouts
+  handle the fuller content fine (the stage scrolls). CvEducation test uses `getAllByText`
+  for periods since two credentials share "2014".
 - Engine no-ops without a 2D canvas context (jsdom) — this is how tests exercise the React
   nav layer. `HTMLCanvasElement.getContext` is stubbed to null in `src/test/setup.ts`.
 - `debugLog` is now headless (no visual reader) but kept — it backs the contact form's
