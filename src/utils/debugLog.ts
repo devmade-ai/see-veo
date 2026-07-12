@@ -1,7 +1,9 @@
 // Requirement: Shared debug logging backbone for diagnosing email issues on mobile
-// Approach: Pub/sub in-memory event store with capped buffer (200 entries).
-//   Components call debugLog() to emit events; the DebugBanner subscribes to
-//   display them in real time. The store is global so it survives re-renders.
+// Approach: Pub/sub in-memory event store with capped buffer (200 entries). The PWA
+//   hooks and InterestForm call debugLog() to emit events; subscribers (or console
+//   access via getDebugEntries/formatDebugReport) can read them. The store is global
+//   so it survives re-renders. Note: the on-screen debug banner was removed with the
+//   new design, so the log is currently headless — kept as latent diagnosis infra.
 // Alternatives considered:
 //   - Per-component local state: Rejected — logs lost when component unmounts
 //   - External logging service: Rejected — adds dependency, overkill for dev debugging
@@ -79,9 +81,9 @@ export function getDebugEntries(): DebugEntry[] {
   return [...entries]
 }
 
-// Requirement: Copy All must include diagnostics detail, not just event log
-// Approach: Accept optional diagnostics array so DebugBanner can pass its local
-//   state into the report. Diagnostics section renders before the event log.
+// Requirement: A copied report may include diagnostics detail, not just the event log
+// Approach: Accept an optional diagnostics array so a caller can pass diagnostic
+//   results into the report. Diagnostics section renders before the event log.
 // Alternatives considered:
 //   - Store diagnostics in the shared log module: Rejected — diagnostics are
 //     async and component-scoped; duplicating that state here adds coupling

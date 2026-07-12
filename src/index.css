@@ -1,111 +1,140 @@
 @import "tailwindcss";
+@import "./fonts.css";
 
-/* Requirement: Dark minimal theme — near-monochrome neutrals so project accent colors pop
-   Approach: True dark grays (not navy), neutral text, no colored accents in base palette
+/* Requirement: Replace the dark-minimal theme with "The Applicant" — a formal CV
+   printed on warm paper, with a monochrome pixel side-runner (Chrome-dino energy)
+   living along the ground. Ink on paper, single amber accent.
+   Approach: Keep existing @theme token NAMES (kept components read them and re-theme
+     automatically) and revalue them to the handoff's warm-paper palette; add the
+     extra semantic tokens the new document layer needs.
    Alternatives considered:
-     - Keep sky-blue primary: Rejected — competes with per-project accent colors
-     - Light minimal theme: User chose dark minimal
-     - Warm grays: Tested — cool neutrals felt more professional */
+     - New token names + rewrite every kept component: Rejected — more churn, and the
+       handoff's own tokens/colors.css keeps names stable on purpose
+     - Two parallel palettes (dark + paper): Rejected — this is a full replacement */
 @theme {
-  --color-primary: #d4d4d4;
-  --color-primary-light: #e5e5e5;
-  --color-secondary: #a3a3a3;
-  --color-accent: #4ade80;
-  --color-surface: #171717;
-  --color-surface-light: #262626;
-  --color-background: #0a0a0a;
-  --color-text: #e5e5e5;
-  --color-text-muted: #a3a3a3;
-  --color-border: #262626;
+  /* ---- Paper surfaces ---- */
+  --color-background: #f4ecd8;      /* page — warm cream paper */
+  --color-void: #ece2c9;            /* deepest inset — ground band, rails */
+  --color-surface: #fbf5e6;         /* raised panel / card / input base */
+  --color-surface-light: #fffdf6;   /* lightest raised sheet */
 
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  /* Requirement: Distinct heading font for visual hierarchy
-     Approach: Space Grotesk for headings — geometric sans-serif with angular character
-       that contrasts with Inter body text at large sizes while staying harmonious
-     Alternatives considered:
-       - Sora: Rejected — rounder, softer feel doesn't match the dark minimal aesthetic
-       - Same font (Inter) for everything: Rejected — user requested heading differentiation
-       - Serif heading font: Rejected — clashes with the monochrome technical aesthetic */
-  --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  /* ---- Ink text ---- */
+  --color-text: #2b2118;            /* primary body ink */
+  --color-heading: #17110a;         /* headings — near-black warm */
+  --color-text-muted: #6b5a44;      /* secondary / meta */
+  --color-text-dim: #93816a;        /* eyebrows / captions */
+  --color-text-faint: #b7a78c;      /* faint hints, rules */
 
-  /* Requirement: Tagline glow animation that lands on sky blue
-     Approach: Custom keyframes that fade from muted gray to sky blue,
-       ending on sky blue so the tagline rests in its final color.
-     Alternatives considered:
-       - Static sky blue (no animation): Rejected — user wants the glow effect kept
-       - Original glow (lands on muted): Rejected — user wants it to land on sky blue */
-  --animate-text-glow: text-glow 2s ease-in-out 4 forwards;
+  /* ---- Primary = solid ink (formal document buttons, active marker) ---- */
+  --color-primary: #2b2118;         /* ink fill */
+  --color-primary-light: #453626;   /* hover — warmer ink */
+  --color-primary-ink: #f7f1e1;     /* paper text on an ink fill */
+  --color-secondary: #6b5a44;
+
+  /* ---- The single accent — amber (coin / active / CRT glow) ---- */
+  --color-accent: #e0972b;
+  --color-amber-light: #f0b858;
+
+  /* ---- Links — readable deep amber on paper ---- */
+  --color-link: #b4732a;
+  --color-link-light: #e0972b;
+
+  /* ---- Hairline rule ---- */
+  --color-border: rgba(43, 33, 24, 0.18);
+
+  /* ---- Semantic ---- */
+  --color-success: #5f7a43;         /* muted olive — form success */
+  --color-error: #a63d2e;           /* muted brick — form errors */
+
+  /* ---- Game world ---- */
+  --color-game-sky-top: #f7f1e1;
+  --color-game-sky-bottom: #efe6cf;
+
+  /* ---- Type families (self-hosted, see fonts.css) ---- */
+  --font-serif: 'Spectral', Georgia, 'Times New Roman', serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --font-pixel: 'Silkscreen', 'Space Mono', ui-monospace, monospace;
+
+  /* ---- Motion tokens (respect prefers-reduced-motion via overrides below) ---- */
+  --animate-doc-in: doc-in 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-coin-pop: coin-pop 0.6s ease-out forwards;
+  --animate-flag-wave: flag-wave 1.1s ease-in-out infinite;
+  --animate-caret: tw-caret 1s step-end infinite;
 }
 
-@keyframes text-glow {
-  0%, 100% { color: #38bdf8; }
-  50% { color: var(--color-text-muted); }
+@keyframes doc-in {
+  from { opacity: 0; transform: translateX(22px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes coin-pop {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-26px) scale(1.25); opacity: 0; }
+}
+@keyframes flag-wave {
+  0%, 100% { transform: skewX(0deg); }
+  50% { transform: skewX(-9deg); }
+}
+@keyframes tw-caret {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
 }
 
-/* Apply heading font to all heading levels */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-}
-
-/* Requirement: Safe area handling for notched devices (iPhone X+, Android cutouts)
-   Approach: Apply safe area insets to body padding so content clears notch and home indicator.
-     Fixed elements (UpdatePrompt, DebugBanner) handle their own insets via Tailwind classes.
+/* Requirement: Full-bleed paper canvas with no page scroll (the document stage
+     scrolls internally); prevent white bleed into safe-area insets on notched phones.
+   Approach: Paper background on html/body, body overflow hidden, tap-highlight off.
    Alternatives considered:
-     - Insets on html element: Rejected — body is the scrolling container, insets belong here
-     - Per-component only: Rejected — base-level padding prevents content touching unsafe edges */
-/* Requirement: Dark background on html element to prevent white bleed in mobile landscape
-   Approach: Set html background to match the theme background color so safe area inset
-     padding regions (notch side) don't expose the default white browser background.
-   Alternatives considered:
-     - Set on body only: Rejected — body has padding for safe areas, so the html background
-       still shows through in the padding region
-     - Set on both html and body: html alone is sufficient since body inherits or is covered */
+     - Scroll on body: Rejected — the design fixes the header + game strip and scrolls
+       only the middle stage, so the body itself must not scroll */
+* { box-sizing: border-box; }
+
 html {
   background-color: var(--color-background);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  margin: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-serif);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Print-friendly styles */
+::selection {
+  background: rgba(224, 151, 43, 0.3);
+  color: #2b2118;
+}
+
+/* Custom scrollbar for the internal document stage — warm ink thumb on paper */
+[data-doc-stage]::-webkit-scrollbar { width: 10px; }
+[data-doc-stage]::-webkit-scrollbar-track { background: transparent; }
+[data-doc-stage]::-webkit-scrollbar-thumb {
+  background: rgba(43, 33, 24, 0.22);
+  border: 3px solid var(--color-background);
+}
+
+/* Reduced motion: no section slide-in, no looping game flourishes */
+@media (prefers-reduced-motion: reduce) {
+  .doc-anim { animation: none !important; }
+}
+
+/* Requirement: PDF export via the browser print dialog — swap the interactive game
+     shell for a clean printed document.
+   Approach: Hide the app root, show the print-only document, white page, no animation.
+   Alternatives considered:
+     - Print the live game shell: Rejected — canvas HUD + fixed strip waste ink and
+       break pagination; a purpose-built print document reads as a proper CV */
 @media print {
-  body {
-    background: white !important;
-    color: black !important;
+  @page { margin: 0.6in; }
+  html, body {
+    background: #fff !important;
+    overflow: visible !important;
+    height: auto !important;
   }
-
-  .no-print {
-    display: none !important;
-  }
-
-  a {
-    color: black !important;
-    text-decoration: underline !important;
-  }
-
-  /* Requirement: Show link URLs in printed CV so readers can visit them
-     Approach: CSS ::after pseudo-element with attr(href) for external links only
-     Alternatives considered:
-       - Show all URLs: Rejected — internal anchors (#main-content) and mailto: are noise
-       - JavaScript-based: Rejected — CSS-only is simpler and works without JS */
-  a[href^="http"]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.75em;
-    font-weight: normal;
-    text-decoration: none;
-    word-break: break-all;
-  }
-
-  section {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  /* Project screenshots: keep visible in print but ensure they render well */
-  img[alt$="screenshot"] {
-    max-height: 8rem;
-    object-fit: cover;
-  }
+  * { animation: none !important; }
+  .no-print { display: none !important; }
+  a { color: #000 !important; }
 }

@@ -2,6 +2,44 @@
 
 Record of completed work and changes.
 
+## 2026-07-11
+
+### Complete redesign — "The Applicant" pixel-runner Living CV
+Full front-end replacement from the Claude Design handoff (`jaco-theron-cv-design-system`).
+Config/build tooling retained.
+
+- **New app shell** (`LivingCv`): full-screen ink-on-paper CV with a Chrome-dino-style pixel
+  runner that walks/hops between six section flags. Coin score + persisted high score +
+  distance HUD; `←`/`→` walk, `Space` jump, click a flag to navigate; Web Audio blips
+  (SFX toggle); CRT/paper texture. Motion-safe (`prefers-reduced-motion`) and print-safe.
+- **Game engine** (`src/game/pixelRunnerEngine.ts`): framework-agnostic canvas class owning
+  the render loop, runner sprites/physics, numeric HUD, and audio. React owns navigation
+  state; the engine is driven imperatively (`goTo`/`jump`).
+- **New section components**: `CvHeader`, `CvGameStrip`, `CvProfile`, `CvExperience`,
+  `CvSkills`, `CvProjects`, `CvEducation`, `CvContact`, `CvSectionHeading`, `CvPrintDoc`.
+- **Theme**: revalued existing Tailwind `@theme` token names to the warm-paper palette
+  (paper `#F4ECD8`, ink `#2B2118`, amber `#E0972B`) so kept components re-theme automatically;
+  added `--color-heading/text-dim/text-faint/link/primary-ink` etc. Self-hosted Spectral /
+  Space Mono / Silkscreen (`src/fonts.css`, `src/fonts/`) → `font-serif`/`font-mono`/`font-pixel`.
+- **PWA**: new icon set (`public/icons/`) + manifest (`Jaco Theron — Living CV`,
+  theme-color = ink, background = paper, `orientation: portrait`). `vite.config.ts` injects
+  `%THEME_COLOR%` = ink parsed from CSS; dropped the now-unused Google-Fonts runtime caching.
+- **Kept & adapted (restyled to paper)**: contact form (`InterestForm` → SMTP relay) placed
+  in the Contact level; PWA install button + `InstallInstructionsModal`; PWA update toast
+  (`UpdatePrompt`); PDF print; Google Analytics + `beforeinstallprompt` capture in `index.html`.
+- **Removed (not in the new design)**: `ActivityCharts`, `ActivityTimeline`, `useRepoTorEmbed`,
+  `constants/embed.ts` (repo-tor chart embeds); `DebugBanner`; old section components
+  (`Hero`, `About`, `Experience`, `Education`, `Skills`, `Projects`, `Section`, `TimelineItem`,
+  `SkillBadge`, `ProjectImage`); `scripts/generate-icons.mjs` (stale icon generator); old
+  `public/` icons. Slimmed `diagnostics.ts` to just `diagnoseFailure` (the 12 check functions
+  were DebugBanner-only).
+- **Content**: rebuilt against the handoff's curated copy, then restored to the owner's full
+  CV on request — **5 experience** entries (PBT Group back) with complete descriptions +
+  highlights, and **5 education** entries (TorqueIT back); added profile intro + stats.
+  `cv-data.ts` now also carries the `sections` game config (flag labels + coin values).
+- **Tests**: rewrote `cv-data`, `components`, and `interest-form` tests for the new shape;
+  added `living-cv` integration test; stubbed canvas/matchMedia in `setup.ts`. 97 tests pass.
+
 ## 2026-04-29
 
 ### Analytics

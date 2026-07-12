@@ -1,84 +1,72 @@
 # see-veo
 
-A personal CV/resume built as a Progressive Web App (PWA) with React, TypeScript, Vite, and Tailwind CSS.
+**Jaco Theron's Living CV** — a personal résumé reimagined as a playable, ink-on-paper
+document. A little Chrome-dino-style pixel runner walks and hops along the ground between
+section "flags"; a coin score + distance HUD tracks how much of the CV you've explored.
+Built as an installable Progressive Web App with React, TypeScript, Vite, and Tailwind CSS.
+
+## The experience
+
+- **One screen, six levels** — Profile, Work, Skills, Projects, Study, Contact. Each is a
+  flag on the ground; reaching a new one for the first time banks its coins.
+- **Navigate any way you like** — walk with `←` / `→`, `Space` to jump, or click a flag.
+- **Formal document, game soul** — Spectral serif body, Space Mono meta, Silkscreen pixel
+  HUD/flags, on warm paper with a single amber accent and a subtle CRT/paper texture.
+- **Score HUD** — coin score, persisted high score (`localStorage`), and walk distance.
+- **Sound** — tiny Web Audio blips on navigation/jump, toggleable (SFX ON/OFF).
+- **Motion- and print-safe** — respects `prefers-reduced-motion`; a clean printed CV
+  replaces the game shell when you export to PDF.
 
 ## Features
 
-### CV Sections
-- **Hero** — Name, title, tagline, and action buttons (install app, download PDF, manual install instructions)
-- **About** — Multi-paragraph personal summary
-- **Skills** — Grouped skill badges across 4 categories (Core, Development, Data & Integration, Languages)
-- **Projects** — Grid of 9 deployed project cards with screenshots, descriptions, tech stacks, and links
-- **Activity Charts** — Embedded repo-tor iframe charts showing commit distribution (most active days, peak working hours)
-- **Activity Timeline** — Embedded repo-tor iframe showing 60-day commit activity by repository
-- **Experience** — Timeline of work history with highlights
-- **Education** — Timeline of credentials and certifications
-- **Interest Form** — Contact form (name, email, message) with validation, retry logic, failure diagnosis, and honeypot spam protection
+### Kept from the previous app, restyled to the paper theme
+- **Contact form** — name / email / message, POSTs to a personal serverless SMTP relay
+  (`VITE_INTEREST_API_URL`) with validation, timeout + single retry, failure diagnosis,
+  and honeypot + timing spam protection. Degrades gracefully when the API is unset/offline.
+- **PWA install** — installable on Chromium via `beforeinstallprompt`; an "Install app"
+  button (or platform-specific "How to install" steps for Safari/Firefox/Samsung) lives in
+  the Contact level.
+- **PWA update** — service worker with 60-minute update checks and a user-controlled
+  refresh toast.
+- **Download as PDF** — `window.print()` swaps the game shell for a clean printed document.
 
-### PWA
-- Installable as a native app on Chromium browsers via `beforeinstallprompt`
-- Platform-specific manual install instructions for Safari (iOS/macOS), Firefox, Samsung Internet
-- Service worker with Workbox runtime caching for offline support
-- Periodic update checks (60-minute interval) with user-controlled refresh prompt
+### Removed in this redesign
+- The embedded repo-tor activity charts and the on-screen debug banner are not part of the
+  new design. (`debugLog` remains as latent diagnosis infra behind the contact form.)
 
-### Accessibility
-- Skip-to-content link for keyboard navigation
-- Focus trap and Escape-to-close in modal dialogs
-- ARIA labels and roles throughout
-- Semantic HTML (nav, section, header, footer)
-
-### Print / PDF
-- Download as PDF via `window.print()` — no library needed
-- `.no-print` class hides interactive UI when printing
-- Print-specific styles (white background, page-break control)
-
-### Developer Tools
-- **Debug Banner** — Floating diagnostic pill with two tabs:
-  - *Diagnostics* — HTTPS, network, API, CORS, service worker, standalone mode, browser detection checks
-  - *Event Log* — Real-time severity-coded logs from InterestForm and PWA hooks
-- Copy-to-clipboard for full diagnostic + event log report
-- Debug logging via pub/sub event store (`debugLog` utility)
-
-## Project Structure
+## Project structure
 
 ```
 src/
-├── App.tsx                  # Single-page layout, composes all sections
-├── index.css                # Tailwind import, @theme tokens, print styles
-├── components/
-│   ├── Hero.tsx             # Header with action buttons
-│   ├── About.tsx            # Personal summary
-│   ├── Experience.tsx       # Work timeline
-│   ├── Education.tsx        # Credentials timeline
-│   ├── Skills.tsx           # Skill categories + badges
-│   ├── Projects.tsx         # Project card grid
-│   ├── ActivityCharts.tsx   # repo-tor embed: daily/hourly charts
-│   ├── ActivityTimeline.tsx # repo-tor embed: 60-day timeline
-│   ├── InterestForm.tsx     # Contact form with error handling
-│   ├── UpdatePrompt.tsx     # PWA update banner
-│   ├── InstallInstructionsModal.tsx # Platform-specific install steps
-│   ├── DebugBanner.tsx      # Floating debug/diagnostics panel
-│   ├── Section.tsx          # Reusable section wrapper
-│   ├── TimelineItem.tsx     # Reusable timeline entry
-│   ├── SkillBadge.tsx       # Skill pill component
-│   └── ProjectImage.tsx     # Project thumbnail with fallback
-├── hooks/
-│   ├── usePWAInstall.ts     # Install prompt capture + browser detection
-│   ├── usePWAUpdate.ts      # Service worker update detection
-│   └── useRepoTorEmbed.ts   # Dynamic embed.js script loading
-├── utils/
-│   ├── debugLog.ts          # Pub/sub event store for debug logging
-│   ├── pwa.ts               # Browser detection, standalone check
-│   └── validation.ts        # Email pattern, form payload validation
-├── constants/
-│   └── embed.ts             # repo-tor embed config (URLs, colors)
+├── App.tsx                    # Composes LivingCv + PWA update/install chrome
+├── index.css                  # @theme paper/ink/amber tokens, keyframes, base, print
+├── fonts.css                  # Self-hosted @font-face (Spectral / Space Mono / Silkscreen)
+├── fonts/                     # woff2 binaries (latin + latin-ext)
 ├── data/
-│   └── cv-data.ts           # All CV content + TypeScript interfaces
-└── test/
-    ├── setup.ts             # Vitest + Testing Library config
-    ├── cv-data.test.ts      # CV data structure validation
-    ├── detect-browser.test.ts # Browser detection edge cases
-    └── validate-payload.test.ts # Form validation coverage
+│   └── cv-data.ts             # All CV content + game section config (flags, coin values)
+├── game/
+│   └── pixelRunnerEngine.ts   # Framework-agnostic canvas engine: runner, HUD, audio
+├── components/
+│   ├── LivingCv.tsx           # Orchestrator: nav state, engine wiring, keyboard
+│   ├── CvHeader.tsx           # Document title + score/hi/distance HUD + SFX/PDF
+│   ├── CvGameStrip.tsx        # Canvas + clickable section flags (active/visited/coin)
+│   ├── CvProfile / CvExperience / CvSkills / CvProjects / CvEducation / CvContact.tsx
+│   ├── CvSectionHeading.tsx   # Shared serif title + pixel eyebrow
+│   ├── CvPrintDoc.tsx         # Print-only clean CV
+│   ├── InterestForm.tsx       # Contact form (SMTP relay)
+│   ├── InstallInstructionsModal.tsx
+│   └── UpdatePrompt.tsx
+├── hooks/
+│   ├── usePWAInstall.ts       # Install prompt capture + browser detection
+│   └── usePWAUpdate.ts        # Service worker update detection
+├── utils/
+│   ├── debugLog.ts            # Pub/sub event store (latent diagnosis infra)
+│   ├── diagnostics.ts         # Contact-form failure diagnosis (diagnoseFailure)
+│   ├── fetchWithTimeout.ts    # fetch + abort-on-timeout
+│   ├── pwa.ts                 # Browser detection, standalone check
+│   └── validation.ts          # Email pattern, form payload validation
+└── test/                      # Vitest + Testing Library
+public/icons/                  # Favicon set + PWA icons (ink runner + amber flag motif)
 ```
 
 ## Development
@@ -93,6 +81,7 @@ npm run dev
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Start dev server |
+| `npm run type-check` | TypeScript check only |
 | `npm run build` | TypeScript check + production build |
 | `npm run lint` | Run ESLint |
 | `npm run preview` | Preview production build locally |
@@ -101,27 +90,31 @@ npm run dev
 
 ## Customizing
 
-Edit `src/data/cv-data.ts` to update all CV content (personal info, experience, education, skills, projects, contact).
+Edit `src/data/cv-data.ts` to update all CV content and the game's section metadata
+(flag labels + coin values). Theme colors and fonts live in `src/index.css` / `src/fonts.css`.
 
-## Environment Variables
+## Environment variables
 
 | Variable | Purpose |
 |----------|---------|
-| `VITE_INTEREST_API_URL` | External API endpoint for the interest/contact form |
+| `VITE_INTEREST_API_URL` | External API endpoint for the contact form |
 
 See `.env.example` for reference.
 
 ## Deployment
 
-Pushes to `main` automatically deploy to Vercel. Connect the repo in the Vercel dashboard and add required env vars under **Settings > Environment Variables**.
+Pushes to `main` automatically deploy to Vercel. Theme color (browser UI = ink) and the PWA
+manifest colors are parsed from `src/index.css` at build time, so CSS stays the single
+source of truth.
 
-## Tech Stack
+## Tech stack
 
 - [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
 - [Vite 7](https://vite.dev/) with `@vitejs/plugin-react`
 - [Tailwind CSS v4](https://tailwindcss.com/) via `@tailwindcss/vite` (CSS-first config)
+- Self-hosted fonts: Spectral, Space Mono, Silkscreen
 - [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox service worker)
-- [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/) for tests
+- [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/)
 - [Vercel](https://vercel.com/) for deployment
 
 ## License

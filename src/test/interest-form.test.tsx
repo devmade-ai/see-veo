@@ -53,12 +53,7 @@ describe('InterestForm', () => {
 
     it('renders the submit button', () => {
       render(<InterestForm />)
-      expect(screen.getByRole('button', { name: 'Send Message' })).toBeInTheDocument()
-    })
-
-    it('renders the introductory text', () => {
-      render(<InterestForm />)
-      expect(screen.getByText(/Interested in working together/)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /send a message/i })).toBeInTheDocument()
     })
 
     it('renders honeypot field hidden from view', () => {
@@ -81,7 +76,7 @@ describe('InterestForm', () => {
       await user.type(screen.getByLabelText('Name'), '   ')
       await user.type(screen.getByLabelText('Email'), 'test@example.com')
       await user.type(screen.getByLabelText('Message'), 'Hi')
-      fireEvent.submit(screen.getByRole('button', { name: 'Send Message' }))
+      fireEvent.submit(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -96,7 +91,7 @@ describe('InterestForm', () => {
       await user.type(screen.getByLabelText('Email'), 'not-an-email')
       await user.type(screen.getByLabelText('Message'), 'Hi')
       // fireEvent.submit bypasses HTML5 type="email" validation
-      fireEvent.submit(screen.getByRole('button', { name: 'Send Message' }))
+      fireEvent.submit(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -110,7 +105,7 @@ describe('InterestForm', () => {
       await user.type(screen.getByLabelText('Name'), 'Jane')
       await user.type(screen.getByLabelText('Email'), 'jane@example.com')
       await user.type(screen.getByLabelText('Message'), '   ')
-      fireEvent.submit(screen.getByRole('button', { name: 'Send Message' }))
+      fireEvent.submit(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -130,7 +125,7 @@ describe('InterestForm', () => {
       const user = userEvent.setup()
       render(<InterestForm />)
       await fillForm(user)
-      await user.click(screen.getByRole('button', { name: 'Send Message' }))
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByText('Message sent!')).toBeInTheDocument()
@@ -148,7 +143,7 @@ describe('InterestForm', () => {
       const user = userEvent.setup()
       render(<InterestForm />)
       await fillForm(user)
-      await user.click(screen.getByRole('button', { name: 'Send Message' }))
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(mockFetch).toHaveBeenCalled()
@@ -173,12 +168,12 @@ describe('InterestForm', () => {
       const user = userEvent.setup()
       render(<InterestForm />)
       await fillForm(user)
-      await user.click(screen.getByRole('button', { name: 'Send Message' }))
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
-        expect(screen.getByText('Sending...')).toBeInTheDocument()
+        expect(screen.getByText(/sending/i)).toBeInTheDocument()
       })
-      expect(screen.getByRole('button', { name: 'Sending...' })).toBeDisabled()
+      expect(screen.getByRole('button', { name: /sending/i })).toBeDisabled()
     })
 
     it('shows error on HTTP error response', async () => {
@@ -195,7 +190,7 @@ describe('InterestForm', () => {
       const user = userEvent.setup()
       render(<InterestForm />)
       await fillForm(user)
-      await user.click(screen.getByRole('button', { name: 'Send Message' }))
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -213,7 +208,7 @@ describe('InterestForm', () => {
       const user = userEvent.setup()
       render(<InterestForm />)
       await fillForm(user)
-      await user.click(screen.getByRole('button', { name: 'Send Message' }))
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByText('Message sent!')).toBeInTheDocument()
@@ -237,7 +232,7 @@ describe('InterestForm', () => {
       const honeypotInput = screen.getByLabelText('Website')
       await user.type(honeypotInput, 'spam-bot-url')
 
-      await user.click(screen.getByRole('button', { name: 'Send Message' }))
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByText('Message sent!')).toBeInTheDocument()
@@ -254,7 +249,7 @@ describe('InterestForm', () => {
       const user = userEvent.setup()
       render(<InterestForm />)
       await fillForm(user)
-      await user.click(screen.getByRole('button', { name: 'Send Message' }))
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -268,7 +263,7 @@ describe('InterestForm', () => {
       const user = userEvent.setup()
       render(<InterestForm />)
       await fillForm(user)
-      await user.click(screen.getByRole('button', { name: 'Send Message' }))
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -282,7 +277,7 @@ describe('InterestForm', () => {
       const user = userEvent.setup()
       render(<InterestForm />)
       await fillForm(user)
-      await user.click(screen.getByRole('button', { name: 'Send Message' }))
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -300,7 +295,7 @@ describe('InterestForm', () => {
       const user = userEvent.setup()
       render(<InterestForm />)
       await fillForm(user)
-      await user.click(screen.getByRole('button', { name: 'Send Message' }))
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
 
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument()
