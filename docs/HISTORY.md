@@ -2,6 +2,36 @@
 
 Record of completed work and changes.
 
+## 2026-07-12
+
+### Social share / link previews (Open Graph + Twitter cards)
+Implemented the share/unfurl feature from the `jaco-theron-cv-design-system` handoff
+(`templates/cv-page/CvPage.dc.html` `<helmet>`).
+
+- **`index.html`**: added static Open Graph + Twitter Card meta tags so the CV unfurls with
+  the paper-and-pixel landscape card on LinkedIn / Facebook / X / WhatsApp / Slack / Telegram /
+  iMessage / Discord. All URLs are **absolute** on the real domain
+  `https://see-veo.vercel.app` (from the repo's GitHub `homepage` field) — the design's
+  `YOUR-DOMAIN` placeholder is fully replaced. Also aligned `<meta name="description">` with
+  the design's richer copy (Cape Town, nine years, "play through") so search + social + card
+  art tell one story. Tags are static (not React-injected) because scrapers don't run JS.
+- **`public/share/`**: shipped `og-card.png` (1200×630), `square-card.png` (1080×1080),
+  `story-card.png` (1080×1920) from the handoff. Served as static files at `/share/*.png`
+  (verified on the live site that Vercel serves root static files before the SPA rewrite;
+  the og:image now resolves as a real PNG instead of the app shell).
+- **`vite.config.ts`**: `globIgnores: ['share/**']` keeps the share cards out of the SW
+  precache — the app never displays them, so precaching all three saved ~0.5 MB per install
+  (precache 1075 → 565 KiB).
+- **`src/test/social-meta.test.ts`**: new guard (6 tests) asserting no `YOUR-DOMAIN`
+  placeholder, absolute `og:url`/`og:image`/`twitter:image`, `1200×630` dimensions, the
+  large-image Twitter card, and that the three PNGs ship. Catches the silent-failure modes
+  (blank previews) that this feature is prone to.
+- Verified copy against `cv-data.ts` and the baked PNG art: name, title, tagline, "nine
+  years", "Cape Town", and both handles all match. type-check, lint, build, and 103 tests pass.
+- **User-only follow-up** (→ `USER_ACTIONS.md`): force a re-scrape on the LinkedIn / Facebook /
+  X validators after deploy (they cache aggressively); post the square/story cards manually
+  where links don't unfurl (Instagram / TikTok / status).
+
 ## 2026-07-11
 
 ### Complete redesign — "The Applicant" pixel-runner Living CV

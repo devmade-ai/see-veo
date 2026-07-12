@@ -89,6 +89,15 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Requirement: Keep the offline precache lean — don't cache the social share cards
+        // Approach: The share PNGs (share/*.png) exist only for link unfurls (fetched by
+        //   external scrapers, server-side) and for manual posting; the app itself never
+        //   displays them, so precaching all three (~0.5 MB) would bloat every install for
+        //   nothing. globIgnores drops them from precache; they still serve from the edge.
+        // Alternatives considered:
+        //   - Narrow globPatterns to exclude them: Rejected — a broad png glob is simpler to
+        //     keep correct as icons are added; an explicit ignore states the intent clearly
+        globIgnores: ['share/**'],
         // Requirement: Prevent the service worker from intercepting cross-origin API requests
         // Approach: navigateFallbackDenylist excludes the interest-form API domain from
         //   navigation fallback; runtimeCaching NetworkOnly ensures those fetches bypass the SW
