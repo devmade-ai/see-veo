@@ -23,11 +23,67 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="JT · CV" />
+    <!-- Requirement: Page description that doubles as a social-preview fallback and
+         matches the share-card copy
+         Approach: Use the design handoff's richer wording (Cape Town, nine years, the
+         "play through" concept) so <meta name="description">, the Open Graph copy
+         below, and the baked card art tell one consistent story
+         Alternatives considered:
+           - Keep the terser prior description: Rejected — it had drifted from the
+             approved share copy; a single authored copy set is easier to keep truthful -->
     <meta
       name="description"
-      content="Jaco Theron's CV as a playable, ink-on-paper pixel-runner document — Solutions / Software / Sales Engineer & Analyst."
+      content="Jaco Theron — a living CV you can play through. Solutions / Software / Sales Engineer & Analyst, Cape Town. Nine years turning messy business problems into working software."
     />
     <title>Jaco Theron — Living CV</title>
+
+    <!-- Requirement: Rich link previews ("unfurls") when the CV URL is shared on
+         LinkedIn, Facebook, X, WhatsApp, Slack, Telegram, iMessage, Discord, etc.
+         Approach: Static Open Graph + Twitter Card tags in index.html so they are in
+         the server-served HTML. URLs are absolute and target the live Vercel
+         deployment; the 1200×630 landscape card ships at /share/og-card.png (from
+         public/share/). Domain source: the repo's GitHub "homepage" field.
+         Alternatives considered:
+           - Inject tags client-side (e.g. React Helmet): Rejected — social scrapers do
+             not run JavaScript, so runtime-injected tags are never seen
+           - Relative og:image path: Rejected — most scrapers ignore a relative image
+             and require an absolute URL
+           - Build-time domain placeholder (like %THEME_COLOR%): Rejected — the domain is
+             stable and the handoff specifies hardcoded values; the indirection only
+             pays off on a domain move, which is a deliberate manual edit anyway
+         Keep in sync: if CV facts or card art change, re-generate the PNGs from
+         guidelines/share-*.card.html and update this copy; if the OG art is ever
+         resized, update og:image:width/height to match or previews may crop. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Jaco Theron — Living CV" />
+    <meta
+      property="og:title"
+      content="Jaco Theron — Solutions / Software / Sales Engineer & Analyst"
+    />
+    <meta
+      property="og:description"
+      content="A living CV you can play through — walk the little pixel runner from section to section. Nine years across insurance, banking, startups and consulting."
+    />
+    <meta property="og:url" content="https://see-veo.vercel.app/" />
+    <meta property="og:image" content="https://see-veo.vercel.app/share/og-card.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Jaco Theron — Curriculum Vitae, with a little pixel runner walking the page toward an amber flag."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Jaco Theron — Solutions / Software / Sales Engineer & Analyst"
+    />
+    <meta
+      name="twitter:description"
+      content="A living CV you can play through. Cape Town, South Africa."
+    />
+    <meta name="twitter:image" content="https://see-veo.vercel.app/share/og-card.png" />
+    <meta name="twitter:image:alt" content="Jaco Theron — Curriculum Vitae share card." />
     <!-- Google tag (gtag.js) -->
     <!-- Requirement: Google Analytics (gtag.js) for site usage tracking
          Approach: Standard async gtag.js snippet in <head>; page-view fires on load
