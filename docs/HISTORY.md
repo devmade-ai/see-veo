@@ -2,6 +2,39 @@
 
 Record of completed work and changes.
 
+## 2026-07-21
+
+### Fleet-standard PWA update policy — auto-on-launch
+Implemented the devmade-ai fleet update policy (glow-props `docs/implementations/PWA_SYSTEM.md`
+→ "Update Application Policy — fleet standard: auto-on-launch"). `registerType` stays
+`'prompt'`; the policy is layered in `usePWAUpdate`.
+
+- **`src/hooks/usePWAUpdate.ts`** (rewritten): module-singleton state + pub/sub. **Launch-apply** —
+  a worker already waiting when registration first resolves is applied silently
+  (`SKIP_WAITING` posted to `registration.waiting`; reload via a latch-gated
+  `controllerchange` backstop plus vite-plugin-pwa's own `controlling` listener), gated on
+  the "Automatic updates" preference (localStorage `jt-cv-auto-update`, default ON,
+  try/catch-safe) and a 30s sessionStorage `jt-cv-pwa-updated` just-updated suppression
+  (also written on user-tap updates). **Mid-session** detections (hourly poll + new
+  visibilitychange check) never reload — they arm the banner; the worker applies next
+  launch. Added `checkForUpdate()` (`registration.update()` + 1500ms settle → typed
+  `'no-sw' | 'up-to-date' | 'update-available' | 'error'`). Background `update()` polls now
+  catch offline rejections into `debugLog` instead of leaking unhandled rejections.
+- **`src/components/UpdatePrompt.tsx`**: hosts the "Automatic updates" checkbox (amber
+  accent, mono, 44px touch target) — see-veo has no menu/settings surface, so the
+  preference rides with the banner. `onUpdate` now typed to return a promise so the
+  banner's error state actually catches rejections.
+- **`src/components/CvContact.tsx`**: "Check for updates" button beside the install
+  affordance (the Contact level is the app-management corner) with plain-language results
+  in an always-mounted `role="status"` line and an unmount guard around the async result.
+- **`src/App.tsx` / `src/components/LivingCv.tsx`**: wiring + `onCheckForUpdates` threading.
+- **Tests**: `pwa-hooks.test.ts` rewritten for the policy (launch-apply + both gates,
+  mid-session arm-only, toggle persistence, all four check results — 11 tests) with a
+  `_resetPwaUpdateStateForTesting()` export; `components.test.tsx` gains CvContact check
+  + UpdatePrompt toggle coverage. 116 tests total; type-check, lint, and build pass;
+  verified the generated `dist/sw.js` carries the `SKIP_WAITING` message handler the
+  launch-apply postMessage relies on.
+
 ## 2026-07-12
 
 ### Social share / link previews (Open Graph + Twitter cards)

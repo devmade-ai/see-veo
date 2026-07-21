@@ -16,6 +16,7 @@ const installProps = {
   onInstall: () => {},
   showManualInstructions: false,
   onShowInstructions: () => {},
+  onCheckForUpdates: () => Promise.resolve('up-to-date' as const),
 }
 
 function renderGame() {

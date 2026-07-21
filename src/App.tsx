@@ -16,7 +16,7 @@ import { usePWAInstall } from './hooks/usePWAInstall'
 //     the modal/toast as siblings, matching the previous separation of concerns
 
 function App() {
-  const { hasUpdate, update } = usePWAUpdate()
+  const { hasUpdate, update, checkForUpdate, autoUpdateEnabled, setAutoUpdate } = usePWAUpdate()
   const {
     canInstall,
     install,
@@ -36,9 +36,18 @@ function App() {
         onInstall={() => void install()}
         showManualInstructions={showManualInstructions}
         onShowInstructions={() => setShowModal(true)}
+        onCheckForUpdates={checkForUpdate}
       />
 
-      {hasUpdate && <UpdatePrompt onUpdate={() => void update()} />}
+      {/* Mid-session updates arm this banner only (fleet auto-on-launch policy);
+          the banner also hosts the persisted "Automatic updates" toggle. */}
+      {hasUpdate && (
+        <UpdatePrompt
+          onUpdate={update}
+          autoUpdateEnabled={autoUpdateEnabled}
+          onToggleAutoUpdate={setAutoUpdate}
+        />
+      )}
 
       {showModal && (
         <InstallInstructionsModal

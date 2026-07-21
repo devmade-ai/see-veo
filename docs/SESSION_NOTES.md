@@ -1,35 +1,40 @@
 # Session Notes
 
-**Worked on:** Social share / link previews (Open Graph + Twitter cards) — the unfurl feature
-from the `jaco-theron-cv-design-system` handoff (`templates/cv-page/CvPage.dc.html` `<helmet>`).
+**Worked on:** Fleet-standard PWA update policy — "auto-on-launch" (glow-props
+`docs/implementations/PWA_SYSTEM.md` → "Update Application Policy") implemented in
+`usePWAUpdate` + the update/check UI, on branch `claude/projects-missing-analytics-vla4ja`.
 
 **Accomplished:**
-- Added static OG + Twitter Card meta tags to `index.html` with **absolute** URLs on the real
-  domain `https://see-veo.vercel.app` (the design's `YOUR-DOMAIN` placeholder is gone). Aligned
-  `<meta name="description">` with the design's richer copy so search/social/card art match.
-- Shipped the three share PNGs to `public/share/` (`og-card.png` 1200×630, `square-card.png`
-  1080×1080, `story-card.png` 1080×1920) → served at `/share/*.png`.
-- `vite.config.ts`: `globIgnores: ['share/**']` drops the share cards from the SW precache
-  (app never displays them) — precache 1075 → 565 KiB.
-- New `src/test/social-meta.test.ts` (6 tests) guards the silent-failure invariants
-  (placeholder, absolute URLs, 1200×630, PNGs present).
-- Docs updated: CLAUDE.md (Key Decisions), HISTORY, USER_ACTIONS (platform re-scrape steps).
+- `usePWAUpdate` rewritten as a module-singleton policy hook: launch-apply a worker
+  already waiting when registration first resolves (SKIP_WAITING postMessage + latch-gated
+  `controllerchange` reload backstop), mid-session detections arm the banner only, hourly
+  poll + new visibilitychange checks, `checkForUpdate()` with the canonical typed result
+  (`'no-sw' | 'up-to-date' | 'update-available' | 'error'`, 1500ms settle).
+- Persisted "Automatic updates" toggle — localStorage `jt-cv-auto-update` (default ON,
+  try/catch-safe), 30s sessionStorage `jt-cv-pwa-updated` just-updated suppression (written
+  by both launch-apply and the user-tap path).
+- UI: toggle checkbox inside `UpdatePrompt` (no menu surface exists — the banner is the
+  update system's one visible moment); "Check for updates" button + `role="status"` result
+  line in `CvContact` beside the install affordance (the app-management corner).
+- Tests: `pwa-hooks.test.ts` rewritten (launch-apply + pref/suppression gates, mid-session
+  arm-only, toggle, all four check results); CvContact + UpdatePrompt component tests added.
+- Docs: CLAUDE.md (Key Decisions bullet + PWA System section aligned to the policy),
+  HISTORY.md entry.
 
-**Current state:** type-check, lint, `npm run build`, and **103 tests** all pass. `dist/`
-verified — `dist/share/og-card.png` is a real PNG and `dist/index.html` carries the absolute
-tags with no placeholder. Ready to commit/push to `claude/cv-page-social-unfurl-06p3q5`.
+**Current state:** type-check, lint, `npm run build`, and **116 tests** all pass. Generated
+`dist/sw.js` verified to carry the `SKIP_WAITING` message handler the launch-apply
+postMessage relies on. Committed on `claude/projects-missing-analytics-vla4ja` (not merged).
 
 **Key context:**
-- **Domain source of truth:** the GitHub repo `homepage` field = `https://see-veo.vercel.app`.
-  No custom domain. If one is added, update the absolute URLs in `index.html` **and** the
-  expected domain in `social-meta.test.ts`.
-- **Why static tags, not React/Helmet:** social scrapers don't execute JavaScript, so only
-  tags present in the server-served `index.html` are seen.
-- **Why absolute image URLs:** most scrapers ignore a relative `og:image`.
-- **Static serving works with the existing SPA rewrite:** verified on the live site that
-  Vercel serves root static files (`/icons/*`, `/sw.js`) before the `index.html` rewrite, so
-  `/share/og-card.png` resolves as a real file once deployed. No `vercel.json` change needed.
-- **Copy is baked in twice** — meta tags *and* PNG art. Both verified against `cv-data.ts`
-  (name/title/tagline/"nine years"/"Cape Town"/handles). Keep them in sync on any CV change.
-- Platform preview testing is user-only (needs the deploy + logins) → see `USER_ACTIONS.md`.
-- Scratch plan removed from `docs/working/` after completion.
+- `registerType` stays `'prompt'` — it is the *mechanism*; the hook is the *policy*. Never
+  revert to tap-only behavior (stale clients never converge) or raw `autoUpdate`
+  (mid-session reloads).
+- vite-plugin-pwa 1.x quirk: `updateServiceWorker(reloadPage)` **ignores** its argument —
+  it only sends SKIP_WAITING; the reload comes from the library's `controlling` listener
+  (installed when the `waiting` event fired). The hook's own `controllerchange` listener,
+  gated on the launch-apply latch, is the order-independent backstop.
+- `hasUpdate` is the module `_hasUpdate` flag, NOT the wrapper's `needRefresh` state — the
+  wrapper sets its flag on every waiting event, which would bypass the launch-apply and
+  just-updated suppression.
+- Storage keys follow the `jt-cv-` prefix (`jt-cv-hi` precedent). Test reset:
+  `_resetPwaUpdateStateForTesting()`.

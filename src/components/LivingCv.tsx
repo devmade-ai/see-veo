@@ -23,6 +23,7 @@ import CvProjects from './CvProjects'
 import CvEducation from './CvEducation'
 import CvContact from './CvContact'
 import CvPrintDoc from './CvPrintDoc'
+import type { UpdateCheckResult } from '../hooks/usePWAUpdate'
 
 const order: SectionId[] = sections.map((s) => s.id)
 
@@ -36,6 +37,7 @@ interface LivingCvProps {
   onInstall: () => void
   showManualInstructions: boolean
   onShowInstructions: () => void
+  onCheckForUpdates: () => Promise<UpdateCheckResult>
 }
 
 export default function LivingCv({
@@ -44,6 +46,7 @@ export default function LivingCv({
   onInstall,
   showManualInstructions,
   onShowInstructions,
+  onCheckForUpdates,
 }: LivingCvProps) {
   const [screen, setScreen] = useState<SectionId>('profile')
   const [soundOn, setSoundOn] = useState(true)
@@ -198,6 +201,7 @@ export default function LivingCv({
                 onInstall={onInstall}
                 showManualInstructions={showManualInstructions}
                 onShowInstructions={onShowInstructions}
+                onCheckForUpdates={onCheckForUpdates}
               />
             )}
           </div>

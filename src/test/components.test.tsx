@@ -15,6 +15,7 @@ import CvEducation from '../components/CvEducation'
 import CvContact from '../components/CvContact'
 import CvHeader from '../components/CvHeader'
 import CvGameStrip from '../components/CvGameStrip'
+import UpdatePrompt from '../components/UpdatePrompt'
 import { cvData, sections } from '../data/cv-data'
 
 const noopInstall = {
@@ -23,6 +24,7 @@ const noopInstall = {
   onInstall: () => {},
   showManualInstructions: false,
   onShowInstructions: () => {},
+  onCheckForUpdates: () => Promise.resolve('up-to-date' as const),
 }
 
 describe('CvProfile', () => {
@@ -124,6 +126,58 @@ describe('CvContact', () => {
   it('hides install affordances once installed', () => {
     render(<CvContact {...noopInstall} isInstalled canInstall showManualInstructions />)
     expect(screen.queryByRole('button', { name: /install/i })).not.toBeInTheDocument()
+  })
+
+  it('runs a manual update check and shows the plain-language result', async () => {
+    const user = userEvent.setup()
+    const onCheckForUpdates = vi.fn().mockResolvedValue('up-to-date')
+    render(<CvContact {...noopInstall} onCheckForUpdates={onCheckForUpdates} />)
+
+    await user.click(screen.getByRole('button', { name: /check for updates/i }))
+
+    expect(onCheckForUpdates).toHaveBeenCalled()
+    expect(await screen.findByText("You're up to date.")).toBeInTheDocument()
+  })
+
+  it('shows the update-found message when the check finds a new version', async () => {
+    const user = userEvent.setup()
+    const onCheckForUpdates = vi.fn().mockResolvedValue('update-available')
+    render(<CvContact {...noopInstall} onCheckForUpdates={onCheckForUpdates} />)
+
+    await user.click(screen.getByRole('button', { name: /check for updates/i }))
+
+    expect(await screen.findByText(/new version found/i)).toBeInTheDocument()
+  })
+})
+
+describe('UpdatePrompt', () => {
+  const promptProps = {
+    onUpdate: () => {},
+    autoUpdateEnabled: true,
+    onToggleAutoUpdate: () => {},
+  }
+
+  it('offers the refresh action and fires onUpdate', async () => {
+    const user = userEvent.setup()
+    const onUpdate = vi.fn()
+    render(<UpdatePrompt {...promptProps} onUpdate={onUpdate} />)
+
+    await user.click(screen.getByRole('button', { name: /refresh now/i }))
+    expect(onUpdate).toHaveBeenCalled()
+  })
+
+  it('renders the automatic-updates toggle reflecting the preference', () => {
+    render(<UpdatePrompt {...promptProps} autoUpdateEnabled={false} />)
+    expect(screen.getByRole('checkbox', { name: /automatic updates/i })).not.toBeChecked()
+  })
+
+  it('reports toggle changes through onToggleAutoUpdate', async () => {
+    const user = userEvent.setup()
+    const onToggleAutoUpdate = vi.fn()
+    render(<UpdatePrompt {...promptProps} onToggleAutoUpdate={onToggleAutoUpdate} />)
+
+    await user.click(screen.getByRole('checkbox', { name: /automatic updates/i }))
+    expect(onToggleAutoUpdate).toHaveBeenCalledWith(false)
   })
 })
 

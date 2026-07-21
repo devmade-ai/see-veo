@@ -17,7 +17,7 @@ section flags). Design from the Claude Design handoff "The Applicant".
 - `src/data/cv-data.ts` — All CV content + TypeScript interfaces **and** the game's `sections` config (flag labels + coin values). Edit this single file to update the resume.
 - `src/game/pixelRunnerEngine.ts` — Framework-agnostic canvas engine: the pixel runner (sprites + physics), the numeric HUD (score/hi/distance written per frame), and Web Audio blips. Driven imperatively by `LivingCv`; no-ops without a 2D context (jsdom).
 - `src/components/` — `LivingCv` (orchestrator: nav state, engine wiring, keyboard), `CvHeader` (title + HUD + SFX/PDF), `CvGameStrip` (canvas + clickable section flags), one component per CV section (`CvProfile`, `CvExperience`, `CvSkills`, `CvProjects`, `CvEducation`, `CvContact`), `CvSectionHeading` (shared), `CvPrintDoc` (print-only clean CV), plus the kept-and-restyled `InterestForm`, `InstallInstructionsModal`, `UpdatePrompt`.
-- `src/hooks/` — `usePWAInstall` and `usePWAUpdate` for install/update prompts.
+- `src/hooks/` — `usePWAInstall` (install prompt) and `usePWAUpdate` (fleet auto-on-launch update policy: launch-apply, mid-session banner, "Automatic updates" toggle, typed `checkForUpdate`).
 - `src/utils/` — Shared utilities: `debugLog.ts` (pub/sub event store; now headless — backs the contact form's diagnosability), `pwa.ts` (browser detection, standalone check), `validation.ts` (email pattern, form payload validation), `fetchWithTimeout.ts` (fetch wrapper with abort-on-timeout), `diagnostics.ts` (`diagnoseFailure` — contact-form failure diagnosis).
 - `src/fonts.css` + `src/fonts/` — Self-hosted `@font-face` for Spectral (serif) / Space Mono (mono) / Silkscreen (pixel). Exposed as `font-serif` / `font-mono` / `font-pixel`.
 - `src/index.css` — Tailwind import, `@import "./fonts.css"`, custom `@theme` color tokens (**warm-paper palette**), keyframes (doc-in / coin-pop / flag-wave / caret), base + print styles. Single source of truth for theme colors — `vite.config.ts` parses this file to feed the PWA manifest and HTML `theme-color`.
@@ -43,6 +43,7 @@ section flags). Design from the Claude Design handoff "The Applicant".
 - **Warm-paper "The Applicant" theme** (single theme, no toggle): paper `#F4ECD8`, ink `#2B2118`, one amber accent `#E0972B`, defined via Tailwind v4 `@theme` tokens. The existing token NAMES were kept and only revalued, so kept components (form/modal/toast) re-theme automatically.
 - **Playable single screen** (`LivingCv`), no client-side routing: six discrete "levels" (Profile/Work/Skills/Projects/Study/Contact), each a flag the pixel runner walks to. React owns navigation/visited state (source of truth); the canvas engine renders + scores. `←`/`→` walk, `Space` jump, click a flag. Coin score persists a high score to `localStorage` (`jt-cv-hi`). Motion-safe via `prefers-reduced-motion` (`motion-safe:` variants + engine teleport).
 - PWA `scope` and `start_url` use `/` — Vercel serves at root, no base-path prefix. `theme-color` = ink, manifest `background_color` = paper, `orientation: portrait`. Icons self-hosted in `public/icons/` (ink runner + amber flag motif from the handoff).
+- **PWA updates follow the fleet auto-on-launch policy** (glow-props `docs/implementations/PWA_SYSTEM.md` → "Update Application Policy"). `registerType` stays `'prompt'` (the mechanism); `usePWAUpdate` is the policy: a worker already **waiting when the app starts** is applied silently (SKIP_WAITING posted to `registration.waiting`, one reload via the latch-gated `controllerchange` backstop + vite-plugin-pwa's own `controlling` listener), gated on the persisted **"Automatic updates"** preference (localStorage `jt-cv-auto-update`, absent = ON, try/catch-safe) and a 30s `sessionStorage` `jt-cv-pwa-updated` just-updated suppression. Updates detected **mid-session** (hourly poll + visibilitychange check) never reload — they arm the `UpdatePrompt` banner; the waiting worker applies on the next launch. **UI placement (no menu/settings surface exists):** the "Automatic updates" checkbox lives inside the `UpdatePrompt` banner (visible whenever the prompt shows); the **"Check for updates"** action (typed result `'no-sw' | 'up-to-date' | 'update-available' | 'error'`, `registration.update()` + ~1500ms settle) lives in the **Contact level next to the install affordance** — the app-management corner of the CV — with an always-mounted `role="status"` result line. The header SFX/PDF cluster was rejected as placement (primary game chrome; a third utility button adds noise).
 - Print styles in `src/index.css` swap the game shell (`print:hidden`) for `CvPrintDoc` (a clean printed CV). `.no-print` also hides fixed chrome.
 - Contact: the `InterestForm` (kept from the previous app, restyled) lives in the **Contact level**, alongside mailto + LinkedIn/GitHub links and the PWA install affordance. POSTs to an **external** SMTP relay via `VITE_INTEREST_API_URL`; degrades gracefully when unset/offline; validates via `validatePayload` first.
 - Google Analytics (gtag.js) embedded in `index.html` with measurement ID `G-61SDQXZSFT`. Standard async snippet; page-view fires on load (no routing).
@@ -357,7 +358,7 @@ VitePWA({
 })
 ```
 
-- **`registerType: 'prompt'`**: Users control when updates apply. `autoUpdate` silently refreshes mid-work.
+- **`registerType: 'prompt'`**: The mechanism that exposes the waiting worker to app code. The *behavior* on top is the fleet-standard **auto-on-launch** policy (apply at launch, defer mid-session, user toggle — see Key Decisions and glow-props `PWA_SYSTEM.md`). Raw `autoUpdate` silently refreshes mid-work; tap-only prompt leaves stale clients forever.
 - **`id`**: Stable app identity. Without it, Chrome derives from `start_url` — breaks on config changes or redeployments.
 - **`prefer_related_applications: false`**: Without this, Chrome may skip `beforeinstallprompt` if it thinks a native app exists.
 - **Separate icon purposes**: `any` for standard display (192, 512), `maskable` for full-bleed (1024). Never combine `"any maskable"` — browsers pick the wrong one. Use a dedicated 1024x1024 for maskable.
@@ -381,7 +382,7 @@ Executes synchronously during HTML parse. Stashes the event for the React hook t
 
 #### Service Worker Updates (`usePWAUpdate.ts`)
 
-Wraps `vite-plugin-pwa`'s React hook. Exposes `hasUpdate` boolean and `updateApp()`. Checks for new SW versions every 60 minutes. Offline-ready auto-dismisses after 3 seconds.
+Wraps `vite-plugin-pwa`'s React hook with module-singleton state. Exposes `hasUpdate`, `update()`, `checkForUpdate()` (typed `'no-sw' | 'up-to-date' | 'update-available' | 'error'`), `autoUpdateEnabled` + `setAutoUpdate()`. Launch-applies an already-waiting worker (auto-on-launch policy); mid-session detections only arm the banner. Checks for new SW versions every 60 minutes and on visibilitychange.
 
 #### Install Detection (`usePWAInstall.ts`)
 
@@ -392,7 +393,7 @@ Detects browser, captures `beforeinstallprompt` (consuming the early-captured ev
 1. **Never combine `"any maskable"` in icon purpose** — use separate entries with a dedicated 1024x1024 for maskable.
 2. **Set `id` explicitly** in the manifest — Chrome derives it from `start_url` otherwise.
 3. **The inline script in `index.html` is essential** — without it, repeat visitors on Chromium lose the install prompt.
-4. **`registerType: 'prompt'`** gives users control. `autoUpdate` silently refreshes mid-work.
+4. **`registerType: 'prompt'` + auto-on-launch policy** — never raw `autoUpdate` (reloads mid-work) and never tap-only prompt (stale clients never converge). Launch-apply keeps both guarantees.
 5. **Clean up all timers** — every `setTimeout`/`setInterval` in `useEffect` needs cleanup. Nested timeouts need the array pattern or mounted ref guard.
 
 ### App Icons

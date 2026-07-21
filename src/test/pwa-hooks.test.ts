@@ -1,11 +1,15 @@
-// Requirement: Tests for PWA hooks (usePWAInstall, usePWAUpdate)
+// Requirement: Tests for PWA hooks (usePWAInstall, usePWAUpdate) including the
+//   fleet-standard auto-on-launch update policy (launch-apply, mid-session defer,
+//   "Automatic updates" toggle, typed manual check)
 // Approach: Test usePWAInstall by mocking window events and navigator; test usePWAUpdate
-//   by mocking the virtual:pwa-register/react module via vitest alias + vi.mock override
+//   by mocking the virtual:pwa-register/react module via vitest alias + vi.mock override,
+//   exposing the captured onNeedRefresh callback and a per-test registration object so
+//   tests can simulate a waiting worker at launch and mid-session detections
 // Alternatives considered:
 //   - Render components that consume hooks: Rejected — adds coupling to UI;
 //     renderHook isolates hook logic
-//   - Skip usePWAUpdate tests: Rejected — the periodic update check and state
-//     exposure are critical PWA functionality worth verifying
+//   - Skip usePWAUpdate tests: Rejected — launch-apply and its gates are the riskiest
+//     PWA behavior in the app (an unwanted reload) and must be pinned by tests
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
@@ -22,44 +26,156 @@ vi.mock('../utils/pwa', () => ({
 // The vitest alias resolves the virtual module to a concrete file; this vi.mock
 // replaces that resolved module with per-test controllable behavior.
 const mockUpdateServiceWorker = vi.fn()
-let mockNeedRefresh = false
+interface MockRegistration {
+  update: ReturnType<typeof vi.fn>
+  active?: object
+  waiting?: { postMessage: ReturnType<typeof vi.fn> }
+}
+let mockRegistration: MockRegistration | null = null
+let capturedOnNeedRefresh: (() => void) | undefined
 
 vi.mock('virtual:pwa-register/react', () => ({
-  useRegisterSW: (opts?: { onRegisteredSW?: (url: string, r: unknown) => void }) => {
-    if (opts?.onRegisteredSW) {
-      opts.onRegisteredSW('sw.js', { update: vi.fn() })
+  useRegisterSW: (opts?: {
+    onRegisteredSW?: (url: string, r: unknown) => void
+    onNeedRefresh?: () => void
+  }) => {
+    capturedOnNeedRefresh = opts?.onNeedRefresh
+    if (opts?.onRegisteredSW && mockRegistration) {
+      opts.onRegisteredSW('sw.js', mockRegistration)
     }
     return {
-      needRefresh: [mockNeedRefresh],
+      needRefresh: [false],
       updateServiceWorker: mockUpdateServiceWorker,
     }
   },
 }))
 
-import { usePWAUpdate } from '../hooks/usePWAUpdate'
+import { usePWAUpdate, _resetPwaUpdateStateForTesting } from '../hooks/usePWAUpdate'
+
+const AUTO_UPDATE_KEY = 'jt-cv-auto-update'
+const UPDATE_APPLIED_KEY = 'jt-cv-pwa-updated'
 
 describe('usePWAUpdate', () => {
   beforeEach(() => {
-    mockNeedRefresh = false
+    _resetPwaUpdateStateForTesting()
+    localStorage.clear()
+    sessionStorage.clear()
+    mockRegistration = null
+    capturedOnNeedRefresh = undefined
     mockUpdateServiceWorker.mockReset()
   })
 
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('returns hasUpdate false when no update is available', () => {
-    mockNeedRefresh = false
     const { result } = renderHook(() => usePWAUpdate())
     expect(result.current.hasUpdate).toBe(false)
   })
 
-  it('returns hasUpdate true when an update is available', () => {
-    mockNeedRefresh = true
+  it('arms hasUpdate when a mid-session update is detected — and never auto-applies', () => {
+    mockRegistration = { update: vi.fn(), active: {} }
     const { result } = renderHook(() => usePWAUpdate())
+
+    act(() => capturedOnNeedRefresh?.())
+
+    expect(result.current.hasUpdate).toBe(true)
+    // Mid-session detections must only arm the banner — no skip-waiting, no reload
+    expect(mockUpdateServiceWorker).not.toHaveBeenCalled()
+  })
+
+  it('calls updateServiceWorker(true) and records the suppression stamp on update()', () => {
+    const { result } = renderHook(() => usePWAUpdate())
+    act(() => {
+      void result.current.update()
+    })
+    expect(mockUpdateServiceWorker).toHaveBeenCalledWith(true)
+    expect(sessionStorage.getItem(UPDATE_APPLIED_KEY)).not.toBeNull()
+  })
+
+  it('launch-applies a worker that is already waiting when registration resolves', () => {
+    const postMessage = vi.fn()
+    mockRegistration = { update: vi.fn(), active: {}, waiting: { postMessage } }
+    const { result } = renderHook(() => usePWAUpdate())
+
+    expect(postMessage).toHaveBeenCalledWith({ type: 'SKIP_WAITING' })
+    expect(sessionStorage.getItem(UPDATE_APPLIED_KEY)).not.toBeNull()
+    // Silent apply — the banner must not arm even if the waiting event also fires
+    act(() => capturedOnNeedRefresh?.())
+    expect(result.current.hasUpdate).toBe(false)
+  })
+
+  it('does not launch-apply when the automatic updates preference is off', () => {
+    localStorage.setItem(AUTO_UPDATE_KEY, 'false')
+    const postMessage = vi.fn()
+    mockRegistration = { update: vi.fn(), active: {}, waiting: { postMessage } }
+    const { result } = renderHook(() => usePWAUpdate())
+
+    expect(postMessage).not.toHaveBeenCalled()
+    // Tap-only mode: the update still arms the banner for an explicit tap
+    act(() => capturedOnNeedRefresh?.())
     expect(result.current.hasUpdate).toBe(true)
   })
 
-  it('calls updateServiceWorker(true) when update is invoked', () => {
+  it('does not launch-apply inside the 30s just-updated suppression window', () => {
+    sessionStorage.setItem(UPDATE_APPLIED_KEY, String(Date.now()))
+    const postMessage = vi.fn()
+    mockRegistration = { update: vi.fn(), active: {}, waiting: { postMessage } }
     const { result } = renderHook(() => usePWAUpdate())
-    result.current.update()
-    expect(mockUpdateServiceWorker).toHaveBeenCalledWith(true)
+
+    expect(postMessage).not.toHaveBeenCalled()
+    // Re-detection right after an applied update is suppressed too
+    act(() => capturedOnNeedRefresh?.())
+    expect(result.current.hasUpdate).toBe(false)
+  })
+
+  it('defaults the automatic updates preference to ON and persists the toggle', () => {
+    const { result } = renderHook(() => usePWAUpdate())
+    expect(result.current.autoUpdateEnabled).toBe(true)
+
+    act(() => result.current.setAutoUpdate(false))
+    expect(result.current.autoUpdateEnabled).toBe(false)
+    expect(localStorage.getItem(AUTO_UPDATE_KEY)).toBe('false')
+
+    act(() => result.current.setAutoUpdate(true))
+    expect(result.current.autoUpdateEnabled).toBe(true)
+    expect(localStorage.getItem(AUTO_UPDATE_KEY)).toBe('true')
+  })
+
+  describe('checkForUpdate', () => {
+    it("returns 'no-sw' when there is no registration", async () => {
+      const { result } = renderHook(() => usePWAUpdate())
+      await expect(result.current.checkForUpdate()).resolves.toBe('no-sw')
+    })
+
+    it("returns 'up-to-date' when the check finds nothing after the settle", async () => {
+      vi.useFakeTimers()
+      mockRegistration = { update: vi.fn().mockResolvedValue(undefined), active: {} }
+      const { result } = renderHook(() => usePWAUpdate())
+
+      const check = result.current.checkForUpdate()
+      await vi.advanceTimersByTimeAsync(1500)
+      await expect(check).resolves.toBe('up-to-date')
+      expect(mockRegistration.update).toHaveBeenCalled()
+    })
+
+    it("returns 'update-available' when a new version arms during the settle", async () => {
+      vi.useFakeTimers()
+      mockRegistration = { update: vi.fn().mockResolvedValue(undefined), active: {} }
+      const { result } = renderHook(() => usePWAUpdate())
+
+      const check = result.current.checkForUpdate()
+      act(() => capturedOnNeedRefresh?.())
+      await vi.advanceTimersByTimeAsync(1500)
+      await expect(check).resolves.toBe('update-available')
+    })
+
+    it("returns 'error' when the registration update throws", async () => {
+      mockRegistration = { update: vi.fn().mockRejectedValue(new Error('offline')), active: {} }
+      const { result } = renderHook(() => usePWAUpdate())
+      await expect(result.current.checkForUpdate()).resolves.toBe('error')
+    })
   })
 })
 
