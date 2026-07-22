@@ -276,20 +276,84 @@ export const cvData: CVData = {
         'A browser-based visual design tool for social posts, presentations and print — with ready-made layouts and export in 28 formats.',
     },
     {
-      id: 'proj-synctone',
-      name: 'SyncTone',
+      id: 'proj-intxt',
+      name: 'inTXT',
       stack: 'React Native · Expo · Supabase',
-      url: 'https://synctone.vercel.app',
+      url: 'https://intxt.app',
       description:
-        'An anonymous messaging app where you tag the tone of each message — happy, sarcastic, sincere — revealed when the recipient opens the chat.',
+        'An anonymous messaging app where every message carries a tag for how it is meant — sincere, joking, serious — so your tone is never misread.',
     },
     {
       id: 'proj-fuelhunt',
       name: 'FuelHunt',
       stack: 'React Native · Mapbox · PostGIS',
-      url: 'https://few-lap.vercel.app',
+      url: 'https://fuelhunt.app',
       description:
         'A fuel-station finder for South Africa that locates the cheapest fuel nearby, filters by type, and gives directions via a full-screen map.',
+    },
+    {
+      id: 'proj-sancio',
+      name: 'Sancio',
+      stack: 'React · TypeScript · Supabase',
+      url: 'https://sun-sea-o.vercel.app/',
+      description:
+        'An agreement tool where contracts come together one clause at a time — each part authored, negotiated and signed on its own, so a deal builds up piece by piece.',
+    },
+    {
+      id: 'proj-knowless',
+      name: 'knowless',
+      stack: 'React · TypeScript · PWA',
+      url: 'https://knowless.net/',
+      description:
+        'An independent investigative-journalism reader — a mobile app for long-form reporting, with offline saving and an encrypted way to send tips.',
+    },
+    {
+      id: 'proj-redline',
+      name: 'redline',
+      stack: 'React · Vite · Wayback Machine',
+      url: 'https://web-arch.vercel.app/',
+      description:
+        'Part of knowless — a tool that shows how a privacy policy or terms-of-service page has quietly changed over time, explained in plain language.',
+    },
+    {
+      id: 'proj-modelpear',
+      name: 'Model Pear',
+      stack: 'SvelteKit · TypeScript · Tailwind',
+      url: 'https://model-pear-web.vercel.app/',
+      description:
+        'A deal-structuring tool for software businesses — model pricing and compare contract structures to find terms that work for both sides.',
+    },
+    {
+      id: 'proj-fourems',
+      name: 'Four Ems',
+      stack: 'React · Vite · Supabase',
+      url: 'https://four-ems.vercel.app/',
+      description:
+        'A form builder for creating multi-page forms with conditional logic, collecting responses, and embedding them anywhere.',
+    },
+    {
+      id: 'proj-repotor',
+      name: 'Repo-Tor',
+      stack: 'React · Vite · Chart.js',
+      url: 'https://repo-tor.vercel.app/',
+      description:
+        "A dashboard that turns a project's commit history into clear visuals — activity trends, contributor patterns and code health over time.",
+    },
+    {
+      id: 'proj-farlume',
+      name: 'Farlume',
+      stack: 'Vue 3 · Vite · IndexedDB',
+      url: 'https://budgy-ting.vercel.app/',
+      description:
+        'A private household budgeting app that tracks spending, spots recurring costs and forecasts how long your money will last — all kept on your own device.',
+    },
+    {
+      id: 'proj-devmade',
+      name: 'devmade',
+      stack: 'React · TypeScript · Cloudflare',
+      url: 'https://www.devmade.app/',
+      description:
+        'The front-door site for the devmade studio, introducing its products and the app-building service behind them.',
     },
   ],
   education: [
