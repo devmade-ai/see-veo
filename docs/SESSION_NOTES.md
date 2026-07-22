@@ -1,40 +1,38 @@
 # Session Notes
 
-**Worked on:** Fleet-standard PWA update policy — "auto-on-launch" (glow-props
-`docs/implementations/PWA_SYSTEM.md` → "Update Application Policy") implemented in
-`usePWAUpdate` + the update/check UI, on branch `claude/projects-missing-analytics-vla4ja`.
+**Worked on:** Refreshing the Projects section — it was stale (4 entries, one
+pre-rebrand) — on branch `claude/google-analytics-setup-34ltdy`.
 
 **Accomplished:**
-- `usePWAUpdate` rewritten as a module-singleton policy hook: launch-apply a worker
-  already waiting when registration first resolves (SKIP_WAITING postMessage + latch-gated
-  `controllerchange` reload backstop), mid-session detections arm the banner only, hourly
-  poll + new visibilitychange checks, `checkForUpdate()` with the canonical typed result
-  (`'no-sw' | 'up-to-date' | 'update-available' | 'error'`, 1500ms settle).
-- Persisted "Automatic updates" toggle — localStorage `jt-cv-auto-update` (default ON,
-  try/catch-safe), 30s sessionStorage `jt-cv-pwa-updated` just-updated suppression (written
-  by both launch-apply and the user-tap path).
-- UI: toggle checkbox inside `UpdatePrompt` (no menu surface exists — the banner is the
-  update system's one visible moment); "Check for updates" button + `role="status"` result
-  line in `CvContact` beside the install affordance (the app-management corner).
-- Tests: `pwa-hooks.test.ts` rewritten (launch-apply + pref/suppression gates, mid-session
-  arm-only, toggle, all four check results); CvContact + UpdatePrompt component tests added.
-- Docs: CLAUDE.md (Key Decisions bullet + PWA System section aligned to the policy),
-  HISTORY.md entry.
+- `src/data/cv-data.ts` `projects[]` refreshed to the current deployed fleet:
+  - **Fixed** the stale `SyncTone` entry → **inTXT** (`intxt.app`; description
+    rewritten — the app tags message *intention*, and the old "tone revealed when
+    the recipient opens the chat" mechanic no longer exists — tags show on the
+    message). `id` `proj-synctone` → `proj-intxt`.
+  - **Fixed** FuelHunt's URL `few-lap.vercel.app` → the live branded domain
+    `fuelhunt.app`.
+  - **Added** 8 deployed, non-excluded projects that were missing: Sancio
+    (sun-sea-o), knowless (kl-website, `knowless.net`), redline (web-arch — a
+    knowless sub-brand), Model Pear (model-pear-web), Four Ems, Repo-Tor, Farlume
+    (budgy-ting, rebranded), and devmade (dm-website, now live at
+    `www.devmade.app`). Total 12 projects.
+- Descriptions written in the existing non-technical, one-sentence voice.
 
-**Current state:** type-check, lint, `npm run build`, and **116 tests** all pass. Generated
-`dist/sw.js` verified to carry the `SKIP_WAITING` message handler the launch-apply
-postMessage relies on. Committed on `claude/projects-missing-analytics-vla4ja` (not merged).
+**Current state:** `npm run type-check` clean; **116 tests pass** (incl.
+`cv-data.test.ts`). Committed on `claude/google-analytics-setup-34ltdy` (branch is
+new — no prior PR/merge on the remote).
 
 **Key context:**
-- `registerType` stays `'prompt'` — it is the *mechanism*; the hook is the *policy*. Never
-  revert to tap-only behavior (stale clients never converge) or raw `autoUpdate`
-  (mid-session reloads).
-- vite-plugin-pwa 1.x quirk: `updateServiceWorker(reloadPage)` **ignores** its argument —
-  it only sends SKIP_WAITING; the reload comes from the library's `controlling` listener
-  (installed when the `waiting` event fired). The hook's own `controllerchange` listener,
-  gated on the launch-apply latch, is the order-independent backstop.
-- `hasUpdate` is the module `_hasUpdate` flag, NOT the wrapper's `needRefresh` state — the
-  wrapper sets its flag on every waiting event, which would bypass the launch-apply and
-  just-updated suppression.
-- Storage keys follow the `jt-cv-` prefix (`jt-cv-hi` precedent). Test reset:
-  `_resetPwaUpdateStateForTesting()`.
+- Project inclusion follows the CLAUDE.md "Deployed Projects" rule: deployed
+  `devmade-ai`/`illuminAI-select` repos, minus the documented exclusions
+  (glow-props, canva-grid-assets, tool-till-tees, chatty-chart, plant-fur,
+  coin-zapp, see-veo itself). sp-website stays out — Medusa storefront, not
+  deployed yet.
+- Ground truth came from querying each scoped repo's GitHub `homepage`/`has_pages`
+  directly — the account-wide `/user/repos` API is blocked (sessions are
+  repo-scoped). The `illuminAI-select` account can't be enumerated from here, so
+  any of its projects beyond what's listed would still need adding (Farlume's repo
+  `budgy-ting` is outside this session's scope; its entry was sourced from the
+  glow-props project meta + the owner's rebrand note).
+- `id` values are React keys only — safe to rename (no test/component referenced
+  `proj-synctone`).
