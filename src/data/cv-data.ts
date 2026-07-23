@@ -260,22 +260,6 @@ export const cvData: CVData = {
   ],
   projects: [
     {
-      id: 'proj-graphiki',
-      name: 'Graphiki',
-      stack: 'React · TypeScript · PWA',
-      url: 'https://graphiki.vercel.app/',
-      description:
-        'A visual knowledge workspace for building and exploring networks of connected ideas — runs entirely in the browser, offline-first.',
-    },
-    {
-      id: 'proj-canvagrid',
-      name: 'CanvaGrid',
-      stack: 'React · Tailwind · pdf-lib',
-      url: 'https://canva-grid.vercel.app/',
-      description:
-        'A browser-based visual design tool for social posts, presentations and print — with ready-made layouts and export in 28 formats.',
-    },
-    {
       id: 'proj-intxt',
       name: 'inTXT',
       stack: 'React Native · Expo · Supabase',
@@ -316,30 +300,6 @@ export const cvData: CVData = {
         'Part of knowless — a tool that shows how a privacy policy or terms-of-service page has quietly changed over time, explained in plain language.',
     },
     {
-      id: 'proj-modelpear',
-      name: 'Model Pear',
-      stack: 'SvelteKit · TypeScript · Tailwind',
-      url: 'https://model-pear-web.vercel.app/',
-      description:
-        'A deal-structuring tool for software businesses — model pricing and compare contract structures to find terms that work for both sides.',
-    },
-    {
-      id: 'proj-fourems',
-      name: 'Four Ems',
-      stack: 'React · Vite · Supabase',
-      url: 'https://four-ems.vercel.app/',
-      description:
-        'A form builder for creating multi-page forms with conditional logic, collecting responses, and embedding them anywhere.',
-    },
-    {
-      id: 'proj-repotor',
-      name: 'Repo-Tor',
-      stack: 'React · Vite · Chart.js',
-      url: 'https://repo-tor.vercel.app/',
-      description:
-        "A dashboard that turns a project's commit history into clear visuals — activity trends, contributor patterns and code health over time.",
-    },
-    {
       id: 'proj-farlume',
       name: 'Farlume',
       stack: 'Vue 3 · Vite · IndexedDB',
@@ -348,12 +308,36 @@ export const cvData: CVData = {
         'A private household budgeting app that tracks spending, spots recurring costs and forecasts how long your money will last — all kept on your own device.',
     },
     {
+      id: 'proj-graphiki',
+      name: 'Graphiki',
+      stack: 'React · TypeScript · PWA',
+      url: 'https://graphiki.vercel.app/',
+      description:
+        'A visual knowledge workspace for building and exploring networks of connected ideas — runs entirely in the browser, offline-first.',
+    },
+    {
+      id: 'proj-canvagrid',
+      name: 'CanvaGrid',
+      stack: 'React · Tailwind · pdf-lib',
+      url: 'https://canva-grid.vercel.app/',
+      description:
+        'A browser-based visual design tool for social posts, presentations and print — with ready-made layouts and export in 28 formats.',
+    },
+    {
       id: 'proj-devmade',
       name: 'devmade',
       stack: 'React · TypeScript · Cloudflare',
       url: 'https://www.devmade.app/',
       description:
         'The front-door site for the devmade studio, introducing its products and the app-building service behind them.',
+    },
+    {
+      id: 'proj-portfolio',
+      name: 'Full Portfolio',
+      stack: 'Every build · one place',
+      url: 'https://devmade-ai.github.io/glow-props/',
+      description:
+        'The complete collection — every project in one place, with a closer look at how each one was built.',
     },
   ],
   education: [

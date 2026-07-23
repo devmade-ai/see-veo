@@ -310,8 +310,10 @@ Project cards in `src/data/cv-data.ts` are sourced from deployed repos across th
 3. **Read each repo's README and package.json** to extract the project name, a non-technical description, and the tech stack. For private repos, use the API contents endpoint with the `Accept: application/vnd.github.v3.raw` header.
 4. **Add entries** to the `projects` array in `src/data/cv-data.ts`.
 
+**Included as the capstone card:**
+- `glow-props` — shown as the **Full Portfolio** "see all" card at the end of the Projects list (`proj-portfolio`; deliberately NOT labelled "glow-props" — links to its GitHub Pages showcase `https://devmade-ai.github.io/glow-props/`). Previously excluded by owner; the owner opted it in as the portfolio index. When refreshing projects, keep it last and keep the display name generic.
+
 **Excluded repos** (not shown in Projects):
-- `glow-props` — excluded by owner
 - `canva-grid-assets` — asset storage, not a standalone project
 - `plant-fur` — excluded by owner
 - `coin-zapp` — excluded by owner
