@@ -1,8 +1,14 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { debugLog } from '../utils/debugLog'
-import { validatePayload } from '../utils/validation'
+import {
+  validatePayload,
+  MAX_NAME_LENGTH,
+  MAX_EMAIL_LENGTH,
+  MAX_MESSAGE_LENGTH,
+} from '../utils/validation'
 import { fetchWithTimeout } from '../utils/fetchWithTimeout'
 import { diagnoseFailure } from '../utils/diagnostics'
+import { loadDraft, saveDraft, type ContactDraft } from '../utils/formDraft'
 
 // Requirement: Let visitors reach out via a real notification (not just a mailto).
 // Approach: Client-side form that POSTs to a personal serverless SMTP relay
@@ -27,12 +33,6 @@ const ERROR_AUTO_DISMISS_MS = 8_000
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
 
-interface InterestFormData {
-  name: string
-  email: string
-  message: string
-}
-
 // Shared field styling — squared paper inputs with an ink hairline and an amber
 // focus ring, matching the document aesthetic of the surrounding CV.
 const FIELD_CLASS =
@@ -41,11 +41,11 @@ const LABEL_CLASS =
   'mb-1.5 block font-mono text-[11px] uppercase tracking-[0.14em] text-text-muted'
 
 export default function InterestForm() {
-  const [formData, setFormData] = useState<InterestFormData>({
-    name: '',
-    email: '',
-    message: '',
-  })
+  // Requirement: Don't lose what a visitor has typed when they leave the Contact level.
+  // Approach: Seed from the saved draft on mount and write every change back (see
+  //   utils/formDraft.ts for why sessionStorage). Sending clears it — saveDraft removes
+  //   the entry once all three fields are blank, which is exactly the post-send reset.
+  const [formData, setFormData] = useState<ContactDraft>(loadDraft)
   const [status, setStatus] = useState<FormStatus>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   // Honeypot field — bots fill this in, real users never see it
@@ -53,9 +53,24 @@ export default function InterestForm() {
   // Timing-based bot detection — real users take >1s to fill a form
   const [mountTime] = useState(() => Date.now())
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  // Guard against setState after unmount during async diagnoseFailure
+  // Guard against setState after unmount during async diagnoseFailure. Set on mount as
+  // well as cleared on unmount: StrictMode's dev double-mount runs the cleanup between the
+  // two mounts, so a ref that is only ever cleared stays false for the rest of the
+  // component's life — swallowing the failure diagnosis every time in development.
+  // Matches the guard in CvContact.
   const mountedRef = useRef(true)
-  useEffect(() => () => { mountedRef.current = false }, [])
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
+
+  // Keep the saved draft in step with the fields. Writing on change (rather than on
+  // unmount) also covers a reload or a tab crash mid-message.
+  useEffect(() => {
+    saveDraft(formData)
+  }, [formData])
 
   // Auto-dismiss error messages after a delay
   useEffect(() => {
@@ -335,7 +350,7 @@ export default function InterestForm() {
           type="text"
           id="interest-name"
           required
-          maxLength={100}
+          maxLength={MAX_NAME_LENGTH}
           value={formData.name}
           onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
           className={FIELD_CLASS}
@@ -351,7 +366,7 @@ export default function InterestForm() {
           type="email"
           id="interest-email"
           required
-          maxLength={254}
+          maxLength={MAX_EMAIL_LENGTH}
           value={formData.email}
           onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
           className={FIELD_CLASS}
@@ -367,7 +382,7 @@ export default function InterestForm() {
           id="interest-message"
           required
           rows={3}
-          maxLength={2000}
+          maxLength={MAX_MESSAGE_LENGTH}
           value={formData.message}
           onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
           className={`${FIELD_CLASS} resize-y`}

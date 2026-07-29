@@ -31,6 +31,37 @@ const order: SectionId[] = sections.map((s) => s.id)
 // plays before the coin unmounts.
 const COIN_POP_MS = 640
 
+// Requirement: The game's keys must never take keystrokes away from the page's own
+//   controls. A visitor's contact-form message arrived with every space missing: the
+//   window-level listener below claimed Space for the runner's jump and called
+//   preventDefault(), which cancels the browser's insertion of the character. The arrow
+//   keys had the same shape — they moved the runner instead of the caret, and navigating
+//   away unmounts the Contact level along with anything typed into the form.
+// Approach: The listener ignores events dispatched from a form field, and leaves Space
+//   alone when the focused element is one a browser activates with Space.
+// Alternatives considered:
+//   - onKeyDown={e => e.stopPropagation()} on each field: Rejected — every input added
+//     later has to remember to opt out; the guard belongs with the handler taking the keys
+//   - Reading document.activeElement: Rejected — e.target is the element the event was
+//     actually dispatched to, and stays correct if focus moves during dispatch
+//   - Dropping Space as a control: Rejected — jump is a documented game control
+
+/** True for anything the visitor types or edits into — the keys belong to it, not the game. */
+function isFormFieldTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  if (target.isContentEditable) return true
+  return target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT'
+}
+
+/**
+ * True when Space would activate the focused control. Swallowing it there leaves keyboard
+ * users unable to press buttons they can see — including "Send a message".
+ */
+function isSpaceActivatedTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  return target.closest('button, summary, [role="button"]') !== null
+}
+
 interface LivingCvProps {
   canInstall: boolean
   isInstalled: boolean
@@ -130,8 +161,15 @@ export default function LivingCv({
   }, [prefersReducedMotion])
 
   // Keyboard controls: ← / → walk between sections, Space jumps.
+  // Guarded so typing in the contact form (or using a focused control) always wins —
+  // see isFormFieldTarget / isSpaceActivatedTarget above for why.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // Already handled elsewhere, or a browser/OS shortcut (Alt+← is "back", ⌘←
+      // is start-of-line) — either way the game has no claim on it.
+      if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return
+      if (isFormFieldTarget(e.target)) return
+
       const idx = order.indexOf(screenRef.current)
       if (e.key === 'ArrowRight') {
         navigate(Math.min(idx + 1, order.length - 1))
@@ -140,6 +178,7 @@ export default function LivingCv({
         navigate(Math.max(idx - 1, 0))
         e.preventDefault()
       } else if (e.key === ' ' || e.code === 'Space') {
+        if (isSpaceActivatedTarget(e.target)) return
         engineRef.current?.jump()
         e.preventDefault()
       }
