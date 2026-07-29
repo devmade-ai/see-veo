@@ -219,6 +219,43 @@ describe('InterestForm', () => {
     })
   })
 
+  describe('draft rescue', () => {
+    // The Contact level unmounts whenever the runner walks to another flag, so the
+    // form has to survive being torn down mid-message (utils/formDraft.ts).
+    it('restores what was typed when the form mounts again', async () => {
+      const user = userEvent.setup()
+      const { unmount } = render(<InterestForm />)
+      await user.type(screen.getByLabelText('Name'), 'Louise Wentworth')
+      await user.type(screen.getByLabelText('Message'), 'Half a thought')
+      unmount()
+
+      render(<InterestForm />)
+      expect(screen.getByLabelText('Name')).toHaveValue('Louise Wentworth')
+      expect(screen.getByLabelText('Message')).toHaveValue('Half a thought')
+    })
+
+    it('forgets the draft once the message is sent', async () => {
+      globalThis.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        clone: () => ({ json: () => Promise.resolve({ success: true }) }),
+      })
+
+      const user = userEvent.setup()
+      const { unmount } = render(<InterestForm />)
+      await fillForm(user)
+      await user.click(screen.getByRole('button', { name: /send a message/i }))
+      await waitFor(() => {
+        expect(screen.getByText('Message sent!')).toBeInTheDocument()
+      })
+      unmount()
+
+      render(<InterestForm />)
+      expect(screen.getByLabelText('Name')).toHaveValue('')
+      expect(screen.getByLabelText('Message')).toHaveValue('')
+    })
+  })
+
   describe('honeypot', () => {
     it('silently succeeds when honeypot is filled (bot detection)', async () => {
       const mockFetch = vi.fn()

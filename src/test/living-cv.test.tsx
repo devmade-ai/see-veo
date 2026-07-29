@@ -6,7 +6,7 @@
 //   navigation layer, which is the source of truth.
 
 import { describe, it, expect, vi } from 'vitest'
-import { render, within } from '@testing-library/react'
+import { render, within, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import LivingCv from '../components/LivingCv'
 
@@ -67,5 +67,68 @@ describe('LivingCv', () => {
     await user.click(within(root).getByRole('button', { name: 'Download as PDF' }))
     expect(printSpy).toHaveBeenCalledOnce()
     printSpy.mockRestore()
+  })
+
+  // Regression: a real message arrived by email with every space missing. The game's
+  // window-level keydown listener claimed Space for the runner's jump and called
+  // preventDefault(), which cancels the browser inserting the character — so every space
+  // typed into the contact form was swallowed. The arrow keys were taken the same way.
+  describe('game keys never take keystrokes from the contact form', () => {
+    async function openContact(user: ReturnType<typeof userEvent.setup>) {
+      const { root } = renderGame()
+      await user.click(within(root).getByRole('button', { name: 'Contact' }))
+      return root
+    }
+
+    it('keeps the spaces typed into the name and message fields', async () => {
+      const user = userEvent.setup()
+      const root = await openContact(user)
+
+      const name = within(root).getByLabelText('Name')
+      await user.type(name, 'Louise Wentworth')
+      expect(name).toHaveValue('Louise Wentworth')
+
+      const message = within(root).getByLabelText('Message')
+      await user.type(message, 'please send me your cell phone number.')
+      expect(message).toHaveValue('please send me your cell phone number.')
+    })
+
+    it('leaves the arrow keys to the caret instead of walking to another level', async () => {
+      const user = userEvent.setup()
+      const root = await openContact(user)
+
+      const name = within(root).getByLabelText('Name')
+      await user.type(name, 'Jaco{ArrowLeft}{ArrowLeft}X')
+
+      expect(within(root).getByText('Final Stage')).toBeInTheDocument() // still on Contact
+      expect(name).toHaveValue('JaXco') // the caret moved, the runner did not
+    })
+
+    it('lets Space activate a focused button', () => {
+      const { root } = renderGame()
+      const sfx = within(root).getByRole('button', { name: 'Toggle sound effects' })
+      sfx.focus()
+
+      // fireEvent returns false when a listener called preventDefault(); cancelling the
+      // keydown is exactly what stops the browser activating the focused control.
+      expect(fireEvent.keyDown(sfx, { key: ' ' })).toBe(true)
+    })
+
+    it('still claims Space everywhere else', () => {
+      const { root } = renderGame()
+      expect(fireEvent.keyDown(root, { key: ' ' })).toBe(false)
+    })
+
+    it('keeps a half-written message when the visitor walks away and comes back', async () => {
+      const user = userEvent.setup()
+      const root = await openContact(user)
+
+      await user.type(within(root).getByLabelText('Message'), 'Half a thought')
+      await user.click(within(root).getByRole('button', { name: 'Work' }))
+      expect(within(root).queryByLabelText('Message')).not.toBeInTheDocument()
+
+      await user.click(within(root).getByRole('button', { name: 'Contact' }))
+      expect(within(root).getByLabelText('Message')).toHaveValue('Half a thought')
+    })
   })
 })

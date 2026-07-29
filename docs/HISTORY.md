@@ -2,6 +2,43 @@
 
 Record of completed work and changes.
 
+## 2026-07-29
+
+### Fix: the game's Space key was eating every space typed into the contact form
+A real interest email arrived with the sender's name as `LouiseWentworth` and her message as
+`pleasesendmeyourcellphonenumber.` — every space gone, while the template's own text was
+untouched. Cause: `LivingCv`'s `window` keydown listener claimed `Space` for the runner's jump
+and called `preventDefault()` with no check on the event target, and cancelling a keydown
+cancels the browser's insertion of that character. The email path was verified innocent first
+(the API only trims the outer edges, and the MIME nodemailer produces for that payload is
+7bit with the spaces intact) — nothing in `tool-till-tees` needed changing.
+
+The failure is worst on Android: Gboard routes letters through the IME composition path where
+no cancellable keydown fires, while the space bar dispatches a real one — so the visitor gets
+every letter and no spaces.
+
+- **`src/components/LivingCv.tsx`**: the listener now returns early for events dispatched from
+  an `input`/`textarea`/`select`/contenteditable target, skips `Space` when the focused element
+  is one a browser activates with it (`button`, `summary`, `[role="button"]` — otherwise keyboard
+  users can't press "Send a message" or tick "Automatic updates"), and ignores Ctrl/Meta/Alt
+  combos so browser shortcuts still work. Arrow keys still navigate from a focused flag button.
+- **`src/utils/formDraft.ts`** (new): mirrors the in-progress contact fields to `sessionStorage`
+  (`jt-cv-contact-draft`) and restores them on mount. Only the active level is mounted, so
+  walking to another flag — or, before the guard, a stray arrow key while typing — unmounted
+  `InterestForm` and discarded the message silently. Untrusted-storage safe (unparseable, wrong
+  shape, or non-string fields degrade to empty; fields clamp to the input limits).
+- **`src/components/InterestForm.tsx`**: seeds state from the draft, writes every change back,
+  and drops its duplicate form-data interface for `ContactDraft`.
+- **`src/utils/validation.ts`**: exports `MAX_NAME_LENGTH` / `MAX_EMAIL_LENGTH` /
+  `MAX_MESSAGE_LENGTH` (mirroring the API's `lib/constants.ts`) so the `maxLength` attributes,
+  the validator, and the draft clamp share one set of numbers.
+- **Tests**: 5 new in `living-cv.test.tsx` (spaces survive typing, arrows move the caret not the
+  runner, Space still activates a focused button, Space still jumps elsewhere, a half-written
+  message survives leaving the level), 2 in `interest-form.test.tsx` (draft restored on remount,
+  cleared after sending), and `form-draft.test.ts` (7 — round-trip + every degrade branch).
+  Verified the 4 behavioural ones fail with the guard removed. `src/test/setup.ts` clears
+  `sessionStorage` between tests. 130 tests pass; lint, type-check, and build clean.
+
 ## 2026-07-21
 
 ### Fleet-standard PWA update policy — auto-on-launch

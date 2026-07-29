@@ -23,3 +23,29 @@ Log of AI mistakes during development sessions. Exists so patterns get spotted a
 2. The security sweep (`2fbb40f`) didn't check git history before removing it. `git log -p -- ActivityCharts.tsx` would have shown the fix and its rationale immediately.
 
 **Lesson:** When fixing something non-obvious, comment it in the code — not just the commit message. Commit messages explain history; inline comments protect against future changes. And before removing a permission, read the git history for why it was added.
+
+---
+
+## 2026-07-29 — A global game key handler silently ate every space in the contact form
+
+**What happened:** `LivingCv` registered a `window` keydown listener for the game controls
+(`←`/`→` walk, `Space` jump) that called `preventDefault()` without checking where the event
+came from. The contact form lives on the same page, so every space a visitor typed into it was
+cancelled before the browser could insert the character. It shipped, and a real person's message
+arrived by email as `pleasesendmeyourcellphonenumber.` from `LouiseWentworth`. Arrow keys were
+taken the same way — and since only the active level is mounted, they also unmounted the form
+and discarded whatever had been typed.
+
+**What should have happened:** Any listener bound to `window`/`document` that cancels a key has
+to establish that the key is actually its own. The event's target tells you: a keystroke
+dispatched from an `input`/`textarea`/`select`/contenteditable belongs to that field, and `Space`
+on a focused `button` belongs to the button. Adding a game control to a page that also has a
+form is exactly when to think about it.
+
+**Lesson:** `preventDefault()` on a keydown is not "stop the page scrolling" — it cancels
+character insertion and control activation too. Global key handlers need a target guard from the
+first commit, and any page mixing keyboard controls with form fields needs a test that types a
+sentence *with spaces* into a real field. Note the shape of the bug report: the evidence pointed
+at the email pipeline (encoding, escaping, the SMTP relay), and the pipeline was innocent —
+the check that ruled it out (compiling the actual MIME) was worth doing before touching it, but
+the answer was in the browser.

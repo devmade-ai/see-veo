@@ -1,4 +1,11 @@
 import '@testing-library/jest-dom/vitest'
+import { beforeEach } from 'vitest'
+
+// The contact form keeps an in-progress draft in sessionStorage (utils/formDraft.ts).
+// Clear it between tests so one test's typing can't pre-fill the next test's form.
+beforeEach(() => {
+  sessionStorage.clear()
+})
 
 // jsdom has no 2D canvas backend. The pixel-runner engine treats a null context as
 // "no-op" (it never starts its render loop), so returning null keeps the game shell
