@@ -4,19 +4,6 @@ Manual actions requiring user intervention. Cleared when completed.
 
 ---
 
-## Reply to Louise Wentworth — her message was mangled by the space-eating bug
-
-A real visitor's contact-form message arrived garbled (`pleasesendmeyourcellphonenumber.`)
-because of the key-handler bug fixed on 2026-07-29. She never received a reply, and only
-you can send one.
-
-1. Email `louisew@pepla.co.za` — she asked for your cell phone number.
-2. Optional: mention the form glitch mangled her message, in plain language.
-
-Clear this section once she's been answered.
-
----
-
 ## Verify the social share unfurl after this deploys
 
 The Open Graph / Twitter tags + share images are wired up and pushed, but the previews can

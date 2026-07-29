@@ -36,8 +36,6 @@ Branch `claude/text-spacing-issue-mhrdfe`.
 to `claude/text-spacing-issue-mhrdfe`. Not merged, not deployed.
 
 **Key context for next session:**
-- **The lost message is recoverable in substance:** `louisew@pepla.co.za` asked for a phone
-  number and never got a reply. Worth answering directly.
 - **Anyone touching the key handler must keep the target guard.** Reasoning and the
   regression tests are in `LivingCv.tsx`, `src/test/living-cv.test.tsx`, and
   `docs/AI_MISTAKES.md` (2026-07-29).
