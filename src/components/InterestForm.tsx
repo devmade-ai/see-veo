@@ -53,9 +53,18 @@ export default function InterestForm() {
   // Timing-based bot detection — real users take >1s to fill a form
   const [mountTime] = useState(() => Date.now())
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  // Guard against setState after unmount during async diagnoseFailure
+  // Guard against setState after unmount during async diagnoseFailure. Set on mount as
+  // well as cleared on unmount: StrictMode's dev double-mount runs the cleanup between the
+  // two mounts, so a ref that is only ever cleared stays false for the rest of the
+  // component's life — swallowing the failure diagnosis every time in development.
+  // Matches the guard in CvContact.
   const mountedRef = useRef(true)
-  useEffect(() => () => { mountedRef.current = false }, [])
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
 
   // Keep the saved draft in step with the fields. Writing on change (rather than on
   // unmount) also covers a reload or a tab crash mid-message.

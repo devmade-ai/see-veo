@@ -4,6 +4,16 @@ Record of completed work and changes.
 
 ## 2026-07-29
 
+### Fix: InterestForm's unmount guard stayed false after StrictMode's dev double-mount
+`InterestForm`'s `mountedRef` was only ever set to `false` on unmount, never back to `true`
+on mount. StrictMode (which `src/main.tsx` enables) runs a mount → cleanup → mount cycle in
+development, so after the first cleanup the ref stayed `false` for the component's whole
+life and the async failure-diagnosis branch (`diagnoseFailure` → error message) silently
+no-op'd every time in dev. Production was unaffected. Now sets `true` in the mount effect
+and `false` in its cleanup — the same shape `CvContact` already used. Regression-pinned by
+an interest-form test that renders inside `<StrictMode>` and asserts the diagnosed failure
+message still reaches the visitor (verified it fails against the old guard). 131 tests.
+
 ### Fix: the game's Space key was eating every space typed into the contact form
 A real interest email arrived with the sender's name as `LouiseWentworth` and her message as
 `pleasesendmeyourcellphonenumber.` — every space gone, while the template's own text was

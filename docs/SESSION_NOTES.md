@@ -26,8 +26,13 @@ Branch `claude/text-spacing-issue-mhrdfe`.
   `MAX_EMAIL_LENGTH` / `MAX_MESSAGE_LENGTH`, used by the validator, the `maxLength`
   attributes, and the draft clamp.
 - **14 new tests**; verified the 4 behavioural ones fail with the guard removed.
+- **Fixed the `mountedRef` StrictMode bug too** (follow-up request): the ref was only ever
+  cleared on unmount, so StrictMode's dev mount → cleanup → mount cycle left it `false`
+  forever and the failure-diagnosis error message silently no-op'd in development. Now set
+  `true` in the mount effect, matching `CvContact`. Pinned by a `<StrictMode>`-wrapped
+  interest-form test (verified it fails against the old guard).
 
-**Current state:** 130 tests pass; lint, type-check, and build clean. Committed and pushed
+**Current state:** 131 tests pass; lint, type-check, and build clean. Committed and pushed
 to `claude/text-spacing-issue-mhrdfe`. Not merged, not deployed.
 
 **Key context for next session:**
@@ -36,10 +41,5 @@ to `claude/text-spacing-issue-mhrdfe`. Not merged, not deployed.
 - **Anyone touching the key handler must keep the target guard.** Reasoning and the
   regression tests are in `LivingCv.tsx`, `src/test/living-cv.test.tsx`, and
   `docs/AI_MISTAKES.md` (2026-07-29).
-- **Noticed, not fixed (needs a call):** `InterestForm`'s `mountedRef` is set to `false` on
-  unmount but never back to `true` on mount, so under React StrictMode's dev double-mount it
-  stays `false` and the async failure-diagnosis branch silently no-ops. Dev-only —
-  production is unaffected. `CvContact` does the same pattern correctly (sets `true` in the
-  mount effect); copying that is a two-line fix.
 - The draft is `sessionStorage`, deliberately: it dies with the tab rather than surfacing
   someone's half-written message on a shared machine days later.
