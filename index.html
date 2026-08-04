@@ -26,7 +26,7 @@
     <!-- Requirement: Page description that doubles as a social-preview fallback and
          matches the share-card copy
          Approach: Use the design handoff's richer wording (Cape Town, nine years, the
-         "play through" concept) so <meta name="description">, the Open Graph copy
+         "play through" concept) so the meta description, the Open Graph copy
          below, and the baked card art tell one consistent story
          Alternatives considered:
            - Keep the terser prior description: Rejected — it had drifted from the
@@ -64,6 +64,32 @@
       property="og:description"
       content="A living CV you can play through — walk the little pixel runner from section to section. Nine years across insurance, banking, startups and consulting."
     />
+    <!-- Requirement: one canonical URL for a page reachable at several.
+         Vercel serves this deployment at the project alias AND at a per-branch
+         preview alias, all byte-identical — without a canonical each one is a
+         separate, competing copy of the same CV.
+         Approach: absolute self-referencing canonical, matching og:url.
+         Alternative: 308 host redirects — a better fix, but it needs the domain
+         settings, not the repo; the canonical works today and stays correct
+         after a redirect is added. -->
+    <!-- Requirement: let a search engine resolve WHO this CV is about instead of
+         inferring it from prose. A CV is the highest-value structured-data case
+         in the fleet — Person is exactly what the page is.
+         Approach: ONE @graph with @id-joined nodes — the Person and the
+         ProfilePage that is about them. Values are copied from
+         src/data/cv-data.ts (personal.name / title / location / linkedin /
+         github); only what the page actually renders is marked up.
+         Alternatives:
+           - Inject at runtime from cv-data.ts: Rejected — scrapers and most
+             crawlers do not run JS, which is the same reason the OG tags above
+             are static. Static duplication of five strings is the cheaper error.
+           - Add WebSite/Organization nodes: Rejected — this is one person's CV,
+             not a site with a publisher; claiming an organisation would be
+             marking up something the page does not show. -->
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://see-veo.vercel.app/#person","name":"Jaco Theron","jobTitle":"Solutions / Software / Sales Engineer & Analyst","description":"A builder-first engineer who moves fluidly between the technical and the commercial \u2014 scoping and selling solutions, then designing and shipping them.","url":"https://see-veo.vercel.app/","address":{"@type":"PostalAddress","addressLocality":"Cape Town","addressCountry":"ZA"},"sameAs":["https://www.linkedin.com/in/jacotheron87","https://github.com/devmade-ai"]},{"@type":"ProfilePage","@id":"https://see-veo.vercel.app/#profilepage","url":"https://see-veo.vercel.app/","name":"Jaco Theron \u2014 Living CV","mainEntity":{"@id":"https://see-veo.vercel.app/#person"}}]}
+    </script>
+    <link rel="canonical" href="https://see-veo.vercel.app/" />
     <meta property="og:url" content="https://see-veo.vercel.app/" />
     <meta property="og:image" content="https://see-veo.vercel.app/share/og-card.png" />
     <meta property="og:image:type" content="image/png" />

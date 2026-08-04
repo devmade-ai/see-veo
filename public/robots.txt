@@ -1,0 +1,19 @@
+# Jaco Theron — Living CV (https://see-veo.vercel.app/)
+#
+# This is a CV. Being found is the entire point, so the crawl is ALLOWED and
+# nothing is Disallow-ed.
+#
+# Worth stating because the instinct on a personal site is to lock it down:
+# Disallow and noindex are different levers. Disallow stops the crawl, which
+# means the crawler never reads a noindex — and a URL discovered from a link
+# elsewhere can still be listed, with no way to ask for its removal. It also
+# blocks the unfurlers: facebookexternalhit, Twitterbot, LinkedInBot and Slack
+# all honour robots.txt, so a Disallow here would switch off the link-preview
+# card this repo generates on purpose.
+#
+# See glow-props docs/implementations/DISCOVERABILITY.md.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://see-veo.vercel.app/sitemap.xml
