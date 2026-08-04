@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  One page. The CV is a single-document app: every section is an in-page anchor
+  on the same URL, so listing them would be listing the same page repeatedly.
+  Hand-written rather than generated for the same reason — there is nothing to
+  enumerate, and a generator over one constant would be more moving parts than
+  the constant.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://see-veo.vercel.app/</loc>
+  </url>
+</urlset>
