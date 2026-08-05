@@ -94,16 +94,34 @@ describe('social share meta (index.html)', () => {
     expect(html).toContain('<link rel="canonical" href="https://see-veo.vercel.app/" />')
   })
 
-  // Regression guard. The meta description shipped EMPTY in production for as
-  // long as an explanatory comment above it contained the literal text
-  // `<meta name="description">` — the build picked up the commented example and
-  // emitted it in place of the real tag.
+  // CORRECTION to what this block used to say. The previous version claimed the
+  // meta description "shipped EMPTY in production" because a comment above it
+  // quoted the tag. That was WRONG, and the real story is the more useful one.
   //
-  // Two assertions, because the source was never wrong: the SOURCE must carry
-  // real content, and no comment may contain a literal meta-tag that the build
-  // can mistake for the real one. Checking dist/ would be stronger still, but
-  // this file runs without a build and a test that silently skips when dist/ is
-  // absent is the kind of green that hid this for months.
+  // The build was never affected. Reproduced by reintroducing the comment and
+  // rebuilding: dist/index.html carries the literal twice — the real tag with
+  // its copy, and the comment quoting the tag name — and a compliant HTML
+  // parser sees exactly ONE description meta, with the right content. Nothing
+  // in the build rewrites this tag; there is no plugin that could.
+  //
+  // What actually read it as empty was the fleet audit's checker, which
+  // extracted meta tags with a REGEX. A regex cannot tell it is inside
+  // `<!-- -->`, so it matched the commented literal, found no content attribute
+  // on it, and reported an empty description. A tool defect filed as a
+  // production defect.
+  //
+  // These assertions are kept anyway, because the class is real even though
+  // this instance was not — the sibling repo model-pear lost its entire
+  // injected head to it. Two things earn their place:
+  //   1. The description carries real copy (cheap, and the thing users see).
+  //   2. No comment contains a tag literal or a build-time substitution token.
+  //      Tag literals defeat every regex-based checker, ours and other people's.
+  //      Substitution tokens are worse: the build replaces them IN PLACE inside
+  //      the comment. see-veo's own `%THEME_COLOR%` was doing this — harmless,
+  //      because it substitutes a colour string into prose, but model-pear named
+  //      its framework's head placeholder the same way and had the real <title>
+  //      and every modulepreload injected inside comment markers, invisible to
+  //      every crawler.
   it('ships a non-empty meta description', () => {
     const match = html.match(/<meta\s+name="description"\s+content="([^"]+)"/)
     expect(match?.[1] ?? '').not.toBe('')
@@ -115,9 +133,21 @@ describe('social share meta (index.html)', () => {
     for (const comment of comments) {
       expect(
         comment,
-        'a <meta …> literal inside a comment is picked up by the build and ' +
-          'emitted in place of the real tag — write "the meta description" instead',
+        'a <meta …> literal inside a comment satisfies presence checks and hijacks ' +
+          'content checks in any regex-based tool — write "the meta description" instead',
       ).not.toMatch(/<meta\s/i)
+    }
+  })
+
+  it('has no build-time substitution token inside an HTML comment', () => {
+    const comments = html.match(/<!--[\s\S]*?-->/g) ?? []
+    for (const comment of comments) {
+      expect(
+        comment,
+        'a %TOKEN% inside a comment is substituted in place by the build — at best ' +
+          'the comment documents itself falsely, at worst real markup is injected ' +
+          'between the comment markers where no parser will see it. Name it in prose.',
+      ).not.toMatch(/%[A-Z_][A-Z0-9_]*%/)
     }
   })
 })

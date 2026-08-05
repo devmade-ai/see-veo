@@ -12,12 +12,16 @@
            - No viewport-fit: Rejected — content overlaps notch on iOS when status bar is translucent -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <!-- Requirement: Browser UI chrome matches the CV's ink motif; fonts are self-hosted
-         Approach: theme-color is the ink token (%THEME_COLOR%, injected from src/index.css so
-                   CSS stays the single source of truth); Spectral/Space Mono/Silkscreen load via
-                   @font-face in src/index.css — no Google Fonts network dependency (offline-first PWA)
+         Approach: theme-color carries a build-time placeholder (see themeColorInjector in
+                   vite.config.ts) filled from src/index.css so CSS stays the single source
+                   of truth; Spectral/Space Mono/Silkscreen load via @font-face in
+                   src/index.css — no Google Fonts network dependency (offline-first PWA)
          Alternatives considered:
-           - Google Fonts <link>: Rejected — external request breaks offline PWA and adds latency
-           - Hardcode theme-color: Rejected — would drift from the CSS palette on future changes -->
+           - Google Fonts link tag: Rejected — external request breaks offline PWA and adds latency
+           - Hardcode theme-color: Rejected — would drift from the CSS palette on future changes
+         NOTE: this comment names the placeholder in PROSE, never as the literal token.
+         The injector is a global string replace and does not know what a comment is,
+         so writing the token here would substitute the colour into this sentence. -->
     <meta name="theme-color" content="%THEME_COLOR%" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -48,7 +52,7 @@
              not run JavaScript, so runtime-injected tags are never seen
            - Relative og:image path: Rejected — most scrapers ignore a relative image
              and require an absolute URL
-           - Build-time domain placeholder (like %THEME_COLOR%): Rejected — the domain is
+           - Build-time domain placeholder (like the theme-color one above): Rejected — the domain is
              stable and the handoff specifies hardcoded values; the indirection only
              pays off on a domain move, which is a deliberate manual edit anyway
          Keep in sync: if CV facts or card art change, re-generate the PNGs from

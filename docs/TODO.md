@@ -2,6 +2,41 @@
 
 Pending improvements and ideas. Completed items move to HISTORY.md.
 
+## Correction — the meta description was never broken (2026-08-05)
+
+Commit `a591e2b` ("fix(seo): a code comment was deleting the meta description in
+production") leads with a claim that is **false**, and this repo's history
+should not be the only record of it.
+
+It claimed production served `<meta name="description">` with no content
+attribute, for as long as the site had been deployed. It did not. Reproduced by
+reintroducing the comment, rebuilding, and parsing the output: `dist/index.html`
+carries the literal twice — the real tag with its full copy, and an explanatory
+comment above it that quotes the tag name — and a **compliant HTML parser sees
+exactly one description meta, with the correct content**. No plugin in this repo
+rewrites that tag; there was never a mechanism by which the claim could be true.
+
+What actually reported it empty was the fleet audit's own checker. It extracted
+meta tags with a regular expression, a regex cannot tell that it is inside
+`<!-- -->`, so it matched the commented literal, found no `content` attribute on
+it, and reported an empty description. A tool defect filed as a production
+defect, and this repo was changed for it. The checkers in glow-props
+(`audit-discoverability.mjs`, `verify-seo.mjs`) now strip comments before any
+extraction.
+
+**Everything else in that commit stands** and was independently verified: GA
+really was blocked by the repo's own CSP, `/robots.txt` really did return the
+app, there really was no canonical, and the card tripwire really was asserting
+the declared dimensions twice instead of reading the PNG.
+
+The comment rewording and the no-tag-literals-in-comments guard are kept, and
+the guard now also covers build-time substitution tokens — because the class is
+real even though this instance was not. This repo's own `%THEME_COLOR%` appeared
+inside two comments and was being substituted in place (harmless: a colour
+string into prose), and sibling repo model-pear named its framework's head
+placeholder the same way, which injected the real title element and every
+modulepreload **inside** the comment markers, invisible to every crawler.
+
 ## Technical
 - [ ] `debugLog` is now headless (the on-screen DebugBanner was removed). Decide: add a small
       debug view / console helper for the contact form's mobile diagnostics, or remove the
