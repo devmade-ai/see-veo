@@ -20,7 +20,7 @@ What actually reported it empty was the fleet audit's own checker. It extracted
 meta tags with a regular expression, a regex cannot tell that it is inside
 `<!-- -->`, so it matched the commented literal, found no `content` attribute on
 it, and reported an empty description. A tool defect filed as a production
-defect, and this repo was changed for it. The checkers in glow-props
+defect, and this repo was changed for it. The checkers in gp-props
 (`audit-discoverability.mjs`, `verify-seo.mjs`) now strip comments before any
 extraction.
 
@@ -50,13 +50,13 @@ modulepreload **inside** the comment markers, invisible to every crawler.
 ## PWA pattern audit — 2026-08-03
 
 Repo-side findings from a fleet-wide audit of every devmade-ai PWA against the
-glow-props implementation patterns. The pattern-side learnings are already folded
+gp-props implementation patterns. The pattern-side learnings are already folded
 back into those docs, so **fetch the current pattern before starting any item** —
 several of these are now described directly by it:
 
 ```bash
-curl -sf "https://devmade-ai.github.io/glow-props/patterns/PWA_SYSTEM.md"
-curl -sf "https://devmade-ai.github.io/glow-props/patterns/PWA_ICON_CACHE_BUST.md"
+curl -sf "https://gp-props.vercel.app/patterns/PWA_SYSTEM.md"
+curl -sf "https://gp-props.vercel.app/patterns/PWA_ICON_CACHE_BUST.md"
 ```
 
 Line references were accurate at audit time. Severity-ordered.
@@ -94,7 +94,7 @@ rule, the launch-apply once-guard, catching `registration.update()` rejections, 
 ## Public visibility — 2026-08-04 fleet audit
 
 Findings from the fleet-wide public-visibility audit against
-[`DISCOVERABILITY.md`](https://devmade-ai.github.io/glow-props/patterns/discoverability/).
+[`DISCOVERABILITY.md`](https://gp-props.vercel.app/patterns/discoverability/).
 **Fetch that pattern before starting.** Verified against the deployed origin
 (`https://see-veo.vercel.app/`) on 2026-08-04, not only read from source.
 

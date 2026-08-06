@@ -11,7 +11,7 @@
 # all honour robots.txt, so a Disallow here would switch off the link-preview
 # card this repo generates on purpose.
 #
-# See glow-props docs/implementations/DISCOVERABILITY.md.
+# See gp-props docs/implementations/DISCOVERABILITY.md.
 
 User-agent: *
 Allow: /

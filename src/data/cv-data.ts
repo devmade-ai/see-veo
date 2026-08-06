@@ -335,7 +335,7 @@ export const cvData: CVData = {
       id: 'proj-portfolio',
       name: 'Full Portfolio',
       stack: 'Every build · one place',
-      url: 'https://devmade-ai.github.io/glow-props/',
+      url: 'https://gp-props.vercel.app/',
       description:
         'The complete collection — every project in one place, with a closer look at how each one was built.',
     },
