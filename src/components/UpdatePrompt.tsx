@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 // Requirement: Show a prominent banner when a PWA update is available, restyled to the
 //   "The Applicant" ink-on-paper theme — now also carrying the fleet-standard
-//   "Automatic updates" preference (glow-props PWA_SYSTEM.md → Update Application
+//   "Automatic updates" preference (gp-props PWA_SYSTEM.md → Update Application
 //   Policy: auto-on-launch, default ON, OFF = tap-only).
 // Approach: Full-width fixed banner pinned to the top with ink fill, paper text, a
 //   squared "refresh" button, and a small checkbox row for the auto-update toggle.

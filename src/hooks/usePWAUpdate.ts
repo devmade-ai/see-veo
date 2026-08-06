@@ -2,7 +2,7 @@ import { useRegisterSW } from 'virtual:pwa-register/react'
 import { useEffect, useState, useCallback } from 'react'
 import { debugLog } from '../utils/debugLog'
 
-// Requirement: Fleet-standard "auto-on-launch" PWA update policy (glow-props
+// Requirement: Fleet-standard "auto-on-launch" PWA update policy (gp-props
 //   docs/implementations/PWA_SYSTEM.md → "Update Application Policy"): a worker already
 //   waiting when the app STARTS is applied immediately (skip-waiting → one reload, silent)
 //   unless the user turned "Automatic updates" off or an update was applied < 30s ago; an

@@ -52,7 +52,7 @@ every letter and no spaces.
 ## 2026-07-21
 
 ### Fleet-standard PWA update policy — auto-on-launch
-Implemented the devmade-ai fleet update policy (glow-props `docs/implementations/PWA_SYSTEM.md`
+Implemented the devmade-ai fleet update policy (gp-props `docs/implementations/PWA_SYSTEM.md`
 → "Update Application Policy — fleet standard: auto-on-launch"). `registerType` stays
 `'prompt'`; the policy is layered in `usePWAUpdate`.
 
