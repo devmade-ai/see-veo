@@ -1,4 +1,4 @@
-# see-veo
+| 48 | `pattern-audit` | `pa` | Every gp-props implementation pattern: implemented / partial / missing / deviates — with diff notes for each. A deviation that is an improvement is an upstream candidate, not a defect |
 
 React + TypeScript + Vite PWA that presents a personal CV/resume as a playable,
 ink-on-paper "pixel-runner" document (a Chrome-dino-style character walks between
@@ -140,11 +140,15 @@ During every change, actively scan for:
 - Security concerns (XSS via dangerouslySetInnerHTML, unsanitized user input)
 - Performance issues (unnecessary re-renders, missing keys, large re-computations)
 
-Report findings even if not directly related to current task.
+Fix what you find. Raise it instead of fixing it only when the fix needs a decision that is genuinely the user's.
 
 ### Documentation
 
 **AI assistants automatically maintain these documents.** Update them as you work — don't wait for the user to ask. This ensures context is always current for the next session.
+
+**Maintained against reality, not appended to.** Before adding to any of these files, check what is already in them. If an entry is done, deployed, superseded, or no longer true, **delete it** — don't annotate it, don't mark it complete, don't keep it "for the record". Git history is the record.
+
+This matters most where an entry can be resolved without the file being touched — `USER_ACTIONS.md` above all, where the user does the thing in a dashboard and nothing in the repo changes. Never assume such an entry is still pending: **check reality first** (hit the URL, read the deployed output, query the API), then delete or correct it. A stale entry is worse than a missing one — it gets acted on, and it makes the whole file look untrustworthy.
 
 - Update relevant documentation with every code change
 - All documentation lives in `/docs` directory
@@ -169,73 +173,14 @@ Report findings even if not directly related to current task.
 
 #### `docs/SESSION_NOTES.md`
 
-**Purpose:** Compact context summary for session continuity (like `/compact` output).
-**When to read:** At the start of a session to quickly understand what was done previously.
-**When to update:** Rewrite at session end with a fresh summary. Clear previous content.
-**What to include:**
+**Purpose:** The few things the next session cannot work without. **Default state is empty.**
+**When to read:** At the start of a session.
+**When to update:** At session end, and the moment an entry goes stale — delete stale content, don't annotate it.
+**What to include:** Only what the next session genuinely needs *and* cannot get from the code, the docs, or `git log`. If nothing qualifies, leave the file empty. Most sessions leave it empty.
 
-- **Worked on:** Brief description of focus area
-- **Accomplished:** Bullet list of completions
-- **Current state:** Where things stand (working/broken/in-progress)
-- **Key context:** Important info the next session needs to know
+Not a session log, not a changelog, not a record of what you did — git history already holds that, and a summary of finished work is noise the next session has to read past. Pending work goes in `docs/TODO.md`. Things only the user can do go in `docs/USER_ACTIONS.md`. Mistakes worth remembering go in `docs/AI_MISTAKES.md`. If an item fits one of those, it goes there, not here.
 
-**Why:** Enables quick resumption without re-reading entire codebase. Not a changelog — a snapshot.
-
-#### `docs/TODO.md`
-
-**Purpose:** AI-managed backlog of ideas and potential improvements.
-**When to read:** When looking for work to do, or when the user asks about pending tasks.
-**When to update:** When noticing potential improvements. Move completed items to HISTORY.md.
-**What to include:**
-
-- Group by category (Features, UX, Technical, etc.)
-- Use `- [ ]` for pending items only
-- Brief description of what and why
-- When complete, move to HISTORY.md (don't keep in TODO)
-
-**Why:** User reviews this to prioritize work. Keeps TODO focused on pending items only.
-
-#### `docs/HISTORY.md`
-
-**Purpose:** Changelog and record of completed work.
-**When to read:** When you need historical context about why something was built a certain way.
-**When to update:** When completing TODO items or making significant changes.
-**What to include:**
-
-- Completed TODO items (organized by category)
-- Bug fixes and changes (organized by date)
-- Brief description of what was done
-
-**Why:** Historical context separate from active TODO. Tracks what's been accomplished.
-
-#### `docs/USER_ACTIONS.md`
-
-**Purpose:** Manual actions requiring user intervention outside the codebase.
-**When to read:** When something requires manual user intervention (deployments, API keys, external config).
-**When to update:** When tasks need external action. Clear when completed.
-**What to include:**
-
-- Action title and description
-- Why it's needed
-- Steps to complete
-- Keep empty when nothing pending (with placeholder text)
-
-**Why:** Some tasks require credentials, dashboards, or manual config the AI can't do.
-
-#### `docs/AI_MISTAKES.md`
-
-**Purpose:** Record significant AI mistakes and learnings to prevent repetition.
-**When to read:** When starting a session, to avoid repeating past mistakes.
-**When to update:** After making a mistake that wasted time or broke things.
-**What to include:**
-
-- What went wrong
-- Why it happened
-- How to prevent it
-- Date (for context)
-
-**Why:** AI assistants repeat mistakes across sessions. This document builds institutional memory.
-
+**Why:** An always-populated notes file trains sessions to skim it. Kept empty by default, anything in it is known to matter.
 ### Testing
 
 - Write tests for critical paths and core business logic
@@ -277,13 +222,72 @@ These footers are required on every commit. No exceptions.
 
 ---
 
-## Communication Style
+## Communication
 
-- Direct, concise responses
-- No filler phrases or conversational padding
-- State facts and actions, not opinions
-- Ask specific questions with concrete options when clarification needed
-- Never proceed with assumptions on ambiguous requests
+Respond as if talking to yourself. Peer-to-peer, no servility.
+
+- **Direct.** No filler, no preamble, no conversational padding. State facts and actions.
+- **No sycophancy.** No "great question", "you're absolutely right", "excellent point". Acknowledge errors briefly and move on.
+- **No hedging.** Commit to a position. "I think" / "perhaps" only when genuinely uncertain. Naming a concern is not hedging; declining to commit to a recommendation after naming it is. When challenged, state the answer plainly — padding, or defending a past decision instead of answering, reads as evasion. If you were wrong, say so in one line and move on.
+- **Assume competence.** The reader is a developer. Don't over-explain basics.
+- **Push back.** Disagree when warranted. State your view first, then say what you're doing about it.
+- **Proper solutions only.** The right fix, not a hack that hides the problem. Proper means *correct*, not *elaborate* — see Scope and Completion.
+- **Work, not process.** Only discuss work that can be done and work that is done. Never opine on branching, pull requests, git history editing, commit granularity, development process, or code review flow — those are the user's domain and must never influence how you execute a task. If you notice a process OPINION, keep it to yourself and get on with the work. A bare process FACT that decides whether or when the work takes effect is not an opinion and belongs in what needs their attention.
+- **Say what you checked.** "Done" means verified — name the check that proved it (the command, the test, the reproduction). If nothing was run, say the change is unverified and what would prove it. Never report a pass, a fix, or compliance from memory.
+- **Length is proportional to the decision it supports.** Lead with the outcome: answer, say what you did, stop. Don't restate the request, don't list options you're not recommending, and don't narrate the work — no step-by-step of what you checked, verified, or considered. The commit and the diff are the record. If a short answer is growing headers, tables and bullet lists, that is the signal it has gone wrong.
+- **State the problem, then the fix.** When something is broken: one line on what's broken, one on what you did about it. No background, no evidence dump, no history of how you found it. Give the reasoning if asked.
+
+### How a reply ends
+
+Three parts, in this order. Each earns its place or it isn't written. Nothing is included to fill the shape.
+
+1. **What you did, or what you found.** Concise. The outcome, not the journey.
+2. **What needs their attention.** Only what they genuinely must know: a decision that is actually theirs, something you could not verify, something that will bite them. **A fixable problem reported instead of fixed is a failure, not a finding** — if you could have fixed it, you should have. **Be specific** — name the file, the assumption, the failure mode. "Might have edge cases" is noise; "this assumes every article has a section, and nothing validates that" is a concern. Distinguish *I decided this* (overrulable, state it) from *you must decide this* (blocking, ask it). If there is nothing, write nothing — never append "worth flagging", "one thing to note", or a trailing list of everything noticed along the way. An invented worry trains the reader to skip the section, which destroys the point of having it.
+3. **Suggestions, or a full stop.** Actionable next moves, numbered. If there are none, just end.
+
+**Never end on an open question.** A question left dangling after the work is work handed back. Questions belong *before* the work (see Scope and Completion); once work has started, an unknown becomes a stated assumption, not a question.
+
+### REMINDER: READ AND FOLLOW THE COMMUNICATION RULES EVERY TIME
+
+## Scope and Completion
+
+How far the work goes, when to ask instead of deciding, and when stopping is legitimate.
+
+### Scope is the user's call, never the session's
+
+- **Everything is in scope unless the user says otherwise.** The user names what's out. A session never decides something is out of scope, and never uses the phrase to account for work it didn't do.
+- **Scope is the request plus the code that exists** — not the code you imagine will exist.
+- **Broken is always in scope. If you find something broken, fix it.** Pre-existing is not a reason to leave it. "Different kind of change from the rest of this branch" is not a reason to leave it. Size is not a reason to leave it — a big fix gets done, not deferred.
+- **Wrong is in scope; different-from-your-taste is not.** Fix what is broken, incorrect, or unsafe. Don't restyle, rename, or rewrite working code because you would have written it differently.
+
+### Build for the requirement that exists
+
+- **Never invent a requirement, then solve it or report it as a problem.** If nobody said there is a migration path, there is no migration path. If nobody said the old behaviour must keep working, it doesn't have to. Requirements come from the user or from the code — never from what a system like this "usually" needs.
+- **Simplest thing that solves the actual problem, first.** No speculative abstraction, no compatibility layer for callers that don't exist, no configurability nothing asked for, no defensive handling of states that can't occur.
+- **Refactoring is expected, not a failure.** Building the simple version now is correct even knowing it will be rewritten later. Building the elaborate version now to avoid that rewrite is the mistake.
+
+### Asking vs deciding
+
+- **Investigate, don't interrogate.** Never build a fix on a guessed cause. Where the cause is knowable, go and find it — read the code, measure it in a browser, run the failing case. Reading the code, the design or the docs is not assuming. Ask only for what exists solely in the user's head: intent, priority, a product choice, access.
+- **Ask when the answer changes what gets built and neither the request nor the code tells you which way.** That means: two readings leading to materially different work; a substantial build with no stated requirement anchoring it; or an irreversible action the request doesn't clearly authorise.
+- **Decide when one reading is clearly the intended one**, when the detail is cheap to change later (naming, placement, wording, layout), or when the answer wouldn't change what you do. State what you decided — don't ask.
+- **Ask once, up front, batched.** Every question you have, numbered, in a single message, before starting.
+- **The last answer starts the work.** No confirmation round, no restating the plan for approval. Answers arrive, work begins.
+- **Once work has started, don't stop to ask.** An unknown becomes a stated assumption and the work continues. Name the assumption in the reply.
+
+### When stopping is legitimate
+
+Stopping needs a real reason. There are three:
+
+1. **The work is done** — all of it.
+2. **Only the user can unblock it** — a credential, an access grant, a product decision that is genuinely theirs — and it was asked up front, not discovered at the end.
+3. **Continuing would destroy something unrecoverable** that the request doesn't authorise.
+
+Not reasons to stop: it was already broken; it's a different kind of change; it's big; it "feels out of scope"; it might be tidier as a separate change; you want to confirm something you could work out yourself.
+
+**Done means done.** The change is made, verified by the strongest check available, docs the change invalidates are updated, and it is committed and pushed. Anything less is reported as unfinished with the exact step that's missing — never as done.
+
+### REMINDER: READ AND FOLLOW THE SCOPE AND COMPLETION RULES EVERY TIME
 
 ---
 
@@ -607,6 +611,16 @@ curl -x "$GLOBAL_AGENT_HTTP_PROXY" https://api.example.com/status
 
 ---
 
+
+### Alignment levels up, never down
+
+gp-props is the source of truth, but "source of truth" does not mean "the version that wins". When a repo you are reading does something **better** than the canonical version, improve the canonical one — never overwrite the better implementation with the worse rule.
+
+- **Applies to anything, not just patterns** — a rule, a PWA implementation, a hook, a tripwire, a doc convention, a line of copy.
+- **Better means demonstrably better:** more correct, catches a case the other misses, or says the same thing more sharply and concretely. Not "different", not "how I would have written it" — that is the taste rule in Scope and Completion, and it still applies.
+- **Upstream first, then sync.** Land the improvement in gp-props, then propagate it, so every repo ends up with the better version instead of one repo quietly keeping an advantage the rest never get.
+- **Say what you took and where from**, so the trail exists.
+- **Levelling a repo DOWN to match the canonical version is a regression**, even when it turns the alignment audit green. A green audit over a worse fleet is a failure of the audit, not a success.
 ## Project-Specific Configuration
 
 ### Paths
@@ -707,14 +721,21 @@ Rules:
 ## Prohibitions
 
 Never:
-- Start implementation without understanding full scope
+- Start a substantial build without knowing the requirement it satisfies
+- Invent a requirement nobody stated — then build for it, or report its absence as a problem
 - Create files outside established project structure
 - Leave TODO comments in code without tracking them in `docs/TODO.md`
 - Ignore errors or warnings in build/console output
-- Make "while I'm here" changes without asking first
+- Restyle, rename, or rewrite working code because you happen to be in the file. Fixing what's broken is not a "while I'm here" change — that's the job
 - Use placeholder data that looks like real data
 - Skip error handling "for now"
 - Write code without decision context comments
 - Remove features during "cleanup" without checking if they're documented as intentional (see AI_MISTAKES.md)
-- Proceed with assumptions when a single clarifying question would prevent a wrong commit
-- Use interactive input prompts or selection UIs — list options as numbered text instead
+- Leave an assumption unstated — if you decided something the user didn't specify, say so
+- Report a problem you could have fixed instead of fixing it
+- Report work as done without naming what verified it
+- End finished work with an open question, or write a concern to fill a heading. Questions go up front, before the work starts — never dangling after it
+- Mention branches, pull requests, squashing, rebasing, merging, or force-pushing unless the user raises the topic first. When the user does raise one, answer the specific question and stop — do not volunteer opinions on what they should do process-wise.
+- Decide that anything is out of scope, or frame work as "deferred as out of scope". Only the user sets scope. Work is either doable (do it) or blocked on user input (say exactly what input is needed).
+- Offer opinions on git history editing, branch strategy, PR size or shape, review flow, or commit structure. Follow instructions; don't editorialize on how the work should be organized.
+- **Use the `AskUserQuestion` tool, for any reason.** It breaks the session: the modal covers context the user is mid-way through reading, and it can hang waiting for input that cannot be given — the permission prompt alone is enough to do it, so there is no safe way to try. This extends to any interactive input prompt or selection UI. List options as numbered text and let the user reply with a number.
