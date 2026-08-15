@@ -52,16 +52,33 @@ section flags). Design from the Claude Design handoff "The Applicant".
 
 ---
 
-## Hard Rules
+## Process
 
-These rules are non-negotiable. Stop and ask before proceeding if any rule would be violated.
+1. **Read these preferences first**
+2. **Gather context from documentation** (CLAUDE.md, relevant docs/)
+3. **Then proceed with the task**
 
-### Before Making Changes
+> **Project notes:** plans and scratch files go in `/docs/working`, never the repo root. Verify with `npm run build` (TypeScript + build) and `npm run test` (Vitest).
 
-- Read relevant existing code and documentation first
-- Ask clarifying questions if scope, approach, or intent is unclear
-- Confirm understanding before implementing non-trivial changes
-- Never assume — when in doubt, ask
+### REMINDER: READ AND FOLLOW THE PROCESS EVERY TIME
+
+## Principles
+
+1. **User-first design** - Align with how real people will use the tool (top priority)
+2. **Simplicity** - Simple flow, clear guidance, non-overwhelming visuals, accurate interpretation
+3. **Document WHY** - Explain decisions and how they align with tool goals
+4. **Testability** - Ensure correctness and alignment with usage goals can be verified
+5. **Know the purpose** - Always be aware of what the tool is for
+6. **Follow conventions** - Best practices and consistent patterns
+7. **Repeatable process** - Follow consistent steps to ensure all the above
+
+### REMINDER: READ AND FOLLOW THE PRINCIPLES EVERY TIME
+
+---
+
+## Code Standards
+
+These rules are non-negotiable.
 
 ### Best Practices
 
@@ -142,45 +159,6 @@ During every change, actively scan for:
 
 Fix what you find. Raise it instead of fixing it only when the fix needs a decision that is genuinely the user's.
 
-### Documentation
-
-**AI assistants automatically maintain these documents.** Update them as you work — don't wait for the user to ask. This ensures context is always current for the next session.
-
-**Maintained against reality, not appended to.** Before adding to any of these files, check what is already in them. If an entry is done, deployed, superseded, or no longer true, **delete it** — don't annotate it, don't mark it complete, don't keep it "for the record". Git history is the record.
-
-This matters most where an entry can be resolved without the file being touched — `USER_ACTIONS.md` above all, where the user does the thing in a dashboard and nothing in the repo changes. Never assume such an entry is still pending: **check reality first** (hit the URL, read the deployed output, query the API), then delete or correct it. A stale entry is worse than a missing one — it gets acted on, and it makes the whole file look untrustworthy.
-
-- Update relevant documentation with every code change
-- All documentation lives in `/docs` directory
-- Plans, notes, and scratch files go in `/docs/working`
-- Never write docs or plans to root directory or random locations
-- This CLAUDE.md must reflect current project state at all times
-
-#### `CLAUDE.md`
-
-**Purpose:** AI preferences, project overview, architecture, key decisions.
-**When to read:** At the start of every session, before doing any work.
-**When to update:** When project architecture changes, state structure changes, or preferences evolve.
-**What to include:**
-
-- Process, Principles, AI Notes: Update when learning new patterns or preferences
-- Project Status: Current working features (bullet list)
-- Architecture: File structure with brief descriptions
-- Key Decisions: Important architectural choices with rationale
-- Any section that becomes outdated after feature changes
-
-**Why:** This is the primary context for AI assistants. Accurate info here prevents mistakes.
-
-#### `docs/SESSION_NOTES.md`
-
-**Purpose:** The few things the next session cannot work without. **Default state is empty.**
-**When to read:** At the start of a session.
-**When to update:** At session end, and the moment an entry goes stale — delete stale content, don't annotate it.
-**What to include:** Only what the next session genuinely needs *and* cannot get from the code, the docs, or `git log`. If nothing qualifies, leave the file empty. Most sessions leave it empty.
-
-Not a session log, not a changelog, not a record of what you did — git history already holds that, and a summary of finished work is noise the next session has to read past. Pending work goes in `docs/TODO.md`. Things only the user can do go in `docs/USER_ACTIONS.md`. Mistakes worth remembering go in `docs/AI_MISTAKES.md`. If an item fits one of those, it goes there, not here.
-
-**Why:** An always-populated notes file trains sessions to skim it. Kept empty by default, anything in it is known to matter.
 ### Testing
 
 - Write tests for critical paths and core business logic
@@ -220,7 +198,49 @@ Semver: patch|minor|major
 
 These footers are required on every commit. No exceptions.
 
----
+### REMINDER: READ AND FOLLOW THE CODE STANDARDS EVERY TIME
+
+## Documentation
+
+**AI assistants automatically maintain these documents.** Update them as you work — don't wait for the user to ask. This ensures context is always current for the next session.
+
+**Maintained against reality, not appended to.** Before adding to any of these files, check what is already in them. If an entry is done, deployed, superseded, or no longer true, **delete it** — don't annotate it, don't mark it complete, don't keep it "for the record". Git history is the record.
+
+This matters most where an entry can be resolved without the file being touched — `USER_ACTIONS.md` above all, where the user does the thing in a dashboard and nothing in the repo changes. Never assume such an entry is still pending: **check reality first** (hit the URL, read the deployed output, query the API), then delete or correct it. A stale entry is worse than a missing one — it gets acted on, and it makes the whole file look untrustworthy.
+
+- Update relevant documentation with every code change
+- All documentation lives in `/docs` directory
+- Plans, notes, and scratch files go in `/docs/working`
+- Never write docs or plans to root directory or random locations
+- This CLAUDE.md must reflect current project state at all times
+
+### `CLAUDE.md`
+
+**Purpose:** AI preferences, project overview, architecture, key decisions.
+**When to read:** At the start of every session, before doing any work.
+**When to update:** When project architecture changes, state structure changes, or preferences evolve.
+**What to include:**
+
+- Process, Principles, AI Notes: Update when learning new patterns or preferences
+- Project Status: Current working features (bullet list)
+- Architecture: File structure with brief descriptions
+- Key Decisions: Important architectural choices with rationale
+- Any section that becomes outdated after feature changes
+
+**Why:** This is the primary context for AI assistants. Accurate info here prevents mistakes.
+
+### `docs/SESSION_NOTES.md`
+
+**Purpose:** The few things the next session cannot work without. **Default state is empty.**
+**When to read:** At the start of a session.
+**When to update:** At session end, and the moment an entry goes stale — delete stale content, don't annotate it.
+**What to include:** Only what the next session genuinely needs *and* cannot get from the code, the docs, or `git log`. If nothing qualifies, leave the file empty. Most sessions leave it empty.
+
+Not a session log, not a changelog, not a record of what you did — git history already holds that, and a summary of finished work is noise the next session has to read past. Pending work goes in `docs/TODO.md`. Things only the user can do go in `docs/USER_ACTIONS.md`. Mistakes worth remembering go in `docs/AI_MISTAKES.md`. If an item fits one of those, it goes there, not here.
+
+**Why:** An always-populated notes file trains sessions to skim it. Kept empty by default, anything in it is known to matter.
+
+### REMINDER: READ AND FOLLOW THE DOCUMENTATION EVERY TIME
 
 ## Communication
 
@@ -315,7 +335,7 @@ Project cards in `src/data/cv-data.ts` are sourced from deployed repos across th
 4. **Add entries** to the `projects` array in `src/data/cv-data.ts`.
 
 **Included as the capstone card:**
-- `gp-props` — shown as the **Full Portfolio** "see all" card at the end of the Projects list (`proj-portfolio`; deliberately NOT labelled "gp-props" — links to its GitHub Pages showcase `https://gp-props.vercel.app/`). Previously excluded by owner; the owner opted it in as the portfolio index. When refreshing projects, keep it last and keep the display name generic.
+- `gp-props` — shown as the **Full Portfolio** "see all" card at the end of the Projects list (`proj-portfolio`; deliberately NOT labelled "gp-props" — links to its live showcase `https://gp-props.vercel.app/`). Previously excluded by owner; the owner opted it in as the portfolio index. When refreshing projects, keep it last and keep the display name generic.
 
 **Excluded repos** (not shown in Projects):
 - `canva-grid-assets` — asset storage, not a standalone project
@@ -327,290 +347,37 @@ Project cards in `src/data/cv-data.ts` are sourced from deployed repos across th
 
 ---
 
-## Suggested Implementations
+## Implementation Patterns (Source of Truth)
 
-Reference patterns for features that should be implemented across all projects. These describe the architecture and behavior to follow — adapt file names and frameworks to the specific project.
+All implementation patterns live in the **gp-props** repo and are the single source of truth for all devmade-ai projects.
 
-### PWA System
+**Source location:** `docs/implementations/` in the gp-props repo
 
-Four parts, built on `vite-plugin-pwa` (^1.2.0) with React. Adapt patterns for other frameworks.
+**How to access from any repo:**
+- Fetch from the live site: `curl -sf "https://gp-props.vercel.app/patterns/{PATTERN_NAME}.md"`
+- Fetch via GitHub API: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/gp-props/contents/docs/implementations/{PATTERN_NAME}.md" | jq -r .content | base64 -d`
+- To list all available patterns: `curl -sf -H "Authorization: token $(printenv GITHUB_ALL_REPO_TOKEN)" "https://api.github.com/repos/devmade-ai/gp-props/contents/docs/implementations" | jq -r '.[].name'`
 
-#### Vite Config (`vite.config.ts`)
-
-```typescript
-import { VitePWA } from 'vite-plugin-pwa'
-
-// Inside defineConfig plugins array:
-VitePWA({
-  registerType: 'prompt',
-  includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
-  manifest: {
-    name: 'Your App',
-    short_name: 'App',
-    description: 'Description here',
-    id: '/',
-    theme_color: '#10b981',
-    background_color: '#ffffff',
-    display: 'standalone',
-    scope: '/',
-    start_url: '/',
-    prefer_related_applications: false,
-    icons: [
-      { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-      { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: 'pwa-1024x1024.png', sizes: '1024x1024', type: 'image/png', purpose: 'maskable' }
-    ]
-  }
-})
-```
-
-- **`registerType: 'prompt'`**: The mechanism that exposes the waiting worker to app code. The *behavior* on top is the fleet-standard **auto-on-launch** policy (apply at launch, defer mid-session, user toggle — see Key Decisions and gp-props `PWA_SYSTEM.md`). Raw `autoUpdate` silently refreshes mid-work; tap-only prompt leaves stale clients forever.
-- **`id`**: Stable app identity. Without it, Chrome derives from `start_url` — breaks on config changes or redeployments.
-- **`prefer_related_applications: false`**: Without this, Chrome may skip `beforeinstallprompt` if it thinks a native app exists.
-- **Separate icon purposes**: `any` for standard display (192, 512), `maskable` for full-bleed (1024). Never combine `"any maskable"` — browsers pick the wrong one. Use a dedicated 1024x1024 for maskable.
-
-#### Install Prompt Race Condition (`index.html`)
-
-`beforeinstallprompt` fires once. On repeat visits with a cached SW, it fires before the framework mounts — if nothing catches it, the install prompt is permanently lost.
-
-Inline classic (non-module) script before any `<script type="module">`:
-
-```html
-<script>
-  window.addEventListener('beforeinstallprompt', function (e) {
-    e.preventDefault();
-    window.__pwaInstallPromptEvent = e;
-  });
-</script>
-```
-
-Executes synchronously during HTML parse. Stashes the event for the React hook to consume. `e.preventDefault()` suppresses the browser's default mini-infobar. The hook's fallback `useEffect` listener handles first-visit timing (SW registers after mount). Neither alone covers both cases.
-
-#### Service Worker Updates (`usePWAUpdate.ts`)
-
-Wraps `vite-plugin-pwa`'s React hook with module-singleton state. Exposes `hasUpdate`, `update()`, `checkForUpdate()` (typed `'no-sw' | 'up-to-date' | 'update-available' | 'error'`), `autoUpdateEnabled` + `setAutoUpdate()`. Launch-applies an already-waiting worker (auto-on-launch policy); mid-session detections only arm the banner. Checks for new SW versions every 60 minutes and on visibilitychange.
-
-#### Install Detection (`usePWAInstall.ts`)
-
-Detects browser, captures `beforeinstallprompt` (consuming the early-captured event from `index.html`), tracks install analytics. Hides prompt when already installed or dismissed.
-
-#### Key Lessons
-
-1. **Never combine `"any maskable"` in icon purpose** — use separate entries with a dedicated 1024x1024 for maskable.
-2. **Set `id` explicitly** in the manifest — Chrome derives it from `start_url` otherwise.
-3. **The inline script in `index.html` is essential** — without it, repeat visitors on Chromium lose the install prompt.
-4. **`registerType: 'prompt'` + auto-on-launch policy** — never raw `autoUpdate` (reloads mid-work) and never tap-only prompt (stale clients never converge). Launch-apply keeps both guarantees.
-5. **Clean up all timers** — every `setTimeout`/`setInterval` in `useEffect` needs cleanup. Nested timeouts need the array pattern or mounted ref guard.
-
-### App Icons
-
-The current icons in `public/icons/` are **pre-built assets** shipped with the "The Applicant"
-handoff (ink pixel-runner + amber flag on paper): `favicon.svg`, `favicon-16/32.png`,
-`apple-touch-icon.png` (180), `icon-192/512.png` (any), `icon-maskable-192/512.png`. The old
-`scripts/generate-icons.mjs` (Sharp-based generator) was **removed** in the redesign — if you
-need to regenerate at other sizes, re-add a generator or export from the source drawing.
-
-**SVG design rules for maskable icons (reference pattern):**
-- Canvas must be square (e.g. `viewBox="0 0 1024 1024"`)
-- Add `shape-rendering="geometricPrecision"` to the root `<svg>` element
-- Background fills entire canvas (no transparency)
-- Important content stays within the inner 80% (safe zone for maskable crop)
-- Design must be legible at 48px (favicon) — avoid fine details
-
-### Download as PDF (via `window.print()`)
-
-Zero-dependency PDF download using the browser's native print dialog. No PDF libraries needed — the user selects "Save as PDF" from their system print dialog.
-
-Three pieces: a trigger button, a `no-print` utility class, and print-friendly CSS overrides.
-
-1. A button that calls `window.print()`
-2. `@media print` CSS rules with `.no-print { display: none !important; }`
-3. `break-inside: avoid` on content blocks you don't want split across pages
-
-#### Key Lessons
-
-1. **No library needed** — `window.print()` opens the system print dialog, which includes "Save as PDF" on all major browsers.
-2. **`!important` is justified here** — print overrides must win against inline styles and dark mode classes.
-3. **Test in print preview** — use Ctrl/Cmd+P to verify layout before committing.
-4. **`break-inside: avoid` on sections** — prevents awkward mid-section page breaks.
-5. **Hide the download button itself** — the button that triggers `window.print()` should be inside a `no-print` container.
-
-### Fix: Timer Leaks on Unmount (Nested Timeouts)
-
-Debounce patterns using `setTimeout` leak when a component unmounts mid-timeout. The nested case is worse: a timeout callback sets *another* timeout, and cleaning up only the outer one leaves the inner one orphaned.
-
-**Fix — track all timeout IDs:**
-```typescript
-useEffect(() => {
-  const timeouts: ReturnType<typeof setTimeout>[] = [];
-
-  const outer = setTimeout(() => {
-    doSomething();
-    const inner = setTimeout(() => save(), 500);
-    timeouts.push(inner);
-  }, 300);
-  timeouts.push(outer);
-
-  return () => timeouts.forEach(clearTimeout);
-}, [value]);
-```
-
-**Alternative — mounted ref guard:**
-```typescript
-const mountedRef = useRef(true);
-useEffect(() => () => { mountedRef.current = false; }, []);
-
-// In any async/timeout callback:
-if (!mountedRef.current) return;
-```
-
-**General rule:** Every `setTimeout`, `setInterval`, `addEventListener`, or `subscribe` call inside a `useEffect` needs a corresponding cleanup in the return function. If callbacks create *new* async operations, those need cleanup too.
-
-### HTTPS Proxy Support for Node.js Scripts
-
-Zero-dependency HTTP CONNECT tunnel for Node.js scripts that need to reach external APIs through an HTTPS proxy. Solves the problem that Node.js's built-in `fetch()` (undici) and `https.get()` **do not** respect `HTTP_PROXY`/`HTTPS_PROXY` environment variables.
-
-#### The Problem
-
-In proxy-only environments (CI containers, Claude Code remote sessions, corporate networks), outbound traffic must route through an HTTP proxy. But:
-
-- **`fetch()` (Node 18+ built-in)**: Uses undici internally. Does NOT auto-detect `HTTP_PROXY`/`HTTPS_PROXY` env vars. Requests fail with DNS errors.
-- **`https.get()`**: Also does NOT respect proxy env vars. Same DNS failure.
-- **`curl`**: Works — it reads `HTTP_PROXY`/`HTTPS_PROXY` automatically. But shelling out to curl from Node is ugly.
-- **`global-agent` / `proxy-agent` packages**: Work, but add external dependencies for a simple tunnel.
-
-#### The Solution
-
-Detect the proxy from environment variables, establish an HTTP CONNECT tunnel, then pipe the HTTPS request through the tunnel socket. Pure `http`/`https` stdlib — no dependencies.
-
-```javascript
-import http from 'http';
-import https from 'https';
-
-// --- Proxy detection ---
-// Check both lowercase and uppercase conventions.
-// HTTPS_PROXY is used for HTTPS requests; HTTP_PROXY for HTTP requests.
-// Most environments set both to the same value.
-const PROXY_URL = process.env.https_proxy || process.env.HTTPS_PROXY || null;
-
-function getProxyConnectOptions(targetHost) {
-  const proxy = new URL(PROXY_URL);
-  const options = {
-    host: proxy.hostname,
-    port: proxy.port,
-    method: 'CONNECT',
-    path: `${targetHost}:443`,
-    headers: { 'Host': `${targetHost}:443` },
-    timeout: 15000,
-  };
-  // Proxy authentication (username:password in proxy URL)
-  if (proxy.username) {
-    const auth = Buffer.from(
-      decodeURIComponent(proxy.username) + ':' + decodeURIComponent(proxy.password)
-    ).toString('base64');
-    options.headers['Proxy-Authorization'] = `Basic ${auth}`;
-  }
-  return options;
-}
-
-// --- HTTPS GET with automatic proxy support ---
-// When PROXY_URL is set: HTTP CONNECT tunnel → HTTPS over tunnel
-// When PROXY_URL is null: Direct HTTPS request
-function httpsGet(requestUrl, headers = {}) {
-  const parsed = new URL(requestUrl);
-  if (PROXY_URL) {
-    return httpsGetViaProxy(parsed, headers);
-  }
-  return httpsGetDirect(parsed, headers);
-}
-
-function httpsGetDirect(parsed, headers) {
-  return new Promise((resolve, reject) => {
-    const req = https.get(parsed.href, { headers, timeout: 15000 }, (res) => {
-      let data = '';
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(JSON.parse(data));
-        } else {
-          reject(new Error(`HTTP ${res.statusCode}: ${data.substring(0, 200)}`));
-        }
-      });
-    });
-    req.on('error', reject);
-    req.on('timeout', () => { req.destroy(); reject(new Error('Request timeout')); });
-  });
-}
-
-function httpsGetViaProxy(parsed, headers) {
-  return new Promise((resolve, reject) => {
-    const connectOptions = getProxyConnectOptions(parsed.hostname);
-    const proxyReq = http.request(connectOptions);
-
-    proxyReq.on('connect', (res, socket) => {
-      if (res.statusCode !== 200) {
-        socket.destroy();
-        reject(new Error(`Proxy CONNECT failed: ${res.statusCode}`));
-        return;
-      }
-      // TLS handshake through the tunnel
-      const tlsReq = https.get({
-        host: parsed.hostname,
-        path: parsed.pathname + parsed.search,
-        headers,
-        socket,              // Reuse the CONNECT tunnel socket
-        servername: parsed.hostname, // Required for SNI
-        timeout: 15000,
-      }, (tlsRes) => {
-        let data = '';
-        tlsRes.on('data', (chunk) => { data += chunk; });
-        tlsRes.on('end', () => {
-          if (tlsRes.statusCode >= 200 && tlsRes.statusCode < 300) {
-            resolve(JSON.parse(data));
-          } else {
-            reject(new Error(`HTTP ${tlsRes.statusCode}: ${data.substring(0, 200)}`));
-          }
-        });
-      });
-      tlsReq.on('error', reject);
-      tlsReq.on('timeout', () => { tlsReq.destroy(); reject(new Error('Request timeout')); });
-    });
-
-    proxyReq.on('error', reject);
-    proxyReq.on('timeout', () => { proxyReq.destroy(); reject(new Error('Proxy connect timeout')); });
-    proxyReq.end();
-  });
-}
-```
-
-**Usage:**
-
-```javascript
-// Works identically whether proxy is set or not
-const data = await httpsGet('https://api.example.com/status', {
-  'User-Agent': 'MyApp/1.0',
-});
-```
-
-**For curl in shell scripts:**
-
-```bash
-# curl respects HTTP_PROXY/HTTPS_PROXY automatically — no code changes needed.
-# If the env var is named differently (e.g., GLOBAL_AGENT_HTTP_PROXY), pass it explicitly:
-curl -x "$GLOBAL_AGENT_HTTP_PROXY" https://api.example.com/status
-```
-
-#### Key Lessons
-
-1. **Node's `fetch()` and `https.get()` ignore proxy env vars** — unlike `curl`, Python `requests`, or Go's `http.Client`, Node does not auto-detect `HTTP_PROXY`. This is a long-standing design choice, not a bug.
-2. **HTTP CONNECT is the standard** — it's how all HTTPS proxying works. The proxy sees only the target hostname, not the request content (TLS encrypts everything after the tunnel opens).
-3. **`socket` + `servername` are both required** — `socket` reuses the tunnel; `servername` enables SNI so the target server presents the correct TLS certificate.
-4. **Auth uses Basic scheme** — proxy credentials are sent as `Proxy-Authorization: Basic base64(user:pass)` in the CONNECT request. URL-decode the username/password first (they may be percent-encoded in the URL).
-5. **No external dependencies needed** — `global-agent`, `proxy-agent`, `https-proxy-agent` packages solve this too, but for scripts that just need GET requests, the stdlib solution above is simpler and has zero supply chain risk.
-6. **`curl` just works** — it reads `HTTP_PROXY`/`HTTPS_PROXY` automatically. Use it for quick tests: `curl -x "$HTTPS_PROXY" https://example.com`.
-
+**Adding a new pattern:** Drop a `.md` file into `docs/implementations/` with YAML frontmatter and it appears in the app automatically. Required frontmatter fields:
+```yaml
 ---
+slug: url-safe-slug
+title: Display Title
+badge: Category
+description: One-line description for the card.
+tags:
+  - tag1
+  - tag2
+order: 10
+---
+```
+The `generatePatternManifest` Vite plugin scans the folder at build time, parses frontmatter, validates required fields, and generates `patterns/manifest.json`. Both `index.html` and `pattern.html` consume this manifest — no hardcoded lists.
 
+**Rules:**
+- **Always fetch the latest version** from gp-props before implementing — patterns are continuously improved
+- **Never create local copies** of implementation pattern files in downstream repos
+- **Do not hardcode a list of patterns** — scan the source folder to discover what's available
+- The set of patterns grows over time; always check the source for new additions
 
 ### Alignment levels up, never down
 
@@ -649,17 +416,6 @@ COMPONENT_STRUCTURE=flat (src/components/)
 
 ---
 
-## Workflow
-
-1. **Receive task** — Ask clarifying questions if needed
-2. **Plan** — Write plan to `/docs/working` if task is non-trivial
-3. **Implement** — Follow all hard rules above
-4. **Verify** — Run `npm run build` to confirm TypeScript and build pass; run tests if configured
-5. **Document** — Update all affected documentation (this file, `/docs`, etc.)
-6. **Report** — Summarize changes and any issues found
-
----
-
 ## AI Notes
 
 - Always read a file before attempting to edit it
@@ -679,44 +435,157 @@ COMPONENT_STRUCTURE=flat (src/components/)
 
 ## Triggers
 
-Single-word commands that invoke focused analysis passes. Each trigger has a short alias. Type the word or alias to activate.
+Commands that invoke focused analysis passes. Each trigger is a single perspective — what you'd notice that the others wouldn't.
 
-| # | Trigger | Alias | What it does |
-|---|---------|-------|--------------|
-| 1 | `review` | `rev` | Code review — bugs, UI, UX, simplification |
-| 2 | `audit` | `aud` | Code quality — hacks, anti-patterns, latent bugs, race conditions |
-| 3 | `docs` | `doc` | Documentation accuracy vs actual code |
-| 4 | `mobile` | `tap` | Mobile UX — touch targets, viewport, safe areas |
-| 5 | `clean` | `cln` | Hygiene — duplication, refactor candidates, dead code |
-| 6 | `performance` | `perf` | Re-renders, expensive ops, bundle size, DB/API, memory |
-| 7 | `security` | `sec` | Injection, auth gaps, data exposure, insecure defaults, CVEs |
-| 8 | `debug` | `dbg` | Debug logging coverage — `debugLog` calls in the form/PWA hooks (the on-screen debug pill was removed) |
-| 9 | `improve` | `imp` | Open-ended — architecture, DX, anything else |
-| 10 | `start` | `go` | Sequential sweep of all 9 above, one at a time |
+### How to invoke
 
-### Trigger behavior
+- **One perspective** — type the trigger name or its alias (e.g. `bugs`, `sec`, `a11y`).
+- **A group** — type the group name (e.g. `correctness`, `frontend`, `ops`).
+- **Everything** — type `all`.
+- **Meta sweep** — type `quick`, `ship`, or `risk` for pre-curated bundles.
 
-- Each trigger runs a single focused pass and reports findings.
-- Findings are listed as numbered text — never interactive prompts or selection UIs.
-- One trigger per response. Never combine multiple triggers in a single response.
+### Scope modifiers (suffix any trigger)
 
-### `start` / `go` behavior
+- *(none)* — whole codebase.
+- `branch` — diff against the branch's base (default: `main`).
+- `branch <base>` — diff against a specified base.
+- `staged` — staged changes only.
+- `file <path>` — single file.
 
-Runs all 9 triggers in priority sequence, one at a time:
+Examples:
+- `bugs` — bugs check across the whole codebase.
+- `bugs branch` — bugs check on the current branch's diff vs main.
+- `correctness branch main` — every correctness trigger against the branch diff.
+- `all staged` — every applicable trigger against staged files.
 
-`rev` → `aud` → `doc` → `tap` → `cln` → `perf` → `sec` → `dbg` → `imp`
+### Behavior rules
 
-After each trigger completes and findings are presented, the user responds with one of:
-1. `fix` — apply the suggested fixes, then move to the next trigger
-2. `skip` — skip this trigger's findings and move to the next trigger
-3. `stop` — end the sweep entirely
+- One trigger pass per response. Never combine.
+- Findings are numbered text — never interactive prompts or selection UIs.
+- After each pass, pause. User responds with `fix` / `skip` / `stop`:
+  - `fix` — apply the suggested fixes for this trigger, then move on.
+  - `skip` — skip this trigger's findings and move on.
+  - `stop` — end the sweep entirely.
+- Groups, meta sweeps, and `all` run triggers sequentially in table order, pausing after each.
+- If a trigger doesn't apply to this repo (e.g. `database` on a static site), report "N/A for this repo" and move on.
+- Triggers are the one place a pause is expected rather than a stop needing justification (Scope and Completion) — the user asked for a review, not a rewrite. Everywhere else, a found problem gets fixed.
 
-Rules:
-- Always pause after each trigger — never auto-advance to the next one.
-- Never run multiple triggers in one response.
-- Wait for the user's explicit `fix`, `skip`, or `stop` before proceeding.
+### Correctness — group `correctness`
 
----
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 1 | `bugs` | `bug` | Logic errors, off-by-ones, null/undefined paths, wrong default branches, stale assumptions |
+| 2 | `errors` | `err` | Missing try/catch, swallowed failures, unhelpful error surfaces to user and dev |
+| 3 | `race` | `rac` | Concurrency, stale closures, async ordering, event leaks, double-fire guards |
+| 4 | `types` | `typ` | `any`/`as` abuse, unsafe casts, missing generics, runtime-vs-compile-time gaps |
+| 5 | `edges` | `edg` | Empty/null/zero/max/unicode/timezone boundary cases; 0-item, 1-item, 10k-item behavior |
+
+### Security / trust — group `trust`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 6 | `security` | `sec` | Injection, XSS, CSRF, auth gaps, insecure defaults, exposed secrets in code or bundle |
+| 7 | `privacy` | `pri` | PII flow, redaction, retention, client-side data leaks, telemetry overreach |
+| 8 | `supply-chain` | `sup` | Dep integrity, lockfile drift, postinstall hooks, third-party scripts |
+
+### Performance — group `speed`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 9 | `performance` | `perf` | Render loops, expensive ops in hot paths, memory leaks, large re-computations |
+| 10 | `network` | `net` | Request count, caching, batching, waterfalls, payload size, compression |
+| 11 | `database` | `db` | N+1, missing indexes, transaction scope, lock contention |
+| 12 | `bundle` | `bun` | Code splitting, tree-shaking, duplicate deps, blocking resources |
+
+### User-facing — group `frontend`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 13 | `ux` | `ux` | Friction, cognitive load, missing loading/empty/error states, undiscoverable affordances |
+| 14 | `a11y` | `a11y` | Keyboard nav, screen reader labels, focus order, contrast, ARIA correctness |
+| 15 | `mobile` | `mob` | Touch target size, viewport, safe areas, tap delay, gestures, iOS keyboard handling |
+| 16 | `motion` | `mot` | `prefers-reduced-motion` respect, animation jank, 60fps budgets, autoplay, transitions that interrupt screen-reader flow |
+| 17 | `forms` | `frm` | Input validation, per-field error states, submit error handling, accessible field labels, paste/autofill behavior, unsaved-changes warnings |
+| 18 | `copy` | `cpy` | Microcopy, voice consistency, jargon, error messages users actually see |
+| 19 | `i18n` | `i18` | Hardcoded strings, RTL readiness, date/number formatting, pluralization |
+| 20 | `dark-mode` | `dm` | Semantic color usage, contrast in both themes, flash-on-load |
+| 21 | `visual` | `vis` | Layout/spacing/alignment, visual hierarchy, brand consistency, dark-vs-light visual parity, inconsistent corner radii/shadows/type scale |
+
+### Maintainability — group `quality`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 22 | `clean` | `cln` | Dead code, duplication, commented-out blocks, unused imports/exports, leftover TODOs |
+| 23 | `naming` | `nam` | Identifier clarity, consistency with local norms, misleading abbreviations |
+| 24 | `patterns` | `pat` | Deviation from established patterns (fleet-wide gp-props or repo-local), reinvented wheels |
+| 25 | `docs` | `doc` | Docs ↔ code drift, missing docs on public API, outdated README/CLAUDE.md claims |
+| 26 | `doc-cleanup` | `dcl` | Duplicated content across doc files, stale files no longer relevant, orphaned docs nothing references, superseded files that replaced but didn't delete their predecessor, sections still describing removed features |
+| 27 | `tests` | `tst` | Coverage gaps on critical paths, flaky patterns, test smells, missing edge-case tests |
+| 28 | `complexity` | `cpx` | Function length, nesting depth, cyclomatic complexity hotspots |
+| 29 | `hacks` | `hck` | `TODO`/`FIXME`/`HACK`/`XXX` markers, `@ts-ignore`/`@ts-expect-error`, `any` escapes framed as temporary, `setTimeout` for timing fixes, quick patches waiting to be done properly |
+| 30 | `simplify` | `smp` | Reinvented framework features, over-engineered abstractions, custom code that could be 1–2 stdlib/library calls, unnecessary layers |
+| 31 | `reuse` | `rus` | Custom-vs-stdlib balance: how much is hand-written that shouldn't be; logic that should be extracted for reuse but isn't; abstractions generalized for a single caller; speculative parameters, defensive checks for impossible states, and configurability serving no real need |
+| 32 | `back-compat` | `bck` | Orphaned feature flags, deprecated branches with no callers, `legacy*` exports, backcompat shims outliving their purpose, `// kept for compatibility` blocks |
+| 33 | `comments` | `cmt` | Code comments against repo rules — WHY not WHAT, no PR-reference rot, no AI narration, no commented-out blocks unless `// KEEP:` annotated |
+| 34 | `dx` | `dx` | Developer experience: README/setup clarity, dev-error message quality, source map/stack trace usefulness, debug-surface ergonomics, contribution path friction |
+| 35 | `undone` | `und` | Started-but-unfinished work — partial implementations, half-wired features, WIP branches of logic, features only reachable from dev but not production |
+
+### Operational — group `ops`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 36 | `deps` | `dep` | Outdated, unused, vulnerable, license-risky dependencies |
+| 37 | `observability` | `obs` | Log coverage, metric hygiene, trace completeness, debug-pill surfaces |
+| 38 | `reliability` | `rel` | Retries, timeouts, idempotency, graceful degradation, offline handling |
+| 39 | `config` | `cfg` | Env var handling, secret management, config schema drift |
+| 40 | `migration` | `mig` | DB migration safety, API versioning, rollback plan, backward compatibility |
+| 41 | `ci` | `ci` | Pipeline health, build speed, cache effectiveness, flake rate |
+| 42 | `pwa` | `pwa` | Service worker correctness, manifest validity, install prompt handling, update flow, offline behavior, icon cache-busting, standalone-mode quirks |
+
+### Design-level — group `design`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 43 | `architecture` | `arch` | Coupling, layering violations, abstraction leaks, module boundaries |
+| 44 | `api` | `api` | Interface consistency, versioning, deprecation, contract clarity |
+| 45 | `state` | `sta` | Where state lives, derivation vs storage, single-source-of-truth violations |
+| 46 | `data-model` | `dat` | Schema normalization, foreign-key integrity, nullable discipline |
+
+### Fleet alignment — group `fleet`
+
+| # | Trigger | Alias | Looks for |
+|---|---------|-------|-----------|
+| 47 | `align` | `aln` | Drift between this repo's CLAUDE.md and gp-props CLAUDE.md — missing sections, stale rules, divergent conventions. Drift runs both ways: anything this repo does better gets upstreamed, not overwritten (see "Alignment levels up, never down") |
+| 48 | `pattern-audit` | `pa` | Every gp-props implementation pattern: implemented / partial / missing / deviates — with diff notes for each. A deviation that is an improvement is an upstream candidate, not a defect |
+
+### Meta sweeps
+
+Run multiple triggers sequentially, pausing after each for `fix` / `skip` / `stop`. Organised roughly by cadence — pick the one that matches when you're running it.
+
+| Trigger | Alias | Cadence | What it does |
+|---------|-------|---------|--------------|
+| `hot` | `h` | pre-commit | `bugs` + `types` + `errors` — fastest sanity check before committing. Pairs well with `hot staged` |
+| `quick` | `q` | pre-push | `bugs` + `security` + `a11y` — the "don't ship this" triad |
+| `ship` | `shp` | pre-merge | `correctness` + `trust` + `a11y` + `tests` — full pre-merge check |
+| `session` | `ses` | end of session | `surface` + `wrap` + `undone` + `skipped` — "what state am I leaving this in?" |
+| `tidy` | `tdy` | weekly | `clean` + `doc-cleanup` + `hacks` + `deps` + `undone` + `dx` — maintenance / hygiene sweep |
+| `all` | `*` | quarterly | Every applicable trigger across every group, in order |
+
+### Reflective passes
+
+Single-pass, no fan-out to other triggers. Each answers one specific question about the recent work.
+
+| Trigger | Alias | What it does |
+|---------|-------|--------------|
+| `risk` | `rsk` | Worst-case blast radius analysis on the current change |
+| `surface` | `srf` | Reflective pass on recent changes: what was decided, what was assumed, what was skipped, what needs human review |
+| `wrap` | `wrp` | Wrap-up pass before moving on — anything to double-check / strengthen / improve, anything discovered / assumed / skipped, anything to cleanup / update / tighten, anything to note / document / clarify |
+| `skipped` | `skp` | What was left undone — issues noticed and not fixed, wherever they were noticed. Each item: what it is, where, why it wasn't fixed. Under Scope and Completion this list should come back empty; anything in it is a defect to close, not a record to keep |
+| `assumed` | `asm` | What was assumed — anything decided rather than asked. Each item: the assumption, why it was made, what happens if wrong |
+| `approach` | `apr` | Was the fix the best / most proper way? Honest self-review: what shortcuts were taken, what a senior reviewer would flag, what the "proper" version looks like if different |
+| `cold` | `cld` | Fresh-eyes branch audit. Re-read CLAUDE.md from scratch. Review every change on the branch as if this were a new session with no prior context — don't privilege the diffs you just made. List all findings with a fix plan per item. Default scope: `branch` |
+
+### REMINDER: READ AND FOLLOW THE TRIGGERS EVERY TIME
 
 ## Prohibitions
 
