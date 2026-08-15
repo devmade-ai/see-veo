@@ -1,4 +1,4 @@
-| 48 | `pattern-audit` | `pa` | Every gp-props implementation pattern: implemented / partial / missing / deviates — with diff notes for each. A deviation that is an improvement is an upstream candidate, not a defect |
+# see-veo
 
 React + TypeScript + Vite PWA that presents a personal CV/resume as a playable,
 ink-on-paper "pixel-runner" document (a Chrome-dino-style character walks between
