@@ -4,6 +4,16 @@ React + TypeScript + Vite PWA that presents a personal CV/resume as a playable,
 ink-on-paper "pixel-runner" document (a Chrome-dino-style character walks between
 section flags). Design from the Claude Design handoff "The Applicant".
 
+## Fetching the Fleet Standards
+
+The canonical rules live in **gp-props** and this file mirrors them. To read the current version:
+
+```bash
+curl -sf "https://gp-props.vercel.app/CLAUDE.md"
+```
+
+Implementation patterns are fetched separately — see Implementation Patterns below.
+
 ## Tech Stack
 
 - React 19 with TypeScript
@@ -145,6 +155,14 @@ Assume all end users are non-technical. This is non-negotiable.
 - Delete unused imports, variables, and dead code immediately
 - Remove commented-out code unless explicitly marked `// KEEP:` with reason
 - Clean up `console.log`/`console.debug` statements before marking work complete
+
+### Timer and Subscription Cleanup
+
+- Every `setTimeout`/`setInterval`/`addEventListener`/`subscribe` needs a matching cleanup (`clearTimeout`/`clearInterval`/`removeEventListener`/unsubscribe handle).
+- Store timer ids in a scope the cleanup can reach. Nested timeouts → array; single-shot → local const or ref.
+- In React: return cleanup from `useEffect`. In plain modules: export a `dispose()` or use `AbortController`.
+- HMR-safe: guard global listener attachment behind a `window.__<featureName>Attached` flag so hot-reload doesn't double-subscribe. For frameworks exposing `import.meta.hot`, also release listeners via `import.meta.hot.dispose()`.
+- See the [TIMER_LEAKS pattern](https://gp-props.vercel.app/patterns/TIMER_LEAKS.md) for concrete patterns (nested-timeout array, AbortController, per-effect dispose, HMR guard). The hosted URL, not a repo-relative path — this block is mirrored into every repo, and only gp-props holds the file.
 
 ### Quality Checks
 
@@ -608,3 +626,8 @@ Never:
 - Decide that anything is out of scope, or frame work as "deferred as out of scope". Only the user sets scope. Work is either doable (do it) or blocked on user input (say exactly what input is needed).
 - Offer opinions on git history editing, branch strategy, PR size or shape, review flow, or commit structure. Follow instructions; don't editorialize on how the work should be organized.
 - **Use the `AskUserQuestion` tool, for any reason.** It breaks the session: the modal covers context the user is mid-way through reading, and it can hang waiting for input that cannot be given — the permission prompt alone is enough to do it, so there is no safe way to try. This extends to any interactive input prompt or selection UI. List options as numbered text and let the user reply with a number.
+- Add a feature without updating the documentation it invalidates, in the same commit
+- Add a workaround for an architectural problem — find the root cause and fix that. Globals, duplicate listeners and flag variables to patch over a structural issue are the shape to watch for; if a fix needs 3+ files coordinated to share state, that is the smell
+- Document or recommend a feature that has not been tested — writing it up is a claim that it works
+- Swallow an error with a silent `.catch(() => {})` — handle the specific failure, or let it surface
+- Hardcode a value that belongs in a CSS variable, a token, or config
