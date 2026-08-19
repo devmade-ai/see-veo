@@ -504,15 +504,13 @@ COMPONENT_STRUCTURE=flat (src/components/)
 
 ---
 
-## Rescued From Replaced Sections
+## Kept From Replaced Sections
 
-Lines the fleet sync found in this repo's canonical sections that canonical
-does not say. Kept verbatim, prefixed with the section they came from, so a
-later pass can decide whether each is local, obsolete, or worth upstreaming.
+What this repo said in sections the fleet sync replaced, that canonical does
+not say. Superseded lines were dropped; these were not. Each is a line, not a
+block — the rescue was line-based, so the surrounding context is in the commit
+before the sync.
 
-- Fetching the Fleet Standards :: The canonical rules live in **gp-props** and this file mirrors them. To read the current version:
-- Fetching the Fleet Standards :: Implementation patterns are fetched separately — see Implementation Patterns below.
-- Process :: > **Project notes:** plans and scratch files go in `/docs/working`, never the repo root. Verify with `npm run build` (TypeScript + build) and `npm run test` (Vitest).
 - Code Standards :: These rules are non-negotiable.
 - Code Standards :: - Follow established patterns and conventions already in the codebase
 - Code Standards :: - Use industry-standard solutions over custom implementations when available
@@ -531,7 +529,6 @@ later pass can decide whether each is local, obsolete, or worth upstreaming.
 - Code Standards :: Every non-trivial code change must include comments explaining:
 - Code Standards :: - **What** the requirement or instruction was
 - Code Standards :: Trivial changes (content updates in `cv-data.ts`, minor styling tweaks) do not need this.
-- Code Standards :: Example:
 - Code Standards :: ```typescript
 - Code Standards :: // Requirement: Rate limit API calls to external service
 - Code Standards :: // Approach: Token bucket algorithm with Redis backend
@@ -560,6 +557,5 @@ later pass can decide whether each is local, obsolete, or worth upstreaming.
 - Documentation :: - Never write docs or plans to root directory or random locations
 - Documentation :: - This CLAUDE.md must reflect current project state at all times
 - Documentation :: - Key Decisions: Important architectural choices with rationale
-- AI Notes :: - **ASK before assuming.** When a user reports a bug, ask clarifying questions (which mode? what did you type? what do you see?) BEFORE writing code. Don't guess the cause and build a fix on an assumption — you'll waste time fixing the wrong thing. One clarifying question saves multiple wrong commits.
 - AI Notes :: - **Communication style:** Direct, concise responses. No filler phrases or conversational padding. State facts and actions. Ask specific questions with concrete options when clarification is needed.
 - Prohibitions :: - Write code without decision context comments
