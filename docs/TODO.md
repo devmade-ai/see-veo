@@ -1,6 +1,6 @@
 # TODO
 
-Pending improvements and ideas. Completed items move to HISTORY.md.
+Pending improvements and ideas. Delete completed items — git history records them.
 
 ## Correction — the meta description was never broken (2026-08-05)
 
