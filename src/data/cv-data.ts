@@ -329,26 +329,26 @@ export const cvData: CVData = {
     {
       id: 'proj-quick-invoice',
       name: 'Quick Invoice',
-      stack: 'React · TypeScript · Vite · Tailwind · DaisyUI · pdf-lib · PWA',
+      stack: 'React · TypeScript · pdf-lib',
       url: 'https://qi-invoice.vercel.app/',
       description:
-        'Fill in an invoice — or a quote — check it over, download it as a PDF. Nothing you type leaves your device.',
+        'A private invoice and quote maker that shows the finished draft and downloads it as a PDF — nothing typed leaves the device.',
     },
     {
       id: 'proj-borderline',
       name: 'Borderline',
-      stack: 'JavaScript · React · Vite · Supabase · PWA',
+      stack: 'React · Supabase · PWA',
       url: 'https://bl-borderline.vercel.app/',
       description:
-        'Countries-of-the-world game. Pick a region and what to name (flags, capitals, currencies, dialing codes and more), then fill in every answer you know: on your own and offline, or against a friend from one shared link.',
+        'A countries-of-the-world game that asks for flags, capitals, currencies, dialing codes and more — alone and offline, or against a friend from one shared link.',
     },
     {
       id: 'proj-pixel-art',
       name: 'Pixel Art',
-      stack: 'JavaScript · React · Vite · PWA',
+      stack: 'React · Vite · PWA',
       url: 'https://px-pixelart.vercel.app/',
       description:
-        'A very basic pixel-picture maker. Choose the rows and columns, then colour squares one at a time or many at once, with copy and paste for colour codes. Save, save as new, and open saved pictures again. Works offline.',
+        'A simple pixel-picture maker that colours a chosen grid one square at a time or many at once, and opens saved pictures again offline.',
     },
     {
       id: 'proj-portfolio',

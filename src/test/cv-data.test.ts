@@ -45,14 +45,15 @@ describe('cvData', () => {
     }
   })
 
-  it('has project entries with a stack line and url', () => {
+  it('has a non-empty https url, description and stack on every card', () => {
     expect(cvData.projects.length).toBeGreaterThan(0)
     for (const item of cvData.projects) {
       expect(item.id).toBeTruthy()
       expect(item.name).toBeTruthy()
-      expect(item.description).toBeTruthy()
-      expect(item.stack).toBeTruthy()
-      expect(item.url).toMatch(/^https?:\/\//)
+      // Whitespace-only copy is empty. http is not accepted: every live link is https.
+      expect(item.description.trim().length).toBeGreaterThan(0)
+      expect(item.stack.trim().length).toBeGreaterThan(0)
+      expect(item.url.trim()).toMatch(/^https:\/\/\S+$/)
     }
   })
 
