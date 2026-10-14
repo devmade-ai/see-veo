@@ -263,6 +263,14 @@ export const cvData: CVData = {
   ],
   projects: [
     {
+      id: 'proj-sancio',
+      name: 'Sancio',
+      stack: 'React · TypeScript · Supabase',
+      url: 'https://sun-sea-o.vercel.app/',
+      description:
+        'An agreement tool where contracts come together one clause at a time — each part authored, negotiated and signed on its own, so a deal builds up piece by piece.',
+    },
+    {
       id: 'proj-intxt',
       name: 'inTXT',
       stack: 'React Native · Expo · Supabase',
@@ -279,12 +287,20 @@ export const cvData: CVData = {
         'A fuel-station finder for South Africa that locates the cheapest fuel nearby, filters by type, and gives directions via a full-screen map.',
     },
     {
-      id: 'proj-sancio',
-      name: 'Sancio',
-      stack: 'React · TypeScript · Supabase',
-      url: 'https://sun-sea-o.vercel.app/',
+      id: 'proj-graphiki',
+      name: 'Graphiki',
+      stack: 'React · TypeScript · PWA',
+      url: 'https://graphiki.vercel.app/',
       description:
-        'An agreement tool where contracts come together one clause at a time — each part authored, negotiated and signed on its own, so a deal builds up piece by piece.',
+        'A visual knowledge workspace for building and exploring networks of connected ideas — runs entirely in the browser, offline-first.',
+    },
+    {
+      id: 'proj-quick-invoice',
+      name: 'Quick Invoice',
+      stack: 'React · TypeScript · pdf-lib',
+      url: 'https://qi-invoice.vercel.app/',
+      description:
+        'A private invoice and quote maker that shows the finished draft and downloads it as a PDF — nothing typed leaves the device.',
     },
     {
       id: 'proj-knowless',
@@ -303,28 +319,12 @@ export const cvData: CVData = {
         'Part of knowless — a tool that shows how a privacy policy or terms-of-service page has quietly changed over time, explained in plain language.',
     },
     {
-      id: 'proj-graphiki',
-      name: 'Graphiki',
-      stack: 'React · TypeScript · PWA',
-      url: 'https://graphiki.vercel.app/',
+      id: 'proj-fanfare-chess',
+      name: 'Fanfare Chess',
+      stack: 'React · chess.js · Supabase',
+      url: 'https://fc-fanfare-chess.vercel.app/',
       description:
-        'A visual knowledge workspace for building and exploring networks of connected ideas — runs entirely in the browser, offline-first.',
-    },
-    {
-      id: 'proj-devmade',
-      name: 'devmade',
-      stack: 'React · TypeScript · Cloudflare',
-      url: 'https://www.devmade.app/',
-      description:
-        'The front-door site for the devmade studio, introducing its products and the app-building service behind them.',
-    },
-    {
-      id: 'proj-quick-invoice',
-      name: 'Quick Invoice',
-      stack: 'React · TypeScript · pdf-lib',
-      url: 'https://qi-invoice.vercel.app/',
-      description:
-        'A private invoice and quote maker that shows the finished draft and downloads it as a PDF — nothing typed leaves the device.',
+        'A two-player chess game where each side secretly arranges their bishops and knights before both setups are revealed — then standard chess from a shared link, with no account.',
     },
     {
       id: 'proj-borderline',
@@ -343,12 +343,12 @@ export const cvData: CVData = {
         'A simple pixel-picture maker that colours a chosen grid one square at a time or many at once, and opens saved pictures again offline.',
     },
     {
-      id: 'proj-fanfare-chess',
-      name: 'Fanfare Chess',
-      stack: 'React · chess.js · Supabase',
-      url: 'https://fc-fanfare-chess.vercel.app/',
+      id: 'proj-devmade',
+      name: 'devmade',
+      stack: 'React · TypeScript · Cloudflare',
+      url: 'https://www.devmade.app/',
       description:
-        'A two-player chess game where each side secretly arranges their bishops and knights before both setups are revealed — then standard chess from a shared link, with no account.',
+        'The front-door site for the devmade studio, introducing its products and the app-building service behind them.',
     },
     {
       id: 'proj-portfolio',
