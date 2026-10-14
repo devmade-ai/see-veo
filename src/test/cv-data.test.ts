@@ -45,15 +45,39 @@ describe('cvData', () => {
     }
   })
 
-  it('has project entries with a stack line and url', () => {
+  it('has a non-empty https url, description and stack on every card', () => {
     expect(cvData.projects.length).toBeGreaterThan(0)
     for (const item of cvData.projects) {
       expect(item.id).toBeTruthy()
       expect(item.name).toBeTruthy()
-      expect(item.description).toBeTruthy()
-      expect(item.stack).toBeTruthy()
-      expect(item.url).toMatch(/^https?:\/\//)
+      // Whitespace-only copy is empty. http is not accepted: every live link is https.
+      expect(item.description.trim().length).toBeGreaterThan(0)
+      expect(item.stack.trim().length).toBeGreaterThan(0)
+      expect(item.url.trim()).toMatch(/^https:\/\/\S+$/)
     }
+  })
+
+  it('lists the selected products, then the portfolio link', () => {
+    expect(cvData.projects.map((project) => project.name)).toEqual([
+      'inTXT',
+      'FuelHunt',
+      'Sancio',
+      'knowless',
+      'redline',
+      'Graphiki',
+      'devmade',
+      'Quick Invoice',
+      'Borderline',
+      'Pixel Art',
+      'Full Portfolio',
+    ])
+  })
+
+  it('counts shipped apps as the product cards, excluding the portfolio link', () => {
+    const products = cvData.projects.filter((project) => project.id !== 'proj-portfolio')
+    const shipped = cvData.stats.find((stat) => stat.label === 'Shipped')
+    expect(products.map((project) => project.name)).not.toContain('Full Portfolio')
+    expect(shipped?.value).toBe(`${products.length} apps`)
   })
 
   it('has education entries with all required fields', () => {

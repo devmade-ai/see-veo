@@ -116,7 +116,10 @@ export const cvData: CVData = {
     'A builder-first engineer who moves fluidly between the technical and the commercial — scoping and selling solutions, then designing and shipping them. Nine years across insurance, banking, startups and independent consulting, translating messy business problems into working software.',
   stats: [
     { label: 'Experience', value: '9+ yrs' },
-    { label: 'Shipped', value: '4 apps' },
+    // Product cards only. proj-portfolio (Full Portfolio) is an index link,
+    // not a product, so it is left out. cv-data.test.ts checks this stays
+    // equal to that count.
+    { label: 'Shipped', value: '10 apps' },
     { label: 'Domains', value: '37+' },
     { label: 'Languages', value: 'EN · NL' },
   ],
@@ -300,14 +303,6 @@ export const cvData: CVData = {
         'Part of knowless — a tool that shows how a privacy policy or terms-of-service page has quietly changed over time, explained in plain language.',
     },
     {
-      id: 'proj-farlume',
-      name: 'Farlume',
-      stack: 'Vue 3 · Vite · IndexedDB',
-      url: 'https://budgy-ting.vercel.app/',
-      description:
-        'A private household budgeting app that tracks spending, spots recurring costs and forecasts how long your money will last — all kept on your own device.',
-    },
-    {
       id: 'proj-graphiki',
       name: 'Graphiki',
       stack: 'React · TypeScript · PWA',
@@ -316,20 +311,36 @@ export const cvData: CVData = {
         'A visual knowledge workspace for building and exploring networks of connected ideas — runs entirely in the browser, offline-first.',
     },
     {
-      id: 'proj-canvagrid',
-      name: 'CanvaGrid',
-      stack: 'React · Tailwind · pdf-lib',
-      url: 'https://canva-grid.vercel.app/',
-      description:
-        'A browser-based visual design tool for social posts, presentations and print — with ready-made layouts and export in 28 formats.',
-    },
-    {
       id: 'proj-devmade',
       name: 'devmade',
       stack: 'React · TypeScript · Cloudflare',
       url: 'https://www.devmade.app/',
       description:
         'The front-door site for the devmade studio, introducing its products and the app-building service behind them.',
+    },
+    {
+      id: 'proj-quick-invoice',
+      name: 'Quick Invoice',
+      stack: 'React · TypeScript · pdf-lib',
+      url: 'https://qi-invoice.vercel.app/',
+      description:
+        'A private invoice and quote maker that shows the finished draft and downloads it as a PDF — nothing typed leaves the device.',
+    },
+    {
+      id: 'proj-borderline',
+      name: 'Borderline',
+      stack: 'React · Supabase · PWA',
+      url: 'https://bl-borderline.vercel.app/',
+      description:
+        'A countries-of-the-world game that asks for flags, capitals, currencies, dialing codes and more — alone and offline, or against a friend from one shared link.',
+    },
+    {
+      id: 'proj-pixel-art',
+      name: 'Pixel Art',
+      stack: 'React · Vite · PWA',
+      url: 'https://px-pixelart.vercel.app/',
+      description:
+        'A simple pixel-picture maker that colours a chosen grid one square at a time or many at once, and opens saved pictures again offline.',
     },
     {
       id: 'proj-portfolio',
