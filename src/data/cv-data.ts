@@ -119,7 +119,7 @@ export const cvData: CVData = {
     // Product cards only. proj-portfolio (Full Portfolio) is an index link,
     // not a product, so it is left out. cv-data.test.ts checks this stays
     // equal to that count.
-    { label: 'Shipped', value: '10 apps' },
+    { label: 'Shipped', value: '11 apps' },
     { label: 'Domains', value: '37+' },
     { label: 'Languages', value: 'EN · NL' },
   ],
@@ -341,6 +341,14 @@ export const cvData: CVData = {
       url: 'https://px-pixelart.vercel.app/',
       description:
         'A simple pixel-picture maker that colours a chosen grid one square at a time or many at once, and opens saved pictures again offline.',
+    },
+    {
+      id: 'proj-fanfare-chess',
+      name: 'Fanfare Chess',
+      stack: 'React · chess.js · Supabase',
+      url: 'https://fc-fanfare-chess.vercel.app/',
+      description:
+        'A two-player chess game where each side secretly arranges their bishops and knights before both setups are revealed — then standard chess from a shared link, with no account.',
     },
     {
       id: 'proj-portfolio',

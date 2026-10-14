@@ -69,6 +69,7 @@ describe('cvData', () => {
       'Quick Invoice',
       'Borderline',
       'Pixel Art',
+      'Fanfare Chess',
       'Full Portfolio',
     ])
   })
