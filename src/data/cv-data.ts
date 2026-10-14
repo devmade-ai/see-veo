@@ -116,7 +116,10 @@ export const cvData: CVData = {
     'A builder-first engineer who moves fluidly between the technical and the commercial — scoping and selling solutions, then designing and shipping them. Nine years across insurance, banking, startups and independent consulting, translating messy business problems into working software.',
   stats: [
     { label: 'Experience', value: '9+ yrs' },
-    { label: 'Shipped', value: '4 apps' },
+    // Product cards only. proj-portfolio (Full Portfolio) is an index link,
+    // not a product, so it is left out. cv-data.test.ts checks this stays
+    // equal to that count.
+    { label: 'Shipped', value: '11 apps' },
     { label: 'Domains', value: '37+' },
     { label: 'Languages', value: 'EN · NL' },
   ],
@@ -316,20 +319,36 @@ export const cvData: CVData = {
         'A visual knowledge workspace for building and exploring networks of connected ideas — runs entirely in the browser, offline-first.',
     },
     {
-      id: 'proj-canvagrid',
-      name: 'CanvaGrid',
-      stack: 'React · Tailwind · pdf-lib',
-      url: 'https://canva-grid.vercel.app/',
-      description:
-        'A browser-based visual design tool for social posts, presentations and print — with ready-made layouts and export in 28 formats.',
-    },
-    {
       id: 'proj-devmade',
       name: 'devmade',
       stack: 'React · TypeScript · Cloudflare',
       url: 'https://www.devmade.app/',
       description:
         'The front-door site for the devmade studio, introducing its products and the app-building service behind them.',
+    },
+    {
+      id: 'proj-quick-invoice',
+      name: 'Quick Invoice',
+      stack: 'React · TypeScript · Vite · Tailwind · DaisyUI · pdf-lib · PWA',
+      url: 'https://qi-invoice.vercel.app/',
+      description:
+        'Fill in an invoice — or a quote — check it over, download it as a PDF. Nothing you type leaves your device.',
+    },
+    {
+      id: 'proj-borderline',
+      name: 'Borderline',
+      stack: 'JavaScript · React · Vite · Supabase · PWA',
+      url: 'https://bl-borderline.vercel.app/',
+      description:
+        'Countries-of-the-world game. Pick a region and what to name (flags, capitals, currencies, dialing codes and more), then fill in every answer you know: on your own and offline, or against a friend from one shared link.',
+    },
+    {
+      id: 'proj-pixel-art',
+      name: 'Pixel Art',
+      stack: 'JavaScript · React · Vite · PWA',
+      url: 'https://px-pixelart.vercel.app/',
+      description:
+        'A very basic pixel-picture maker. Choose the rows and columns, then colour squares one at a time or many at once, with copy and paste for colour codes. Save, save as new, and open saved pictures again. Works offline.',
     },
     {
       id: 'proj-portfolio',
