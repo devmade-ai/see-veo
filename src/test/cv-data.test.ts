@@ -59,17 +59,17 @@ describe('cvData', () => {
 
   it('lists the selected products, then the portfolio link', () => {
     expect(cvData.projects.map((project) => project.name)).toEqual([
+      'Sancio',
       'inTXT',
       'FuelHunt',
-      'Sancio',
+      'Graphiki',
+      'Quick Invoice',
       'knowless',
       'redline',
-      'Graphiki',
-      'devmade',
-      'Quick Invoice',
+      'Fanfare Chess',
       'Borderline',
       'Pixel Art',
-      'Fanfare Chess',
+      'devmade',
       'Full Portfolio',
     ])
   })
