@@ -119,7 +119,7 @@ export const cvData: CVData = {
     // Product cards only. proj-portfolio (Full Portfolio) is an index link,
     // not a product, so it is left out. cv-data.test.ts checks this stays
     // equal to that count.
-    { label: 'Shipped', value: '11 apps' },
+    { label: 'Shipped', value: '10 apps' },
     { label: 'Domains', value: '37+' },
     { label: 'Languages', value: 'EN · NL' },
   ],
@@ -301,14 +301,6 @@ export const cvData: CVData = {
       url: 'https://web-arch.vercel.app/',
       description:
         'Part of knowless — a tool that shows how a privacy policy or terms-of-service page has quietly changed over time, explained in plain language.',
-    },
-    {
-      id: 'proj-farlume',
-      name: 'Farlume',
-      stack: 'Vue 3 · Vite · IndexedDB',
-      url: 'https://budgy-ting.vercel.app/',
-      description:
-        'A private household budgeting app that tracks spending, spots recurring costs and forecasts how long your money will last — all kept on your own device.',
     },
     {
       id: 'proj-graphiki',

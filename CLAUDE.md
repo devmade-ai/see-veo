@@ -468,6 +468,7 @@ Project cards in `src/data/cv-data.ts` are sourced from deployed repos across th
 
 **Excluded repos** (not shown in Projects):
 - `canva-grid` — excluded by owner
+- `fl-farlume` — still in development; excluded by owner
 - `canva-grid-assets` — asset storage, not a standalone project
 - `plant-fur` — excluded by owner
 - `coin-zapp` — excluded by owner

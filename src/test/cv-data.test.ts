@@ -64,7 +64,6 @@ describe('cvData', () => {
       'Sancio',
       'knowless',
       'redline',
-      'Farlume',
       'Graphiki',
       'devmade',
       'Quick Invoice',
