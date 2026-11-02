@@ -113,4 +113,23 @@ export default defineConfig({
       },
     }),
   ],
+  // Requirement: Silkscreen must actually load. Its four woff2 files are under
+  //   Vite's 4KB default, so the build inlines them as data:font/woff2 URLs.
+  //   CSP font-src is 'self' plus fonts.gstatic.com (vercel.json) and blocks
+  //   data:, so the pixel face never applies and the HUD / SFX / PDF labels
+  //   fall back to Space Mono.
+  // Approach: refuse inlining for .woff/.woff2. Every face is emitted as a
+  //   hashed /assets file, which 'self' allows and the workbox woff2 glob
+  //   already precaches. Anything that is not a font returns undefined, which
+  //   falls through to the 4KB default.
+  // Alternatives considered:
+  //   - Add data: to font-src: Rejected — widens CSP for an inline step that
+  //     Spectral and Space Mono do not need; they already ship as files.
+  //   - assetsInlineLimit: 0: Rejected — also stops inlining unrelated small
+  //     assets. The extension check is the narrower fix.
+  build: {
+    assetsInlineLimit: (filePath) => {
+      if (/\.woff2?$/i.test(filePath)) return false
+    },
+  },
 })
