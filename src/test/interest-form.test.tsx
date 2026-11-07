@@ -50,6 +50,11 @@ describe('InterestForm', () => {
       expect(screen.getByLabelText('Name')).toBeInTheDocument()
       expect(screen.getByLabelText('Email')).toBeInTheDocument()
       expect(screen.getByLabelText('Message')).toBeInTheDocument()
+      for (const label of ['Name', 'Email', 'Message']) {
+        const field = screen.getByLabelText(label)
+        expect(field.className).toContain('text-[0.95rem]')
+        expect(field.className).toContain('pointer-coarse:text-[16px]')
+      }
     })
 
     it('renders the submit button', () => {

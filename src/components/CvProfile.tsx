@@ -24,8 +24,10 @@ export default function CvProfile() {
         <div className="text-right font-mono text-[11.5px] leading-[1.9] text-text-muted">
           <div>{personal.location}</div>
           <div>
+            {/* Coarse pointers reflow each link to a 44px row. A hit layer on the
+                17px line would cover the other link. Mouse keeps the text line. */}
             <a
-              className="text-link hover:text-accent"
+              className="text-link hover:text-accent pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:items-center"
               href={personal.linkedin.url}
               target="_blank"
               rel="noopener noreferrer"
@@ -35,7 +37,7 @@ export default function CvProfile() {
           </div>
           <div>
             <a
-              className="text-link hover:text-accent"
+              className="text-link hover:text-accent pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:items-center"
               href={personal.github.url}
               target="_blank"
               rel="noopener noreferrer"

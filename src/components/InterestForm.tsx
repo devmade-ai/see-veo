@@ -35,8 +35,10 @@ type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
 
 // Shared field styling — squared paper inputs with an ink hairline and an amber
 // focus ring, matching the document aesthetic of the surrounding CV.
+// 0.95rem (15.2px) is the fine-pointer size. Coarse pointers get 16px so iOS
+// Safari does not zoom the page into the field. The hit box is already ≥44px.
 const FIELD_CLASS =
-  'w-full border border-[rgba(43,33,24,0.2)] bg-surface px-3.5 py-2.5 font-serif text-[0.95rem] text-text placeholder:text-text-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-accent/40'
+  'w-full border border-[rgba(43,33,24,0.2)] bg-surface px-3.5 py-2.5 font-serif text-[0.95rem] pointer-coarse:text-[16px] text-text placeholder:text-text-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-accent/40'
 const LABEL_CLASS =
   'mb-1.5 block font-mono text-[11px] uppercase tracking-[0.14em] text-text-muted'
 

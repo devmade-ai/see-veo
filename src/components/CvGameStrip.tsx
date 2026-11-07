@@ -51,7 +51,7 @@ export default function CvGameStrip({
               onClick={() => onNavigate(index)}
               aria-label={section.flagLabel}
               aria-current={active ? 'true' : undefined}
-              className="pointer-events-auto relative flex min-w-0 flex-1 cursor-pointer flex-col items-center border-0 bg-transparent px-1"
+              className="coarse-hit pointer-events-auto relative flex min-w-0 flex-1 cursor-pointer flex-col items-center border-0 bg-transparent px-1"
             >
               {showCoin && (
                 <span
@@ -73,10 +73,13 @@ export default function CvGameStrip({
                     : 'bg-[rgba(43,33,24,0.3)]'
                 }`}
               />
+              {/* "Projects" at 8px is wider than a 320px column and crosses into
+                  Study. Tighten only that label below 360px, and only enough to
+                  keep a gap between glyphs. The face stays 8px. */}
               <span
                 className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap font-pixel text-[8px] font-bold uppercase tracking-[0.01em] ${
-                  active ? 'top-[56px] text-heading' : 'top-[44px] text-text-dim'
-                }`}
+                  section.id === 'projects' ? 'max-[360px]:tracking-[-0.06em]' : ''
+                } ${active ? 'top-[56px] text-heading' : 'top-[44px] text-text-dim'}`}
               >
                 {section.flagLabel}
               </span>

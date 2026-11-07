@@ -33,9 +33,11 @@ describe('CvProfile', () => {
     expect(screen.getByRole('heading', { level: 1, name: cvData.personal.name })).toBeInTheDocument()
     expect(screen.getByText(cvData.personal.title)).toBeInTheDocument()
     expect(screen.getByText(new RegExp(cvData.personal.quote.slice(0, 20)))).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: cvData.personal.linkedin.label })).toHaveAttribute(
-      'href',
-      cvData.personal.linkedin.url,
+    const linkedin = screen.getByRole('link', { name: cvData.personal.linkedin.label })
+    expect(linkedin).toHaveAttribute('href', cvData.personal.linkedin.url)
+    expect(linkedin.className).toContain('pointer-coarse:min-h-11')
+    expect(screen.getByRole('link', { name: cvData.personal.github.label }).className).toContain(
+      'pointer-coarse:min-h-11',
     )
   })
 
@@ -83,6 +85,7 @@ describe('CvProjects', () => {
     expect(links[0]).toHaveAttribute('href', cvData.projects[0].url)
     expect(links[0]).toHaveAttribute('target', '_blank')
     expect(links[0]).toHaveAttribute('rel', 'noopener noreferrer')
+    for (const link of links) expect(link.className).toContain('coarse-hit-down')
   })
 })
 
@@ -188,7 +191,11 @@ describe('CvHeader', () => {
     )
     expect(screen.getByText('Jaco Theron')).toBeInTheDocument()
     expect(screen.getByText('SFX ON')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Download as PDF' })).toBeInTheDocument()
+    const pdf = screen.getByRole('button', { name: 'Download as PDF' })
+    expect(pdf).toBeInTheDocument()
+    expect(pdf.className).toContain('coarse-hit')
+    expect(pdf.className).toContain('min-h-[34px]')
+    expect(screen.getByRole('button', { name: 'Toggle sound effects' }).className).toContain('coarse-hit')
   })
 
   it('reflects the sound state and fires the callbacks', async () => {
@@ -220,7 +227,12 @@ describe('CvGameStrip', () => {
       />,
     )
     for (const section of sections) {
-      expect(screen.getByRole('button', { name: section.flagLabel })).toBeInTheDocument()
+      const flag = screen.getByRole('button', { name: section.flagLabel })
+      expect(flag).toBeInTheDocument()
+      expect(flag.className).toContain('coarse-hit')
+      const label = [...flag.querySelectorAll('span')].find((span) => span.textContent === section.flagLabel)
+      if (section.id === 'projects') expect(label?.className).toContain('max-[360px]:tracking-[-0.06em]')
+      else expect(label?.className).not.toContain('max-[360px]:tracking-')
     }
     await user.click(screen.getByRole('button', { name: 'Projects' }))
     expect(onNavigate).toHaveBeenCalledWith(3)
