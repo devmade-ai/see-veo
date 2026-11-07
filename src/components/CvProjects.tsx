@@ -29,7 +29,7 @@ export default function CvProjects() {
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="self-start border-b border-[rgba(180,115,42,0.4)] pb-px font-mono text-[11px] tracking-[0.08em] text-link hover:text-accent"
+              className="coarse-hit-down self-start border-b border-[rgba(180,115,42,0.4)] pb-px font-mono text-[11px] tracking-[0.08em] text-link hover:text-accent"
             >
               VISIT &rarr;
             </a>

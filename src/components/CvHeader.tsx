@@ -42,7 +42,7 @@ export default function CvHeader({ name, soundOn, onToggleSound, onPrint }: CvHe
           onClick={onToggleSound}
           aria-label="Toggle sound effects"
           aria-pressed={soundOn}
-          className="min-h-[34px] cursor-pointer border border-[rgba(43,33,24,0.18)] bg-surface px-[11px] font-pixel text-[9px] tracking-[0.02em] text-text-muted transition-colors hover:border-primary hover:text-text"
+          className="coarse-hit min-h-[34px] cursor-pointer border border-[rgba(43,33,24,0.18)] bg-surface px-[11px] font-pixel text-[9px] tracking-[0.02em] text-text-muted transition-colors hover:border-primary hover:text-text"
         >
           {soundOn ? 'SFX ON' : 'SFX OFF'}
         </button>
@@ -51,7 +51,7 @@ export default function CvHeader({ name, soundOn, onToggleSound, onPrint }: CvHe
           type="button"
           onClick={onPrint}
           aria-label="Download as PDF"
-          className="min-h-[34px] cursor-pointer border border-primary bg-primary px-[13px] font-pixel text-[9px] tracking-[0.02em] text-primary-ink shadow-[2px_2px_0_rgba(43,33,24,0.35)] transition-transform active:translate-x-px active:translate-y-px"
+          className="coarse-hit min-h-[34px] cursor-pointer border border-primary bg-primary px-[13px] font-pixel text-[9px] tracking-[0.02em] text-primary-ink shadow-[2px_2px_0_rgba(43,33,24,0.35)] transition-transform active:translate-x-px active:translate-y-px"
         >
           PDF
         </button>

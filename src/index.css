@@ -108,6 +108,42 @@ body {
   color: #2b2118;
 }
 
+/* Requirement: Touch targets are 44×44 CSS px on coarse pointers (WCAG 2.5.5)
+     while the painted control, the 61px header, and the 122px game strip stay
+     the size they are for a mouse.
+   Approach: an invisible ::before, no wider than the control, only under
+     pointer: coarse. .coarse-hit centers a 44px band (SFX, PDF, flags — the
+     spare padding is inside the header or the strip). .coarse-hit-down anchors
+     the same band toward the card padding under a VISIT link so it does not
+     cover the description above it.
+   Alternatives considered:
+     - min-height: 44px on the control: Rejected — paints SFX/PDF taller and
+       grows the header; on an inline link it does not enlarge the hit box.
+     - min-width on the layer: Rejected — flag columns already touch, and a
+       wider layer would steal the next flag. */
+@media (pointer: coarse) {
+  .coarse-hit,
+  .coarse-hit-down {
+    position: relative;
+  }
+  .coarse-hit::before,
+  .coarse-hit-down::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 44px;
+  }
+  .coarse-hit::before {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .coarse-hit-down::before {
+    /* 15px of the band sits in the card's 18px bottom padding. */
+    bottom: -15px;
+  }
+}
+
 /* Custom scrollbar for the internal document stage — warm ink thumb on paper */
 [data-doc-stage]::-webkit-scrollbar { width: 10px; }
 [data-doc-stage]::-webkit-scrollbar-track { background: transparent; }
