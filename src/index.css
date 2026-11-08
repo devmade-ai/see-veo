@@ -103,6 +103,27 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Requirement: iOS safe areas (viewport-fit=cover + black-translucent status bar) must
+     paint paper/sky in the inset gutters without growing the 61px header row or
+     compressing the 122px game strip border box.
+   Approach: One flex band per axis outside those rows inside [data-cv-root]; horizontal
+     insets on the shell so landscape notch clears the document stage too.
+   Alternatives considered:
+     - padding on header/footer components: Rejected — mixes inset into the visible chrome
+       and steals height from the fixed strip/nav geometry */
+[data-cv-root] {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+[data-safe-area-top] {
+  height: env(safe-area-inset-top, 0px);
+  background-color: var(--color-background);
+}
+[data-safe-area-bottom] {
+  height: env(safe-area-inset-bottom, 0px);
+  background-color: var(--color-game-sky-bottom);
+}
+
 ::selection {
   background: rgba(224, 151, 43, 0.3);
   color: #2b2118;

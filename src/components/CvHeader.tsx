@@ -13,7 +13,7 @@ interface CvHeaderProps {
 
 export default function CvHeader({ name, soundOn, onToggleSound, onPrint }: CvHeaderProps) {
   return (
-    <header className="relative z-20 flex shrink-0 items-center justify-between gap-x-[14px] border-b border-[rgba(43,33,24,0.18)] px-[clamp(16px,4vw,34px)] pb-3 pt-[max(14px,env(safe-area-inset-top))] max-[560px]:flex-wrap max-[560px]:gap-x-2.5 max-[560px]:gap-y-1.5 max-[560px]:px-3.5">
+    <header className="relative z-20 flex shrink-0 items-center justify-between gap-x-[14px] border-b border-[rgba(43,33,24,0.18)] px-[clamp(16px,4vw,34px)] pb-3 pt-3.5 max-[560px]:flex-wrap max-[560px]:gap-x-2.5 max-[560px]:gap-y-1.5 max-[560px]:px-3.5">
       <div className="flex min-w-0 items-baseline gap-3">
         <span className="whitespace-nowrap font-serif text-[16px] font-bold tracking-[0.02em] text-heading">
           {name}
