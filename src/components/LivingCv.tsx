@@ -216,6 +216,10 @@ export default function LivingCv({
         {/* CRT scanline / paper texture overlay */}
         <div className="pointer-events-none absolute inset-0 z-40 opacity-60 [background:repeating-linear-gradient(0deg,rgba(43,33,24,0.045)_0_1px,transparent_1px_3px)] [mix-blend-mode:multiply]" />
 
+        {/* Top/bottom bands hold env(safe-area-inset-*) once, outside the painted header
+            row and the fixed 122px game strip — see index.css [data-safe-area-*]. */}
+        <div data-safe-area-top="" aria-hidden className="pointer-events-none relative z-20 shrink-0" />
+
         <CvHeader
           name={cvData.personal.name}
           soundOn={soundOn}
@@ -253,6 +257,8 @@ export default function LivingCv({
           poppingIndex={poppingIndex}
           onNavigate={navigate}
         />
+
+        <div data-safe-area-bottom="" aria-hidden className="pointer-events-none relative z-20 shrink-0" />
       </div>
 
       {/* Clean printed document — hidden on screen, shown by the print stylesheet. */}
